@@ -1,0 +1,31 @@
+Change Component Designator: OldDesignator=J1 NewDesignator=J2
+Added Component: Designator=J1(JP4-C1T)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "ComponentLink1 Description"; Value = "Manufacturer"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "ComponentLink1URL"; Value = "http://www.we-online.com"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "ComponentLink2 Description"; Value = "Datasheet"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "ComponentLink2URL"; Value = "http://katalog.we-online.de/em/datasheet/6130xx143121.pdf"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Created by"; Value = "Karrer Zheng"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Created Date"; Value = "29 March 2013"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Manufacturer"; Value = "W¨¹rth Elektronik eiSos GmbH"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "NoPins"; Value = "04"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "partNo"; Value = "613004143121"; VariantName = "[No Variations]"
+Added Pin To Net: NetName=GND Pin=J1-4
+Change Net Name : Old Net Name=NetJ1_3 New Net Name=NetJ2_3
+Change Net Name : Old Net Name=NetJ1_4 New Net Name=NetJ2_4
+Added Pin To Net: NetName=RX1 Pin=J1-2
+Added Pin To Net: NetName=RX1 Pin=R14-1
+Added Pin To Net: NetName=RX1 Pin=U1-31
+Added Net: Name=RX1
+Added Pin To Net: NetName=TX1 Pin=J1-1
+Added Pin To Net: NetName=TX1 Pin=R12-1
+Added Pin To Net: NetName=TX1 Pin=U1-30
+Added Net: Name=TX1
+Added Pin To Net: NetName=TX3 Pin=J1-3
+Added Pin To Net: NetName=TX3 Pin=U1-21
+Added Net: Name=TX3
+Added Member To Class: ClassName=U_[01] - MCU Member=Component J1 JP4
+Added Room: Name=U_[01] - MCU
+Added Room: Name=U_[02] - SIM
+Added Room: Name=U_[03] - SENSORs
+Added Room: Name=U_[04] - Power

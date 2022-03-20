@@ -1,0 +1,1752 @@
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccDHwryO.s 			page 1
+
+
+   1              		.cpu cortex-m3
+   2              		.eabi_attribute 20, 1
+   3              		.eabi_attribute 21, 1
+   4              		.eabi_attribute 23, 3
+   5              		.eabi_attribute 24, 1
+   6              		.eabi_attribute 25, 1
+   7              		.eabi_attribute 26, 1
+   8              		.eabi_attribute 30, 1
+   9              		.eabi_attribute 34, 1
+  10              		.eabi_attribute 18, 4
+  11              		.file	"mpu6050.c"
+  12              		.text
+  13              	.Ltext0:
+  14              		.cfi_sections	.debug_frame
+  15              		.section	.text.MPU6050_Init,"ax",%progbits
+  16              		.align	1
+  17              		.global	MPU6050_Init
+  18              		.arch armv7-m
+  19              		.syntax unified
+  20              		.thumb
+  21              		.thumb_func
+  22              		.fpu softvfp
+  24              	MPU6050_Init:
+  25              	.LVL0:
+  26              	.LFB65:
+  27              		.file 1 "Core/Src/mpu6050.c"
+   1:Core/Src/mpu6050.c **** /*
+   2:Core/Src/mpu6050.c ****  * mpu6050.c
+   3:Core/Src/mpu6050.c ****  *
+   4:Core/Src/mpu6050.c ****  *  Created on: Nov 13, 2019
+   5:Core/Src/mpu6050.c ****  *      Author: Bulanov Konstantin
+   6:Core/Src/mpu6050.c ****  *
+   7:Core/Src/mpu6050.c ****  *  Contact information
+   8:Core/Src/mpu6050.c ****  *  -------------------
+   9:Core/Src/mpu6050.c ****  *
+  10:Core/Src/mpu6050.c ****  * e-mail   :  leech001@gmail.com
+  11:Core/Src/mpu6050.c ****  */
+  12:Core/Src/mpu6050.c **** 
+  13:Core/Src/mpu6050.c **** /*
+  14:Core/Src/mpu6050.c ****  * |---------------------------------------------------------------------------------
+  15:Core/Src/mpu6050.c ****  * | Copyright (C) Bulanov Konstantin,2021
+  16:Core/Src/mpu6050.c ****  * |
+  17:Core/Src/mpu6050.c ****  * | This program is free software: you can redistribute it and/or modify
+  18:Core/Src/mpu6050.c ****  * | it under the terms of the GNU General Public License as published by
+  19:Core/Src/mpu6050.c ****  * | the Free Software Foundation, either version 3 of the License, or
+  20:Core/Src/mpu6050.c ****  * | any later version.
+  21:Core/Src/mpu6050.c ****  * |
+  22:Core/Src/mpu6050.c ****  * | This program is distributed in the hope that it will be useful,
+  23:Core/Src/mpu6050.c ****  * | but WITHOUT ANY WARRANTY; without even the implied warranty of
+  24:Core/Src/mpu6050.c ****  * | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  25:Core/Src/mpu6050.c ****  * | GNU General Public License for more details.
+  26:Core/Src/mpu6050.c ****  * |
+  27:Core/Src/mpu6050.c ****  * | You should have received a copy of the GNU General Public License
+  28:Core/Src/mpu6050.c ****  * | along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  29:Core/Src/mpu6050.c ****  * |
+  30:Core/Src/mpu6050.c ****  * | Kalman filter algorithm used from https://github.com/TKJElectronics/KalmanFilter
+  31:Core/Src/mpu6050.c ****  * |---------------------------------------------------------------------------------
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccDHwryO.s 			page 2
+
+
+  32:Core/Src/mpu6050.c ****  */
+  33:Core/Src/mpu6050.c **** 
+  34:Core/Src/mpu6050.c **** #include <math.h>
+  35:Core/Src/mpu6050.c **** #include "mpu6050.h"
+  36:Core/Src/mpu6050.c **** 
+  37:Core/Src/mpu6050.c **** #define RAD_TO_DEG 57.295779513082320876798154814105
+  38:Core/Src/mpu6050.c **** 
+  39:Core/Src/mpu6050.c **** #define WHO_AM_I_REG 0x75
+  40:Core/Src/mpu6050.c **** #define PWR_MGMT_1_REG 0x6B
+  41:Core/Src/mpu6050.c **** #define SMPLRT_DIV_REG 0x19
+  42:Core/Src/mpu6050.c **** #define ACCEL_CONFIG_REG 0x1C
+  43:Core/Src/mpu6050.c **** #define ACCEL_XOUT_H_REG 0x3B
+  44:Core/Src/mpu6050.c **** #define TEMP_OUT_H_REG 0x41
+  45:Core/Src/mpu6050.c **** #define GYRO_CONFIG_REG 0x1B
+  46:Core/Src/mpu6050.c **** #define GYRO_XOUT_H_REG 0x43
+  47:Core/Src/mpu6050.c **** 
+  48:Core/Src/mpu6050.c **** // Setup MPU6050
+  49:Core/Src/mpu6050.c **** #define MPU6050_ADDR 0xD0
+  50:Core/Src/mpu6050.c **** const uint16_t i2c_timeout = 100;
+  51:Core/Src/mpu6050.c **** const double Accel_Z_corrector = 18500.0;
+  52:Core/Src/mpu6050.c **** 
+  53:Core/Src/mpu6050.c **** uint32_t timer;
+  54:Core/Src/mpu6050.c **** 
+  55:Core/Src/mpu6050.c **** Kalman_t KalmanX = {
+  56:Core/Src/mpu6050.c ****     .Q_angle = 0.001f,
+  57:Core/Src/mpu6050.c ****     .Q_bias = 0.003f,
+  58:Core/Src/mpu6050.c ****     .R_measure = 0.03f};
+  59:Core/Src/mpu6050.c **** 
+  60:Core/Src/mpu6050.c **** Kalman_t KalmanY = {
+  61:Core/Src/mpu6050.c ****     .Q_angle = 0.001f,
+  62:Core/Src/mpu6050.c ****     .Q_bias = 0.003f,
+  63:Core/Src/mpu6050.c ****     .R_measure = 0.03f,
+  64:Core/Src/mpu6050.c **** };
+  65:Core/Src/mpu6050.c **** 
+  66:Core/Src/mpu6050.c **** uint8_t MPU6050_Init(I2C_HandleTypeDef *I2Cx)
+  67:Core/Src/mpu6050.c **** {
+  28              		.loc 1 67 1 view -0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 8
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              		.loc 1 67 1 is_stmt 0 view .LVU1
+  33 0000 2DE9F041 		push	{r4, r5, r6, r7, r8, lr}
+  34              	.LCFI0:
+  35              		.cfi_def_cfa_offset 24
+  36              		.cfi_offset 4, -24
+  37              		.cfi_offset 5, -20
+  38              		.cfi_offset 6, -16
+  39              		.cfi_offset 7, -12
+  40              		.cfi_offset 8, -8
+  41              		.cfi_offset 14, -4
+  42 0004 86B0     		sub	sp, sp, #24
+  43              	.LCFI1:
+  44              		.cfi_def_cfa_offset 48
+  45 0006 0546     		mov	r5, r0
+  68:Core/Src/mpu6050.c ****     uint8_t check;
+  46              		.loc 1 68 5 is_stmt 1 view .LVU2
+  69:Core/Src/mpu6050.c ****     uint8_t Data;
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccDHwryO.s 			page 3
+
+
+  47              		.loc 1 69 5 view .LVU3
+  70:Core/Src/mpu6050.c **** 
+  71:Core/Src/mpu6050.c ****     // check device ID WHO_AM_I
+  72:Core/Src/mpu6050.c **** 
+  73:Core/Src/mpu6050.c ****     HAL_I2C_Mem_Read(I2Cx, MPU6050_ADDR, WHO_AM_I_REG, 1, &check, 1, i2c_timeout);
+  48              		.loc 1 73 5 view .LVU4
+  49 0008 6423     		movs	r3, #100
+  50 000a 0293     		str	r3, [sp, #8]
+  51 000c 0123     		movs	r3, #1
+  52 000e 0193     		str	r3, [sp, #4]
+  53 0010 0DF11702 		add	r2, sp, #23
+  54 0014 0092     		str	r2, [sp]
+  55 0016 7522     		movs	r2, #117
+  56 0018 D021     		movs	r1, #208
+  57 001a FFF7FEFF 		bl	HAL_I2C_Mem_Read
+  58              	.LVL1:
+  74:Core/Src/mpu6050.c **** 
+  75:Core/Src/mpu6050.c ****     if (check == 104) // 0x68 will be returned by the sensor if everything goes well
+  59              		.loc 1 75 5 view .LVU5
+  60              		.loc 1 75 15 is_stmt 0 view .LVU6
+  61 001e 9DF81730 		ldrb	r3, [sp, #23]	@ zero_extendqisi2
+  62              		.loc 1 75 8 view .LVU7
+  63 0022 682B     		cmp	r3, #104
+  64 0024 03D0     		beq	.L5
+  76:Core/Src/mpu6050.c ****     {
+  77:Core/Src/mpu6050.c ****         // power management register 0X6B we should write all 0's to wake the sensor up
+  78:Core/Src/mpu6050.c ****         Data = 0;
+  79:Core/Src/mpu6050.c ****         HAL_I2C_Mem_Write(I2Cx, MPU6050_ADDR, PWR_MGMT_1_REG, 1, &Data, 1, i2c_timeout);
+  80:Core/Src/mpu6050.c **** 
+  81:Core/Src/mpu6050.c ****         // Set DATA RATE of 1KHz by writing SMPLRT_DIV register
+  82:Core/Src/mpu6050.c ****         Data = 0x07;
+  83:Core/Src/mpu6050.c ****         HAL_I2C_Mem_Write(I2Cx, MPU6050_ADDR, SMPLRT_DIV_REG, 1, &Data, 1, i2c_timeout);
+  84:Core/Src/mpu6050.c **** 
+  85:Core/Src/mpu6050.c ****         // Set accelerometer configuration in ACCEL_CONFIG Register
+  86:Core/Src/mpu6050.c ****         // XA_ST=0,YA_ST=0,ZA_ST=0, FS_SEL=0 -> � 2g
+  87:Core/Src/mpu6050.c ****         Data = 0x00;
+  88:Core/Src/mpu6050.c ****         HAL_I2C_Mem_Write(I2Cx, MPU6050_ADDR, ACCEL_CONFIG_REG, 1, &Data, 1, i2c_timeout);
+  89:Core/Src/mpu6050.c **** 
+  90:Core/Src/mpu6050.c ****         // Set Gyroscopic configuration in GYRO_CONFIG Register
+  91:Core/Src/mpu6050.c ****         // XG_ST=0,YG_ST=0,ZG_ST=0, FS_SEL=0 -> � 250 �/s
+  92:Core/Src/mpu6050.c ****         Data = 0x00;
+  93:Core/Src/mpu6050.c ****         HAL_I2C_Mem_Write(I2Cx, MPU6050_ADDR, GYRO_CONFIG_REG, 1, &Data, 1, i2c_timeout);
+  94:Core/Src/mpu6050.c ****         return 0;
+  95:Core/Src/mpu6050.c ****     }
+  96:Core/Src/mpu6050.c ****     return 1;
+  65              		.loc 1 96 12 view .LVU8
+  66 0026 0120     		movs	r0, #1
+  67              	.L2:
+  97:Core/Src/mpu6050.c **** }
+  68              		.loc 1 97 1 view .LVU9
+  69 0028 06B0     		add	sp, sp, #24
+  70              	.LCFI2:
+  71              		.cfi_remember_state
+  72              		.cfi_def_cfa_offset 24
+  73              		@ sp needed
+  74 002a BDE8F081 		pop	{r4, r5, r6, r7, r8, pc}
+  75              	.LVL2:
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccDHwryO.s 			page 4
+
+
+  76              	.L5:
+  77              	.LCFI3:
+  78              		.cfi_restore_state
+  78:Core/Src/mpu6050.c ****         HAL_I2C_Mem_Write(I2Cx, MPU6050_ADDR, PWR_MGMT_1_REG, 1, &Data, 1, i2c_timeout);
+  79              		.loc 1 78 9 is_stmt 1 view .LVU10
+  78:Core/Src/mpu6050.c ****         HAL_I2C_Mem_Write(I2Cx, MPU6050_ADDR, PWR_MGMT_1_REG, 1, &Data, 1, i2c_timeout);
+  80              		.loc 1 78 14 is_stmt 0 view .LVU11
+  81 002e 0024     		movs	r4, #0
+  82 0030 8DF81640 		strb	r4, [sp, #22]
+  79:Core/Src/mpu6050.c **** 
+  83              		.loc 1 79 9 is_stmt 1 view .LVU12
+  84 0034 4FF06408 		mov	r8, #100
+  85 0038 CDF80880 		str	r8, [sp, #8]
+  86 003c 0126     		movs	r6, #1
+  87 003e 0196     		str	r6, [sp, #4]
+  88 0040 0DF11607 		add	r7, sp, #22
+  89 0044 0097     		str	r7, [sp]
+  90 0046 3346     		mov	r3, r6
+  91 0048 6B22     		movs	r2, #107
+  92 004a D021     		movs	r1, #208
+  93 004c 2846     		mov	r0, r5
+  94 004e FFF7FEFF 		bl	HAL_I2C_Mem_Write
+  95              	.LVL3:
+  82:Core/Src/mpu6050.c ****         HAL_I2C_Mem_Write(I2Cx, MPU6050_ADDR, SMPLRT_DIV_REG, 1, &Data, 1, i2c_timeout);
+  96              		.loc 1 82 9 view .LVU13
+  82:Core/Src/mpu6050.c ****         HAL_I2C_Mem_Write(I2Cx, MPU6050_ADDR, SMPLRT_DIV_REG, 1, &Data, 1, i2c_timeout);
+  97              		.loc 1 82 14 is_stmt 0 view .LVU14
+  98 0052 0723     		movs	r3, #7
+  99 0054 8DF81630 		strb	r3, [sp, #22]
+  83:Core/Src/mpu6050.c **** 
+ 100              		.loc 1 83 9 is_stmt 1 view .LVU15
+ 101 0058 CDF80880 		str	r8, [sp, #8]
+ 102 005c 0196     		str	r6, [sp, #4]
+ 103 005e 0097     		str	r7, [sp]
+ 104 0060 3346     		mov	r3, r6
+ 105 0062 1922     		movs	r2, #25
+ 106 0064 D021     		movs	r1, #208
+ 107 0066 2846     		mov	r0, r5
+ 108 0068 FFF7FEFF 		bl	HAL_I2C_Mem_Write
+ 109              	.LVL4:
+  87:Core/Src/mpu6050.c ****         HAL_I2C_Mem_Write(I2Cx, MPU6050_ADDR, ACCEL_CONFIG_REG, 1, &Data, 1, i2c_timeout);
+ 110              		.loc 1 87 9 view .LVU16
+  87:Core/Src/mpu6050.c ****         HAL_I2C_Mem_Write(I2Cx, MPU6050_ADDR, ACCEL_CONFIG_REG, 1, &Data, 1, i2c_timeout);
+ 111              		.loc 1 87 14 is_stmt 0 view .LVU17
+ 112 006c 8DF81640 		strb	r4, [sp, #22]
+  88:Core/Src/mpu6050.c **** 
+ 113              		.loc 1 88 9 is_stmt 1 view .LVU18
+ 114 0070 CDF80880 		str	r8, [sp, #8]
+ 115 0074 0196     		str	r6, [sp, #4]
+ 116 0076 0097     		str	r7, [sp]
+ 117 0078 3346     		mov	r3, r6
+ 118 007a 1C22     		movs	r2, #28
+ 119 007c D021     		movs	r1, #208
+ 120 007e 2846     		mov	r0, r5
+ 121 0080 FFF7FEFF 		bl	HAL_I2C_Mem_Write
+ 122              	.LVL5:
+  92:Core/Src/mpu6050.c ****         HAL_I2C_Mem_Write(I2Cx, MPU6050_ADDR, GYRO_CONFIG_REG, 1, &Data, 1, i2c_timeout);
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccDHwryO.s 			page 5
+
+
+ 123              		.loc 1 92 9 view .LVU19
+  92:Core/Src/mpu6050.c ****         HAL_I2C_Mem_Write(I2Cx, MPU6050_ADDR, GYRO_CONFIG_REG, 1, &Data, 1, i2c_timeout);
+ 124              		.loc 1 92 14 is_stmt 0 view .LVU20
+ 125 0084 8DF81640 		strb	r4, [sp, #22]
+  93:Core/Src/mpu6050.c ****         return 0;
+ 126              		.loc 1 93 9 is_stmt 1 view .LVU21
+ 127 0088 CDF80880 		str	r8, [sp, #8]
+ 128 008c 0196     		str	r6, [sp, #4]
+ 129 008e 0097     		str	r7, [sp]
+ 130 0090 3346     		mov	r3, r6
+ 131 0092 1B22     		movs	r2, #27
+ 132 0094 D021     		movs	r1, #208
+ 133 0096 2846     		mov	r0, r5
+ 134 0098 FFF7FEFF 		bl	HAL_I2C_Mem_Write
+ 135              	.LVL6:
+  94:Core/Src/mpu6050.c ****     }
+ 136              		.loc 1 94 9 view .LVU22
+  94:Core/Src/mpu6050.c ****     }
+ 137              		.loc 1 94 16 is_stmt 0 view .LVU23
+ 138 009c 2046     		mov	r0, r4
+ 139 009e C3E7     		b	.L2
+ 140              		.cfi_endproc
+ 141              	.LFE65:
+ 143              		.global	__aeabi_i2d
+ 144              		.global	__aeabi_dmul
+ 145              		.section	.text.MPU6050_Read_Accel,"ax",%progbits
+ 146              		.align	1
+ 147              		.global	MPU6050_Read_Accel
+ 148              		.syntax unified
+ 149              		.thumb
+ 150              		.thumb_func
+ 151              		.fpu softvfp
+ 153              	MPU6050_Read_Accel:
+ 154              	.LVL7:
+ 155              	.LFB66:
+  98:Core/Src/mpu6050.c **** 
+  99:Core/Src/mpu6050.c **** void MPU6050_Read_Accel(I2C_HandleTypeDef *I2Cx, MPU6050_t *DataStruct)
+ 100:Core/Src/mpu6050.c **** {
+ 156              		.loc 1 100 1 is_stmt 1 view -0
+ 157              		.cfi_startproc
+ 158              		@ args = 0, pretend = 0, frame = 8
+ 159              		@ frame_needed = 0, uses_anonymous_args = 0
+ 160              		.loc 1 100 1 is_stmt 0 view .LVU25
+ 161 0000 70B5     		push	{r4, r5, r6, lr}
+ 162              	.LCFI4:
+ 163              		.cfi_def_cfa_offset 16
+ 164              		.cfi_offset 4, -16
+ 165              		.cfi_offset 5, -12
+ 166              		.cfi_offset 6, -8
+ 167              		.cfi_offset 14, -4
+ 168 0002 86B0     		sub	sp, sp, #24
+ 169              	.LCFI5:
+ 170              		.cfi_def_cfa_offset 40
+ 171 0004 0C46     		mov	r4, r1
+ 101:Core/Src/mpu6050.c ****     uint8_t Rec_Data[6];
+ 172              		.loc 1 101 5 is_stmt 1 view .LVU26
+ 102:Core/Src/mpu6050.c **** 
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccDHwryO.s 			page 6
+
+
+ 103:Core/Src/mpu6050.c ****     // Read 6 BYTES of data starting from ACCEL_XOUT_H register
+ 104:Core/Src/mpu6050.c **** 
+ 105:Core/Src/mpu6050.c ****     HAL_I2C_Mem_Read(I2Cx, MPU6050_ADDR, ACCEL_XOUT_H_REG, 1, Rec_Data, 6, i2c_timeout);
+ 173              		.loc 1 105 5 view .LVU27
+ 174 0006 6423     		movs	r3, #100
+ 175 0008 0293     		str	r3, [sp, #8]
+ 176 000a 0623     		movs	r3, #6
+ 177 000c 0193     		str	r3, [sp, #4]
+ 178 000e 04AB     		add	r3, sp, #16
+ 179 0010 0093     		str	r3, [sp]
+ 180 0012 0123     		movs	r3, #1
+ 181 0014 3B22     		movs	r2, #59
+ 182 0016 D021     		movs	r1, #208
+ 183              	.LVL8:
+ 184              		.loc 1 105 5 is_stmt 0 view .LVU28
+ 185 0018 FFF7FEFF 		bl	HAL_I2C_Mem_Read
+ 186              	.LVL9:
+ 106:Core/Src/mpu6050.c **** 
+ 107:Core/Src/mpu6050.c ****     DataStruct->Accel_X_RAW = (int16_t)(Rec_Data[0] << 8 | Rec_Data[1]);
+ 187              		.loc 1 107 5 is_stmt 1 view .LVU29
+ 188              		.loc 1 107 49 is_stmt 0 view .LVU30
+ 189 001c 9DF81030 		ldrb	r3, [sp, #16]	@ zero_extendqisi2
+ 190              		.loc 1 107 68 view .LVU31
+ 191 0020 9DF81100 		ldrb	r0, [sp, #17]	@ zero_extendqisi2
+ 192              		.loc 1 107 31 view .LVU32
+ 193 0024 40EA0320 		orr	r0, r0, r3, lsl #8
+ 194 0028 00B2     		sxth	r0, r0
+ 195              		.loc 1 107 29 view .LVU33
+ 196 002a 2080     		strh	r0, [r4]	@ movhi
+ 108:Core/Src/mpu6050.c ****     DataStruct->Accel_Y_RAW = (int16_t)(Rec_Data[2] << 8 | Rec_Data[3]);
+ 197              		.loc 1 108 5 is_stmt 1 view .LVU34
+ 198              		.loc 1 108 49 is_stmt 0 view .LVU35
+ 199 002c 9DF81230 		ldrb	r3, [sp, #18]	@ zero_extendqisi2
+ 200              		.loc 1 108 68 view .LVU36
+ 201 0030 9DF81360 		ldrb	r6, [sp, #19]	@ zero_extendqisi2
+ 202              		.loc 1 108 31 view .LVU37
+ 203 0034 46EA0326 		orr	r6, r6, r3, lsl #8
+ 204 0038 36B2     		sxth	r6, r6
+ 205              		.loc 1 108 29 view .LVU38
+ 206 003a 6680     		strh	r6, [r4, #2]	@ movhi
+ 109:Core/Src/mpu6050.c ****     DataStruct->Accel_Z_RAW = (int16_t)(Rec_Data[4] << 8 | Rec_Data[5]);
+ 207              		.loc 1 109 5 is_stmt 1 view .LVU39
+ 208              		.loc 1 109 49 is_stmt 0 view .LVU40
+ 209 003c 9DF81430 		ldrb	r3, [sp, #20]	@ zero_extendqisi2
+ 210              		.loc 1 109 68 view .LVU41
+ 211 0040 9DF81550 		ldrb	r5, [sp, #21]	@ zero_extendqisi2
+ 212              		.loc 1 109 31 view .LVU42
+ 213 0044 45EA0325 		orr	r5, r5, r3, lsl #8
+ 214 0048 2DB2     		sxth	r5, r5
+ 215              		.loc 1 109 29 view .LVU43
+ 216 004a A580     		strh	r5, [r4, #4]	@ movhi
+ 110:Core/Src/mpu6050.c **** 
+ 111:Core/Src/mpu6050.c ****     /*** convert the RAW values into acceleration in 'g'
+ 112:Core/Src/mpu6050.c ****          we have to divide according to the Full scale value set in FS_SEL
+ 113:Core/Src/mpu6050.c ****          I have configured FS_SEL = 0. So I am dividing by 16384.0
+ 114:Core/Src/mpu6050.c ****          for more details check ACCEL_CONFIG Register              ****/
+ 115:Core/Src/mpu6050.c **** 
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccDHwryO.s 			page 7
+
+
+ 116:Core/Src/mpu6050.c ****     DataStruct->Ax = DataStruct->Accel_X_RAW / 16384.0;
+ 217              		.loc 1 116 5 is_stmt 1 view .LVU44
+ 218              		.loc 1 116 46 is_stmt 0 view .LVU45
+ 219 004c FFF7FEFF 		bl	__aeabi_i2d
+ 220              	.LVL10:
+ 221 0050 0022     		movs	r2, #0
+ 222 0052 0C4B     		ldr	r3, .L8
+ 223 0054 FFF7FEFF 		bl	__aeabi_dmul
+ 224              	.LVL11:
+ 225              		.loc 1 116 20 view .LVU46
+ 226 0058 C4E90201 		strd	r0, [r4, #8]
+ 117:Core/Src/mpu6050.c ****     DataStruct->Ay = DataStruct->Accel_Y_RAW / 16384.0;
+ 227              		.loc 1 117 5 is_stmt 1 view .LVU47
+ 228              		.loc 1 117 46 is_stmt 0 view .LVU48
+ 229 005c 3046     		mov	r0, r6
+ 230 005e FFF7FEFF 		bl	__aeabi_i2d
+ 231              	.LVL12:
+ 232 0062 0022     		movs	r2, #0
+ 233 0064 074B     		ldr	r3, .L8
+ 234 0066 FFF7FEFF 		bl	__aeabi_dmul
+ 235              	.LVL13:
+ 236              		.loc 1 117 20 view .LVU49
+ 237 006a C4E90401 		strd	r0, [r4, #16]
+ 118:Core/Src/mpu6050.c ****     DataStruct->Az = DataStruct->Accel_Z_RAW / 16384.0;
+ 238              		.loc 1 118 5 is_stmt 1 view .LVU50
+ 239              		.loc 1 118 46 is_stmt 0 view .LVU51
+ 240 006e 2846     		mov	r0, r5
+ 241 0070 FFF7FEFF 		bl	__aeabi_i2d
+ 242              	.LVL14:
+ 243 0074 0022     		movs	r2, #0
+ 244 0076 034B     		ldr	r3, .L8
+ 245 0078 FFF7FEFF 		bl	__aeabi_dmul
+ 246              	.LVL15:
+ 247              		.loc 1 118 20 view .LVU52
+ 248 007c C4E90601 		strd	r0, [r4, #24]
+ 119:Core/Src/mpu6050.c **** }
+ 249              		.loc 1 119 1 view .LVU53
+ 250 0080 06B0     		add	sp, sp, #24
+ 251              	.LCFI6:
+ 252              		.cfi_def_cfa_offset 16
+ 253              		@ sp needed
+ 254 0082 70BD     		pop	{r4, r5, r6, pc}
+ 255              	.LVL16:
+ 256              	.L9:
+ 257              		.loc 1 119 1 view .LVU54
+ 258              		.align	2
+ 259              	.L8:
+ 260 0084 0000103F 		.word	1058013184
+ 261              		.cfi_endproc
+ 262              	.LFE66:
+ 264              		.global	__aeabi_ddiv
+ 265              		.section	.text.MPU6050_Read_Gyro,"ax",%progbits
+ 266              		.align	1
+ 267              		.global	MPU6050_Read_Gyro
+ 268              		.syntax unified
+ 269              		.thumb
+ 270              		.thumb_func
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccDHwryO.s 			page 8
+
+
+ 271              		.fpu softvfp
+ 273              	MPU6050_Read_Gyro:
+ 274              	.LVL17:
+ 275              	.LFB67:
+ 120:Core/Src/mpu6050.c **** 
+ 121:Core/Src/mpu6050.c **** void MPU6050_Read_Gyro(I2C_HandleTypeDef *I2Cx, MPU6050_t *DataStruct)
+ 122:Core/Src/mpu6050.c **** {
+ 276              		.loc 1 122 1 is_stmt 1 view -0
+ 277              		.cfi_startproc
+ 278              		@ args = 0, pretend = 0, frame = 8
+ 279              		@ frame_needed = 0, uses_anonymous_args = 0
+ 280              		.loc 1 122 1 is_stmt 0 view .LVU56
+ 281 0000 70B5     		push	{r4, r5, r6, lr}
+ 282              	.LCFI7:
+ 283              		.cfi_def_cfa_offset 16
+ 284              		.cfi_offset 4, -16
+ 285              		.cfi_offset 5, -12
+ 286              		.cfi_offset 6, -8
+ 287              		.cfi_offset 14, -4
+ 288 0002 86B0     		sub	sp, sp, #24
+ 289              	.LCFI8:
+ 290              		.cfi_def_cfa_offset 40
+ 291 0004 0C46     		mov	r4, r1
+ 123:Core/Src/mpu6050.c ****     uint8_t Rec_Data[6];
+ 292              		.loc 1 123 5 is_stmt 1 view .LVU57
+ 124:Core/Src/mpu6050.c **** 
+ 125:Core/Src/mpu6050.c ****     // Read 6 BYTES of data starting from GYRO_XOUT_H register
+ 126:Core/Src/mpu6050.c **** 
+ 127:Core/Src/mpu6050.c ****     HAL_I2C_Mem_Read(I2Cx, MPU6050_ADDR, GYRO_XOUT_H_REG, 1, Rec_Data, 6, i2c_timeout);
+ 293              		.loc 1 127 5 view .LVU58
+ 294 0006 6423     		movs	r3, #100
+ 295 0008 0293     		str	r3, [sp, #8]
+ 296 000a 0623     		movs	r3, #6
+ 297 000c 0193     		str	r3, [sp, #4]
+ 298 000e 04AB     		add	r3, sp, #16
+ 299 0010 0093     		str	r3, [sp]
+ 300 0012 0123     		movs	r3, #1
+ 301 0014 4322     		movs	r2, #67
+ 302 0016 D021     		movs	r1, #208
+ 303              	.LVL18:
+ 304              		.loc 1 127 5 is_stmt 0 view .LVU59
+ 305 0018 FFF7FEFF 		bl	HAL_I2C_Mem_Read
+ 306              	.LVL19:
+ 128:Core/Src/mpu6050.c **** 
+ 129:Core/Src/mpu6050.c ****     DataStruct->Gyro_X_RAW = (int16_t)(Rec_Data[0] << 8 | Rec_Data[1]);
+ 307              		.loc 1 129 5 is_stmt 1 view .LVU60
+ 308              		.loc 1 129 48 is_stmt 0 view .LVU61
+ 309 001c 9DF81030 		ldrb	r3, [sp, #16]	@ zero_extendqisi2
+ 310              		.loc 1 129 67 view .LVU62
+ 311 0020 9DF81100 		ldrb	r0, [sp, #17]	@ zero_extendqisi2
+ 312              		.loc 1 129 30 view .LVU63
+ 313 0024 40EA0320 		orr	r0, r0, r3, lsl #8
+ 314 0028 00B2     		sxth	r0, r0
+ 315              		.loc 1 129 28 view .LVU64
+ 316 002a 2084     		strh	r0, [r4, #32]	@ movhi
+ 130:Core/Src/mpu6050.c ****     DataStruct->Gyro_Y_RAW = (int16_t)(Rec_Data[2] << 8 | Rec_Data[3]);
+ 317              		.loc 1 130 5 is_stmt 1 view .LVU65
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccDHwryO.s 			page 9
+
+
+ 318              		.loc 1 130 48 is_stmt 0 view .LVU66
+ 319 002c 9DF81230 		ldrb	r3, [sp, #18]	@ zero_extendqisi2
+ 320              		.loc 1 130 67 view .LVU67
+ 321 0030 9DF81360 		ldrb	r6, [sp, #19]	@ zero_extendqisi2
+ 322              		.loc 1 130 30 view .LVU68
+ 323 0034 46EA0326 		orr	r6, r6, r3, lsl #8
+ 324 0038 36B2     		sxth	r6, r6
+ 325              		.loc 1 130 28 view .LVU69
+ 326 003a 6684     		strh	r6, [r4, #34]	@ movhi
+ 131:Core/Src/mpu6050.c ****     DataStruct->Gyro_Z_RAW = (int16_t)(Rec_Data[4] << 8 | Rec_Data[5]);
+ 327              		.loc 1 131 5 is_stmt 1 view .LVU70
+ 328              		.loc 1 131 48 is_stmt 0 view .LVU71
+ 329 003c 9DF81430 		ldrb	r3, [sp, #20]	@ zero_extendqisi2
+ 330              		.loc 1 131 67 view .LVU72
+ 331 0040 9DF81550 		ldrb	r5, [sp, #21]	@ zero_extendqisi2
+ 332              		.loc 1 131 30 view .LVU73
+ 333 0044 45EA0325 		orr	r5, r5, r3, lsl #8
+ 334 0048 2DB2     		sxth	r5, r5
+ 335              		.loc 1 131 28 view .LVU74
+ 336 004a A584     		strh	r5, [r4, #36]	@ movhi
+ 132:Core/Src/mpu6050.c **** 
+ 133:Core/Src/mpu6050.c ****     /*** convert the RAW values into dps (�/s)
+ 134:Core/Src/mpu6050.c ****          we have to divide according to the Full scale value set in FS_SEL
+ 135:Core/Src/mpu6050.c ****          I have configured FS_SEL = 0. So I am dividing by 131.0
+ 136:Core/Src/mpu6050.c ****          for more details check GYRO_CONFIG Register              ****/
+ 137:Core/Src/mpu6050.c **** 
+ 138:Core/Src/mpu6050.c ****     DataStruct->Gx = DataStruct->Gyro_X_RAW / 131.0;
+ 337              		.loc 1 138 5 is_stmt 1 view .LVU75
+ 338              		.loc 1 138 45 is_stmt 0 view .LVU76
+ 339 004c FFF7FEFF 		bl	__aeabi_i2d
+ 340              	.LVL20:
+ 341 0050 0FA3     		adr	r3, .L12
+ 342 0052 D3E90023 		ldrd	r2, [r3]
+ 343 0056 FFF7FEFF 		bl	__aeabi_ddiv
+ 344              	.LVL21:
+ 345              		.loc 1 138 20 view .LVU77
+ 346 005a C4E90A01 		strd	r0, [r4, #40]
+ 139:Core/Src/mpu6050.c ****     DataStruct->Gy = DataStruct->Gyro_Y_RAW / 131.0;
+ 347              		.loc 1 139 5 is_stmt 1 view .LVU78
+ 348              		.loc 1 139 45 is_stmt 0 view .LVU79
+ 349 005e 3046     		mov	r0, r6
+ 350 0060 FFF7FEFF 		bl	__aeabi_i2d
+ 351              	.LVL22:
+ 352 0064 0AA3     		adr	r3, .L12
+ 353 0066 D3E90023 		ldrd	r2, [r3]
+ 354 006a FFF7FEFF 		bl	__aeabi_ddiv
+ 355              	.LVL23:
+ 356              		.loc 1 139 20 view .LVU80
+ 357 006e C4E90C01 		strd	r0, [r4, #48]
+ 140:Core/Src/mpu6050.c ****     DataStruct->Gz = DataStruct->Gyro_Z_RAW / 131.0;
+ 358              		.loc 1 140 5 is_stmt 1 view .LVU81
+ 359              		.loc 1 140 45 is_stmt 0 view .LVU82
+ 360 0072 2846     		mov	r0, r5
+ 361 0074 FFF7FEFF 		bl	__aeabi_i2d
+ 362              	.LVL24:
+ 363 0078 05A3     		adr	r3, .L12
+ 364 007a D3E90023 		ldrd	r2, [r3]
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccDHwryO.s 			page 10
+
+
+ 365 007e FFF7FEFF 		bl	__aeabi_ddiv
+ 366              	.LVL25:
+ 367              		.loc 1 140 20 view .LVU83
+ 368 0082 C4E90E01 		strd	r0, [r4, #56]
+ 141:Core/Src/mpu6050.c **** }
+ 369              		.loc 1 141 1 view .LVU84
+ 370 0086 06B0     		add	sp, sp, #24
+ 371              	.LCFI9:
+ 372              		.cfi_def_cfa_offset 16
+ 373              		@ sp needed
+ 374 0088 70BD     		pop	{r4, r5, r6, pc}
+ 375              	.LVL26:
+ 376              	.L13:
+ 377              		.loc 1 141 1 view .LVU85
+ 378 008a 00BFAFF3 		.align	3
+ 378      0080
+ 379              	.L12:
+ 380 0090 00000000 		.word	0
+ 381 0094 00606040 		.word	1080057856
+ 382              		.cfi_endproc
+ 383              	.LFE67:
+ 385              		.global	__aeabi_i2f
+ 386              		.global	__aeabi_fdiv
+ 387              		.global	__aeabi_fadd
+ 388              		.section	.text.MPU6050_Read_Temp,"ax",%progbits
+ 389              		.align	1
+ 390              		.global	MPU6050_Read_Temp
+ 391              		.syntax unified
+ 392              		.thumb
+ 393              		.thumb_func
+ 394              		.fpu softvfp
+ 396              	MPU6050_Read_Temp:
+ 397              	.LVL27:
+ 398              	.LFB68:
+ 142:Core/Src/mpu6050.c **** 
+ 143:Core/Src/mpu6050.c **** void MPU6050_Read_Temp(I2C_HandleTypeDef *I2Cx, MPU6050_t *DataStruct)
+ 144:Core/Src/mpu6050.c **** {
+ 399              		.loc 1 144 1 is_stmt 1 view -0
+ 400              		.cfi_startproc
+ 401              		@ args = 0, pretend = 0, frame = 8
+ 402              		@ frame_needed = 0, uses_anonymous_args = 0
+ 403              		.loc 1 144 1 is_stmt 0 view .LVU87
+ 404 0000 10B5     		push	{r4, lr}
+ 405              	.LCFI10:
+ 406              		.cfi_def_cfa_offset 8
+ 407              		.cfi_offset 4, -8
+ 408              		.cfi_offset 14, -4
+ 409 0002 86B0     		sub	sp, sp, #24
+ 410              	.LCFI11:
+ 411              		.cfi_def_cfa_offset 32
+ 412 0004 0C46     		mov	r4, r1
+ 145:Core/Src/mpu6050.c ****     uint8_t Rec_Data[2];
+ 413              		.loc 1 145 5 is_stmt 1 view .LVU88
+ 146:Core/Src/mpu6050.c ****     int16_t temp;
+ 414              		.loc 1 146 5 view .LVU89
+ 147:Core/Src/mpu6050.c **** 
+ 148:Core/Src/mpu6050.c ****     // Read 2 BYTES of data starting from TEMP_OUT_H_REG register
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccDHwryO.s 			page 11
+
+
+ 149:Core/Src/mpu6050.c **** 
+ 150:Core/Src/mpu6050.c ****     HAL_I2C_Mem_Read(I2Cx, MPU6050_ADDR, TEMP_OUT_H_REG, 1, Rec_Data, 2, i2c_timeout);
+ 415              		.loc 1 150 5 view .LVU90
+ 416 0006 6423     		movs	r3, #100
+ 417 0008 0293     		str	r3, [sp, #8]
+ 418 000a 0223     		movs	r3, #2
+ 419 000c 0193     		str	r3, [sp, #4]
+ 420 000e 05AB     		add	r3, sp, #20
+ 421 0010 0093     		str	r3, [sp]
+ 422 0012 0123     		movs	r3, #1
+ 423 0014 4122     		movs	r2, #65
+ 424 0016 D021     		movs	r1, #208
+ 425              	.LVL28:
+ 426              		.loc 1 150 5 is_stmt 0 view .LVU91
+ 427 0018 FFF7FEFF 		bl	HAL_I2C_Mem_Read
+ 428              	.LVL29:
+ 151:Core/Src/mpu6050.c **** 
+ 152:Core/Src/mpu6050.c ****     temp = (int16_t)(Rec_Data[0] << 8 | Rec_Data[1]);
+ 429              		.loc 1 152 5 is_stmt 1 view .LVU92
+ 430              		.loc 1 152 30 is_stmt 0 view .LVU93
+ 431 001c 9DF81430 		ldrb	r3, [sp, #20]	@ zero_extendqisi2
+ 432              		.loc 1 152 34 view .LVU94
+ 433 0020 1B02     		lsls	r3, r3, #8
+ 434              		.loc 1 152 12 view .LVU95
+ 435 0022 1BB2     		sxth	r3, r3
+ 436              		.loc 1 152 49 view .LVU96
+ 437 0024 9DF81500 		ldrb	r0, [sp, #21]	@ zero_extendqisi2
+ 438              	.LVL30:
+ 153:Core/Src/mpu6050.c ****     DataStruct->Temperature = (float)((int16_t)temp / (float)340.0 + (float)36.53);
+ 439              		.loc 1 153 5 is_stmt 1 view .LVU97
+ 440              		.loc 1 153 53 is_stmt 0 view .LVU98
+ 441 0028 1843     		orrs	r0, r0, r3
+ 442              	.LVL31:
+ 443              		.loc 1 153 53 view .LVU99
+ 444 002a FFF7FEFF 		bl	__aeabi_i2f
+ 445              	.LVL32:
+ 446              		.loc 1 153 53 view .LVU100
+ 447 002e 0449     		ldr	r1, .L16
+ 448 0030 FFF7FEFF 		bl	__aeabi_fdiv
+ 449              	.LVL33:
+ 450              		.loc 1 153 31 view .LVU101
+ 451 0034 0349     		ldr	r1, .L16+4
+ 452 0036 FFF7FEFF 		bl	__aeabi_fadd
+ 453              	.LVL34:
+ 454              		.loc 1 153 29 view .LVU102
+ 455 003a 2064     		str	r0, [r4, #64]	@ float
+ 154:Core/Src/mpu6050.c **** }
+ 456              		.loc 1 154 1 view .LVU103
+ 457 003c 06B0     		add	sp, sp, #24
+ 458              	.LCFI12:
+ 459              		.cfi_def_cfa_offset 8
+ 460              		@ sp needed
+ 461 003e 10BD     		pop	{r4, pc}
+ 462              	.LVL35:
+ 463              	.L17:
+ 464              		.loc 1 154 1 view .LVU104
+ 465              		.align	2
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccDHwryO.s 			page 12
+
+
+ 466              	.L16:
+ 467 0040 0000AA43 		.word	1135214592
+ 468 0044 B81E1242 		.word	1108483768
+ 469              		.cfi_endproc
+ 470              	.LFE68:
+ 472              		.global	__aeabi_dsub
+ 473              		.global	__aeabi_dadd
+ 474              		.section	.text.Kalman_getAngle,"ax",%progbits
+ 475              		.align	1
+ 476              		.global	Kalman_getAngle
+ 477              		.syntax unified
+ 478              		.thumb
+ 479              		.thumb_func
+ 480              		.fpu softvfp
+ 482              	Kalman_getAngle:
+ 483              	.LVL36:
+ 484              	.LFB70:
+ 155:Core/Src/mpu6050.c **** 
+ 156:Core/Src/mpu6050.c **** void MPU6050_Read_All(I2C_HandleTypeDef *I2Cx, MPU6050_t *DataStruct)
+ 157:Core/Src/mpu6050.c **** {
+ 158:Core/Src/mpu6050.c ****     uint8_t Rec_Data[14];
+ 159:Core/Src/mpu6050.c ****     int16_t temp;
+ 160:Core/Src/mpu6050.c **** 
+ 161:Core/Src/mpu6050.c ****     // Read 14 BYTES of data starting from ACCEL_XOUT_H register
+ 162:Core/Src/mpu6050.c **** 
+ 163:Core/Src/mpu6050.c ****     HAL_I2C_Mem_Read(I2Cx, MPU6050_ADDR, ACCEL_XOUT_H_REG, 1, Rec_Data, 14, i2c_timeout);
+ 164:Core/Src/mpu6050.c **** 
+ 165:Core/Src/mpu6050.c ****     DataStruct->Accel_X_RAW = (int16_t)(Rec_Data[0] << 8 | Rec_Data[1]);
+ 166:Core/Src/mpu6050.c ****     DataStruct->Accel_Y_RAW = (int16_t)(Rec_Data[2] << 8 | Rec_Data[3]);
+ 167:Core/Src/mpu6050.c ****     DataStruct->Accel_Z_RAW = (int16_t)(Rec_Data[4] << 8 | Rec_Data[5]);
+ 168:Core/Src/mpu6050.c ****     temp = (int16_t)(Rec_Data[6] << 8 | Rec_Data[7]);
+ 169:Core/Src/mpu6050.c ****     DataStruct->Gyro_X_RAW = (int16_t)(Rec_Data[8] << 8 | Rec_Data[9]);
+ 170:Core/Src/mpu6050.c ****     DataStruct->Gyro_Y_RAW = (int16_t)(Rec_Data[10] << 8 | Rec_Data[11]);
+ 171:Core/Src/mpu6050.c ****     DataStruct->Gyro_Z_RAW = (int16_t)(Rec_Data[12] << 8 | Rec_Data[13]);
+ 172:Core/Src/mpu6050.c **** 
+ 173:Core/Src/mpu6050.c ****     DataStruct->Ax = DataStruct->Accel_X_RAW / 16384.0;
+ 174:Core/Src/mpu6050.c ****     DataStruct->Ay = DataStruct->Accel_Y_RAW / 16384.0;
+ 175:Core/Src/mpu6050.c ****     DataStruct->Az = DataStruct->Accel_Z_RAW / 16384.0;
+ 176:Core/Src/mpu6050.c ****     DataStruct->Temperature = (float)((int16_t)temp / (float)340.0 + (float)36.53);
+ 177:Core/Src/mpu6050.c ****     DataStruct->Gx = DataStruct->Gyro_X_RAW / 131.0;
+ 178:Core/Src/mpu6050.c ****     DataStruct->Gy = DataStruct->Gyro_Y_RAW / 131.0;
+ 179:Core/Src/mpu6050.c ****     DataStruct->Gz = DataStruct->Gyro_Z_RAW / 131.0;
+ 180:Core/Src/mpu6050.c **** 
+ 181:Core/Src/mpu6050.c ****     // Kalman angle solve
+ 182:Core/Src/mpu6050.c ****     double dt = (double)(HAL_GetTick() - timer) / 1000;
+ 183:Core/Src/mpu6050.c ****     timer = HAL_GetTick();
+ 184:Core/Src/mpu6050.c ****     double roll;
+ 185:Core/Src/mpu6050.c ****     double roll_sqrt = sqrt(
+ 186:Core/Src/mpu6050.c ****         DataStruct->Accel_X_RAW * DataStruct->Accel_X_RAW + DataStruct->Accel_Z_RAW * DataStruct->A
+ 187:Core/Src/mpu6050.c ****     if (roll_sqrt != 0.0)
+ 188:Core/Src/mpu6050.c ****     {
+ 189:Core/Src/mpu6050.c ****         roll = atan(DataStruct->Accel_Y_RAW / roll_sqrt) * RAD_TO_DEG;
+ 190:Core/Src/mpu6050.c ****     }
+ 191:Core/Src/mpu6050.c ****     else
+ 192:Core/Src/mpu6050.c ****     {
+ 193:Core/Src/mpu6050.c ****         roll = 0.0;
+ 194:Core/Src/mpu6050.c ****     }
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccDHwryO.s 			page 13
+
+
+ 195:Core/Src/mpu6050.c ****     double pitch = atan2(-DataStruct->Accel_X_RAW, DataStruct->Accel_Z_RAW) * RAD_TO_DEG;
+ 196:Core/Src/mpu6050.c ****     if ((pitch < -90 && DataStruct->KalmanAngleY > 90) || (pitch > 90 && DataStruct->KalmanAngleY <
+ 197:Core/Src/mpu6050.c ****     {
+ 198:Core/Src/mpu6050.c ****         KalmanY.angle = pitch;
+ 199:Core/Src/mpu6050.c ****         DataStruct->KalmanAngleY = pitch;
+ 200:Core/Src/mpu6050.c ****     }
+ 201:Core/Src/mpu6050.c ****     else
+ 202:Core/Src/mpu6050.c ****     {
+ 203:Core/Src/mpu6050.c ****         DataStruct->KalmanAngleY = Kalman_getAngle(&KalmanY, pitch, DataStruct->Gy, dt);
+ 204:Core/Src/mpu6050.c ****     }
+ 205:Core/Src/mpu6050.c ****     if (fabs(DataStruct->KalmanAngleY) > 90)
+ 206:Core/Src/mpu6050.c ****         DataStruct->Gx = -DataStruct->Gx;
+ 207:Core/Src/mpu6050.c ****     DataStruct->KalmanAngleX = Kalman_getAngle(&KalmanX, roll, DataStruct->Gx, dt);
+ 208:Core/Src/mpu6050.c **** }
+ 209:Core/Src/mpu6050.c **** 
+ 210:Core/Src/mpu6050.c **** double Kalman_getAngle(Kalman_t *Kalman, double newAngle, double newRate, double dt)
+ 211:Core/Src/mpu6050.c **** {
+ 485              		.loc 1 211 1 is_stmt 1 view -0
+ 486              		.cfi_startproc
+ 487              		@ args = 16, pretend = 0, frame = 72
+ 488              		@ frame_needed = 0, uses_anonymous_args = 0
+ 489              		.loc 1 211 1 is_stmt 0 view .LVU106
+ 490 0000 2DE9F047 		push	{r4, r5, r6, r7, r8, r9, r10, lr}
+ 491              	.LCFI13:
+ 492              		.cfi_def_cfa_offset 32
+ 493              		.cfi_offset 4, -32
+ 494              		.cfi_offset 5, -28
+ 495              		.cfi_offset 6, -24
+ 496              		.cfi_offset 7, -20
+ 497              		.cfi_offset 8, -16
+ 498              		.cfi_offset 9, -12
+ 499              		.cfi_offset 10, -8
+ 500              		.cfi_offset 14, -4
+ 501 0004 92B0     		sub	sp, sp, #72
+ 502              	.LCFI14:
+ 503              		.cfi_def_cfa_offset 104
+ 504 0006 8246     		mov	r10, r0
+ 505 0008 CDE90623 		strd	r2, [sp, #24]
+ 212:Core/Src/mpu6050.c ****     double rate = newRate - Kalman->bias;
+ 506              		.loc 1 212 5 is_stmt 1 view .LVU107
+ 507              		.loc 1 212 35 is_stmt 0 view .LVU108
+ 508 000c D0E90834 		ldrd	r3, [r0, #32]
+ 509              		.loc 1 212 12 view .LVU109
+ 510 0010 CDE90434 		strd	r3, [sp, #16]
+ 511 0014 1A46     		mov	r2, r3
+ 512              	.LVL37:
+ 513              		.loc 1 212 12 view .LVU110
+ 514 0016 2346     		mov	r3, r4
+ 515 0018 DDE91A01 		ldrd	r0, [sp, #104]
+ 516              	.LVL38:
+ 517              		.loc 1 212 12 view .LVU111
+ 518 001c FFF7FEFF 		bl	__aeabi_dsub
+ 519              	.LVL39:
+ 213:Core/Src/mpu6050.c ****     Kalman->angle += dt * rate;
+ 520              		.loc 1 213 5 is_stmt 1 view .LVU112
+ 521              		.loc 1 213 25 is_stmt 0 view .LVU113
+ 522 0020 DDE91C23 		ldrd	r2, [sp, #112]
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccDHwryO.s 			page 14
+
+
+ 523 0024 FFF7FEFF 		bl	__aeabi_dmul
+ 524              	.LVL40:
+ 525              		.loc 1 213 19 view .LVU114
+ 526 0028 DAE90623 		ldrd	r2, [r10, #24]
+ 527 002c FFF7FEFF 		bl	__aeabi_dadd
+ 528              	.LVL41:
+ 529 0030 0646     		mov	r6, r0
+ 530 0032 0F46     		mov	r7, r1
+ 531 0034 CDE90867 		strd	r6, [sp, #32]
+ 532 0038 CAE90667 		strd	r6, [r10, #24]
+ 214:Core/Src/mpu6050.c **** 
+ 215:Core/Src/mpu6050.c ****     Kalman->P[0][0] += dt * (dt * Kalman->P[1][1] - Kalman->P[0][1] - Kalman->P[1][0] + Kalman->Q_a
+ 533              		.loc 1 215 5 is_stmt 1 view .LVU115
+ 534              		.loc 1 215 47 is_stmt 0 view .LVU116
+ 535 003c DAE91045 		ldrd	r4, [r10, #64]
+ 536              		.loc 1 215 33 view .LVU117
+ 537 0040 DDE91C23 		ldrd	r2, [sp, #112]
+ 538 0044 2046     		mov	r0, r4
+ 539 0046 2946     		mov	r1, r5
+ 540 0048 FFF7FEFF 		bl	__aeabi_dmul
+ 541              	.LVL42:
+ 542 004c 0246     		mov	r2, r0
+ 543 004e 0B46     		mov	r3, r1
+ 544 0050 CDE90223 		strd	r2, [sp, #8]
+ 545              		.loc 1 215 65 view .LVU118
+ 546 0054 DAE90C89 		ldrd	r8, [r10, #48]
+ 547              		.loc 1 215 51 view .LVU119
+ 548 0058 4246     		mov	r2, r8
+ 549 005a 4B46     		mov	r3, r9
+ 550 005c FFF7FEFF 		bl	__aeabi_dsub
+ 551              	.LVL43:
+ 552              		.loc 1 215 83 view .LVU120
+ 553 0060 DAE90E67 		ldrd	r6, [r10, #56]
+ 554              		.loc 1 215 69 view .LVU121
+ 555 0064 3246     		mov	r2, r6
+ 556 0066 3B46     		mov	r3, r7
+ 557 0068 FFF7FEFF 		bl	__aeabi_dsub
+ 558              	.LVL44:
+ 559              		.loc 1 215 87 view .LVU122
+ 560 006c DAE90023 		ldrd	r2, [r10]
+ 561 0070 FFF7FEFF 		bl	__aeabi_dadd
+ 562              	.LVL45:
+ 563              		.loc 1 215 27 view .LVU123
+ 564 0074 DDE91C23 		ldrd	r2, [sp, #112]
+ 565 0078 FFF7FEFF 		bl	__aeabi_dmul
+ 566              	.LVL46:
+ 567              		.loc 1 215 21 view .LVU124
+ 568 007c DAE90A23 		ldrd	r2, [r10, #40]
+ 569 0080 FFF7FEFF 		bl	__aeabi_dadd
+ 570              	.LVL47:
+ 571 0084 0A46     		mov	r2, r1
+ 572 0086 0146     		mov	r1, r0
+ 573 0088 CDE90012 		strd	r1, [sp]
+ 574 008c CAE90A12 		strd	r1, [r10, #40]
+ 216:Core/Src/mpu6050.c ****     Kalman->P[0][1] -= dt * Kalman->P[1][1];
+ 575              		.loc 1 216 5 is_stmt 1 view .LVU125
+ 576              		.loc 1 216 21 is_stmt 0 view .LVU126
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccDHwryO.s 			page 15
+
+
+ 577 0090 DDE90223 		ldrd	r2, [sp, #8]
+ 578 0094 4046     		mov	r0, r8
+ 579 0096 4946     		mov	r1, r9
+ 580 0098 FFF7FEFF 		bl	__aeabi_dsub
+ 581              	.LVL48:
+ 582 009c 8046     		mov	r8, r0
+ 583 009e 8946     		mov	r9, r1
+ 584 00a0 CDE90A89 		strd	r8, [sp, #40]
+ 585 00a4 CAE90C89 		strd	r8, [r10, #48]
+ 217:Core/Src/mpu6050.c ****     Kalman->P[1][0] -= dt * Kalman->P[1][1];
+ 586              		.loc 1 217 5 is_stmt 1 view .LVU127
+ 587              		.loc 1 217 21 is_stmt 0 view .LVU128
+ 588 00a8 DDE90223 		ldrd	r2, [sp, #8]
+ 589 00ac 3046     		mov	r0, r6
+ 590 00ae 3946     		mov	r1, r7
+ 591 00b0 FFF7FEFF 		bl	__aeabi_dsub
+ 592              	.LVL49:
+ 593 00b4 8046     		mov	r8, r0
+ 594 00b6 8946     		mov	r9, r1
+ 595 00b8 0246     		mov	r2, r0
+ 596 00ba 0B46     		mov	r3, r1
+ 597 00bc CAE90E23 		strd	r2, [r10, #56]
+ 218:Core/Src/mpu6050.c ****     Kalman->P[1][1] += Kalman->Q_bias * dt;
+ 598              		.loc 1 218 5 is_stmt 1 view .LVU129
+ 599              		.loc 1 218 39 is_stmt 0 view .LVU130
+ 600 00c0 DDE91C23 		ldrd	r2, [sp, #112]
+ 601 00c4 DAE90201 		ldrd	r0, [r10, #8]
+ 602 00c8 FFF7FEFF 		bl	__aeabi_dmul
+ 603              	.LVL50:
+ 604 00cc 0246     		mov	r2, r0
+ 605 00ce 0B46     		mov	r3, r1
+ 606              		.loc 1 218 21 view .LVU131
+ 607 00d0 2046     		mov	r0, r4
+ 608 00d2 2946     		mov	r1, r5
+ 609 00d4 FFF7FEFF 		bl	__aeabi_dadd
+ 610              	.LVL51:
+ 611 00d8 0546     		mov	r5, r0
+ 612 00da 0E46     		mov	r6, r1
+ 613 00dc CDE90C56 		strd	r5, [sp, #48]
+ 614 00e0 CAE91056 		strd	r5, [r10, #64]
+ 219:Core/Src/mpu6050.c **** 
+ 220:Core/Src/mpu6050.c ****     double S = Kalman->P[0][0] + Kalman->R_measure;
+ 615              		.loc 1 220 5 is_stmt 1 view .LVU132
+ 616              		.loc 1 220 12 is_stmt 0 view .LVU133
+ 617 00e4 DAE90423 		ldrd	r2, [r10, #16]
+ 618 00e8 DDE90045 		ldrd	r4, [sp]
+ 619 00ec 2046     		mov	r0, r4
+ 620 00ee 2946     		mov	r1, r5
+ 621 00f0 FFF7FEFF 		bl	__aeabi_dadd
+ 622              	.LVL52:
+ 623 00f4 0646     		mov	r6, r0
+ 624 00f6 0F46     		mov	r7, r1
+ 625              	.LVL53:
+ 221:Core/Src/mpu6050.c ****     double K[2];
+ 626              		.loc 1 221 5 is_stmt 1 view .LVU134
+ 222:Core/Src/mpu6050.c ****     K[0] = Kalman->P[0][0] / S;
+ 627              		.loc 1 222 5 view .LVU135
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccDHwryO.s 			page 16
+
+
+ 628              		.loc 1 222 28 is_stmt 0 view .LVU136
+ 629 00f8 0246     		mov	r2, r0
+ 630 00fa 0B46     		mov	r3, r1
+ 631 00fc 2046     		mov	r0, r4
+ 632 00fe 2946     		mov	r1, r5
+ 633 0100 FFF7FEFF 		bl	__aeabi_ddiv
+ 634              	.LVL54:
+ 635 0104 0446     		mov	r4, r0
+ 636 0106 0D46     		mov	r5, r1
+ 637              		.loc 1 222 10 view .LVU137
+ 638 0108 CDE90E45 		strd	r4, [sp, #56]
+ 223:Core/Src/mpu6050.c ****     K[1] = Kalman->P[1][0] / S;
+ 639              		.loc 1 223 5 is_stmt 1 view .LVU138
+ 640              		.loc 1 223 28 is_stmt 0 view .LVU139
+ 641 010c 3246     		mov	r2, r6
+ 642 010e 3B46     		mov	r3, r7
+ 643 0110 CDE90289 		strd	r8, [sp, #8]
+ 644 0114 4046     		mov	r0, r8
+ 645 0116 4946     		mov	r1, r9
+ 646 0118 FFF7FEFF 		bl	__aeabi_ddiv
+ 647              	.LVL55:
+ 648 011c 8046     		mov	r8, r0
+ 649 011e 8946     		mov	r9, r1
+ 650              		.loc 1 223 10 view .LVU140
+ 651 0120 CDE91089 		strd	r8, [sp, #64]
+ 224:Core/Src/mpu6050.c **** 
+ 225:Core/Src/mpu6050.c ****     double y = newAngle - Kalman->angle;
+ 652              		.loc 1 225 5 is_stmt 1 view .LVU141
+ 653              		.loc 1 225 12 is_stmt 0 view .LVU142
+ 654 0124 DDE90867 		ldrd	r6, [sp, #32]
+ 655              	.LVL56:
+ 656              		.loc 1 225 12 view .LVU143
+ 657 0128 3246     		mov	r2, r6
+ 658 012a 3B46     		mov	r3, r7
+ 659 012c DDE90601 		ldrd	r0, [sp, #24]
+ 660 0130 FFF7FEFF 		bl	__aeabi_dsub
+ 661              	.LVL57:
+ 662 0134 0246     		mov	r2, r0
+ 663 0136 0B46     		mov	r3, r1
+ 664              	.LVL58:
+ 226:Core/Src/mpu6050.c ****     Kalman->angle += K[0] * y;
+ 665              		.loc 1 226 5 is_stmt 1 view .LVU144
+ 666              		.loc 1 226 27 is_stmt 0 view .LVU145
+ 667 0138 CDE90623 		strd	r2, [sp, #24]
+ 668              	.LVL59:
+ 669              		.loc 1 226 27 view .LVU146
+ 670 013c 2046     		mov	r0, r4
+ 671 013e 2946     		mov	r1, r5
+ 672 0140 FFF7FEFF 		bl	__aeabi_dmul
+ 673              	.LVL60:
+ 674              		.loc 1 226 27 view .LVU147
+ 675 0144 0246     		mov	r2, r0
+ 676 0146 0B46     		mov	r3, r1
+ 677              		.loc 1 226 19 view .LVU148
+ 678 0148 3046     		mov	r0, r6
+ 679 014a 3946     		mov	r1, r7
+ 680 014c FFF7FEFF 		bl	__aeabi_dadd
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccDHwryO.s 			page 17
+
+
+ 681              	.LVL61:
+ 682 0150 0646     		mov	r6, r0
+ 683 0152 0F46     		mov	r7, r1
+ 684 0154 CAE90667 		strd	r6, [r10, #24]
+ 227:Core/Src/mpu6050.c ****     Kalman->bias += K[1] * y;
+ 685              		.loc 1 227 5 is_stmt 1 view .LVU149
+ 686              		.loc 1 227 26 is_stmt 0 view .LVU150
+ 687 0158 DDE90623 		ldrd	r2, [sp, #24]
+ 688 015c 4046     		mov	r0, r8
+ 689 015e 4946     		mov	r1, r9
+ 690 0160 FFF7FEFF 		bl	__aeabi_dmul
+ 691              	.LVL62:
+ 692 0164 0246     		mov	r2, r0
+ 693 0166 0B46     		mov	r3, r1
+ 694              		.loc 1 227 18 view .LVU151
+ 695 0168 DDE90401 		ldrd	r0, [sp, #16]
+ 696 016c FFF7FEFF 		bl	__aeabi_dadd
+ 697              	.LVL63:
+ 698 0170 CAE90801 		strd	r0, [r10, #32]
+ 228:Core/Src/mpu6050.c **** 
+ 229:Core/Src/mpu6050.c ****     double P00_temp = Kalman->P[0][0];
+ 699              		.loc 1 229 5 is_stmt 1 view .LVU152
+ 700              	.LVL64:
+ 230:Core/Src/mpu6050.c ****     double P01_temp = Kalman->P[0][1];
+ 701              		.loc 1 230 5 view .LVU153
+ 231:Core/Src/mpu6050.c **** 
+ 232:Core/Src/mpu6050.c ****     Kalman->P[0][0] -= K[0] * P00_temp;
+ 702              		.loc 1 232 5 view .LVU154
+ 703              		.loc 1 232 29 is_stmt 0 view .LVU155
+ 704 0174 2246     		mov	r2, r4
+ 705 0176 2B46     		mov	r3, r5
+ 706 0178 DDE90001 		ldrd	r0, [sp]
+ 707 017c FFF7FEFF 		bl	__aeabi_dmul
+ 708              	.LVL65:
+ 709 0180 0246     		mov	r2, r0
+ 710 0182 0B46     		mov	r3, r1
+ 711              		.loc 1 232 21 view .LVU156
+ 712 0184 DDE90001 		ldrd	r0, [sp]
+ 713 0188 FFF7FEFF 		bl	__aeabi_dsub
+ 714              	.LVL66:
+ 715 018c CAE90A01 		strd	r0, [r10, #40]
+ 233:Core/Src/mpu6050.c ****     Kalman->P[0][1] -= K[0] * P01_temp;
+ 716              		.loc 1 233 5 is_stmt 1 view .LVU157
+ 717              		.loc 1 233 29 is_stmt 0 view .LVU158
+ 718 0190 2246     		mov	r2, r4
+ 719 0192 2B46     		mov	r3, r5
+ 720 0194 DDE90A45 		ldrd	r4, [sp, #40]
+ 721 0198 2046     		mov	r0, r4
+ 722 019a 2946     		mov	r1, r5
+ 723 019c FFF7FEFF 		bl	__aeabi_dmul
+ 724              	.LVL67:
+ 725 01a0 0246     		mov	r2, r0
+ 726 01a2 0B46     		mov	r3, r1
+ 727              		.loc 1 233 21 view .LVU159
+ 728 01a4 2046     		mov	r0, r4
+ 729 01a6 2946     		mov	r1, r5
+ 730 01a8 FFF7FEFF 		bl	__aeabi_dsub
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccDHwryO.s 			page 18
+
+
+ 731              	.LVL68:
+ 732 01ac CAE90C01 		strd	r0, [r10, #48]
+ 234:Core/Src/mpu6050.c ****     Kalman->P[1][0] -= K[1] * P00_temp;
+ 733              		.loc 1 234 5 is_stmt 1 view .LVU160
+ 734              		.loc 1 234 29 is_stmt 0 view .LVU161
+ 735 01b0 4246     		mov	r2, r8
+ 736 01b2 4B46     		mov	r3, r9
+ 737 01b4 DDE90001 		ldrd	r0, [sp]
+ 738 01b8 FFF7FEFF 		bl	__aeabi_dmul
+ 739              	.LVL69:
+ 740 01bc 0246     		mov	r2, r0
+ 741 01be 0B46     		mov	r3, r1
+ 742              		.loc 1 234 21 view .LVU162
+ 743 01c0 DDE90201 		ldrd	r0, [sp, #8]
+ 744 01c4 FFF7FEFF 		bl	__aeabi_dsub
+ 745              	.LVL70:
+ 746 01c8 CAE90E01 		strd	r0, [r10, #56]
+ 235:Core/Src/mpu6050.c ****     Kalman->P[1][1] -= K[1] * P01_temp;
+ 747              		.loc 1 235 5 is_stmt 1 view .LVU163
+ 748              		.loc 1 235 29 is_stmt 0 view .LVU164
+ 749 01cc 4246     		mov	r2, r8
+ 750 01ce 4B46     		mov	r3, r9
+ 751 01d0 2046     		mov	r0, r4
+ 752 01d2 2946     		mov	r1, r5
+ 753 01d4 FFF7FEFF 		bl	__aeabi_dmul
+ 754              	.LVL71:
+ 755 01d8 0246     		mov	r2, r0
+ 756 01da 0B46     		mov	r3, r1
+ 757              		.loc 1 235 21 view .LVU165
+ 758 01dc DDE90C01 		ldrd	r0, [sp, #48]
+ 759 01e0 FFF7FEFF 		bl	__aeabi_dsub
+ 760              	.LVL72:
+ 761 01e4 CAE91001 		strd	r0, [r10, #64]
+ 236:Core/Src/mpu6050.c **** 
+ 237:Core/Src/mpu6050.c ****     return Kalman->angle;
+ 762              		.loc 1 237 5 is_stmt 1 view .LVU166
+ 238:Core/Src/mpu6050.c **** };
+ 763              		.loc 1 238 1 is_stmt 0 view .LVU167
+ 764 01e8 3046     		mov	r0, r6
+ 765 01ea 3946     		mov	r1, r7
+ 766 01ec 12B0     		add	sp, sp, #72
+ 767              	.LCFI15:
+ 768              		.cfi_def_cfa_offset 32
+ 769              	.LVL73:
+ 770              		.loc 1 238 1 view .LVU168
+ 771              		@ sp needed
+ 772 01ee BDE8F087 		pop	{r4, r5, r6, r7, r8, r9, r10, pc}
+ 773              		.loc 1 238 1 view .LVU169
+ 774              		.cfi_endproc
+ 775              	.LFE70:
+ 777              		.global	__aeabi_ui2d
+ 778              		.global	__aeabi_dcmpeq
+ 779              		.global	__aeabi_dcmplt
+ 780              		.global	__aeabi_dcmpgt
+ 781              		.section	.text.MPU6050_Read_All,"ax",%progbits
+ 782              		.align	1
+ 783              		.global	MPU6050_Read_All
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccDHwryO.s 			page 19
+
+
+ 784              		.syntax unified
+ 785              		.thumb
+ 786              		.thumb_func
+ 787              		.fpu softvfp
+ 789              	MPU6050_Read_All:
+ 790              	.LVL74:
+ 791              	.LFB69:
+ 157:Core/Src/mpu6050.c ****     uint8_t Rec_Data[14];
+ 792              		.loc 1 157 1 is_stmt 1 view -0
+ 793              		.cfi_startproc
+ 794              		@ args = 0, pretend = 0, frame = 16
+ 795              		@ frame_needed = 0, uses_anonymous_args = 0
+ 157:Core/Src/mpu6050.c ****     uint8_t Rec_Data[14];
+ 796              		.loc 1 157 1 is_stmt 0 view .LVU171
+ 797 0000 2DE9F04F 		push	{r4, r5, r6, r7, r8, r9, r10, fp, lr}
+ 798              	.LCFI16:
+ 799              		.cfi_def_cfa_offset 36
+ 800              		.cfi_offset 4, -36
+ 801              		.cfi_offset 5, -32
+ 802              		.cfi_offset 6, -28
+ 803              		.cfi_offset 7, -24
+ 804              		.cfi_offset 8, -20
+ 805              		.cfi_offset 9, -16
+ 806              		.cfi_offset 10, -12
+ 807              		.cfi_offset 11, -8
+ 808              		.cfi_offset 14, -4
+ 809 0004 89B0     		sub	sp, sp, #36
+ 810              	.LCFI17:
+ 811              		.cfi_def_cfa_offset 72
+ 812 0006 0C46     		mov	r4, r1
+ 158:Core/Src/mpu6050.c ****     int16_t temp;
+ 813              		.loc 1 158 5 is_stmt 1 view .LVU172
+ 159:Core/Src/mpu6050.c **** 
+ 814              		.loc 1 159 5 view .LVU173
+ 163:Core/Src/mpu6050.c **** 
+ 815              		.loc 1 163 5 view .LVU174
+ 816 0008 6423     		movs	r3, #100
+ 817 000a 0293     		str	r3, [sp, #8]
+ 818 000c 0E23     		movs	r3, #14
+ 819 000e 0193     		str	r3, [sp, #4]
+ 820 0010 04AB     		add	r3, sp, #16
+ 821 0012 0093     		str	r3, [sp]
+ 822 0014 0123     		movs	r3, #1
+ 823 0016 3B22     		movs	r2, #59
+ 824 0018 D021     		movs	r1, #208
+ 825              	.LVL75:
+ 163:Core/Src/mpu6050.c **** 
+ 826              		.loc 1 163 5 is_stmt 0 view .LVU175
+ 827 001a FFF7FEFF 		bl	HAL_I2C_Mem_Read
+ 828              	.LVL76:
+ 165:Core/Src/mpu6050.c ****     DataStruct->Accel_Y_RAW = (int16_t)(Rec_Data[2] << 8 | Rec_Data[3]);
+ 829              		.loc 1 165 5 is_stmt 1 view .LVU176
+ 165:Core/Src/mpu6050.c ****     DataStruct->Accel_Y_RAW = (int16_t)(Rec_Data[2] << 8 | Rec_Data[3]);
+ 830              		.loc 1 165 49 is_stmt 0 view .LVU177
+ 831 001e 9DF81030 		ldrb	r3, [sp, #16]	@ zero_extendqisi2
+ 165:Core/Src/mpu6050.c ****     DataStruct->Accel_Y_RAW = (int16_t)(Rec_Data[2] << 8 | Rec_Data[3]);
+ 832              		.loc 1 165 68 view .LVU178
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccDHwryO.s 			page 20
+
+
+ 833 0022 9DF81100 		ldrb	r0, [sp, #17]	@ zero_extendqisi2
+ 165:Core/Src/mpu6050.c ****     DataStruct->Accel_Y_RAW = (int16_t)(Rec_Data[2] << 8 | Rec_Data[3]);
+ 834              		.loc 1 165 31 view .LVU179
+ 835 0026 40EA0320 		orr	r0, r0, r3, lsl #8
+ 836 002a 00B2     		sxth	r0, r0
+ 165:Core/Src/mpu6050.c ****     DataStruct->Accel_Y_RAW = (int16_t)(Rec_Data[2] << 8 | Rec_Data[3]);
+ 837              		.loc 1 165 29 view .LVU180
+ 838 002c 2080     		strh	r0, [r4]	@ movhi
+ 166:Core/Src/mpu6050.c ****     DataStruct->Accel_Z_RAW = (int16_t)(Rec_Data[4] << 8 | Rec_Data[5]);
+ 839              		.loc 1 166 5 is_stmt 1 view .LVU181
+ 166:Core/Src/mpu6050.c ****     DataStruct->Accel_Z_RAW = (int16_t)(Rec_Data[4] << 8 | Rec_Data[5]);
+ 840              		.loc 1 166 49 is_stmt 0 view .LVU182
+ 841 002e 9DF81230 		ldrb	r3, [sp, #18]	@ zero_extendqisi2
+ 166:Core/Src/mpu6050.c ****     DataStruct->Accel_Z_RAW = (int16_t)(Rec_Data[4] << 8 | Rec_Data[5]);
+ 842              		.loc 1 166 68 view .LVU183
+ 843 0032 9DF81390 		ldrb	r9, [sp, #19]	@ zero_extendqisi2
+ 166:Core/Src/mpu6050.c ****     DataStruct->Accel_Z_RAW = (int16_t)(Rec_Data[4] << 8 | Rec_Data[5]);
+ 844              		.loc 1 166 31 view .LVU184
+ 845 0036 49EA0329 		orr	r9, r9, r3, lsl #8
+ 846 003a 0FFA89F9 		sxth	r9, r9
+ 166:Core/Src/mpu6050.c ****     DataStruct->Accel_Z_RAW = (int16_t)(Rec_Data[4] << 8 | Rec_Data[5]);
+ 847              		.loc 1 166 29 view .LVU185
+ 848 003e A4F80290 		strh	r9, [r4, #2]	@ movhi
+ 167:Core/Src/mpu6050.c ****     temp = (int16_t)(Rec_Data[6] << 8 | Rec_Data[7]);
+ 849              		.loc 1 167 5 is_stmt 1 view .LVU186
+ 167:Core/Src/mpu6050.c ****     temp = (int16_t)(Rec_Data[6] << 8 | Rec_Data[7]);
+ 850              		.loc 1 167 49 is_stmt 0 view .LVU187
+ 851 0042 9DF81430 		ldrb	r3, [sp, #20]	@ zero_extendqisi2
+ 167:Core/Src/mpu6050.c ****     temp = (int16_t)(Rec_Data[6] << 8 | Rec_Data[7]);
+ 852              		.loc 1 167 68 view .LVU188
+ 853 0046 9DF81580 		ldrb	r8, [sp, #21]	@ zero_extendqisi2
+ 167:Core/Src/mpu6050.c ****     temp = (int16_t)(Rec_Data[6] << 8 | Rec_Data[7]);
+ 854              		.loc 1 167 31 view .LVU189
+ 855 004a 48EA0328 		orr	r8, r8, r3, lsl #8
+ 856 004e 0FFA88F8 		sxth	r8, r8
+ 167:Core/Src/mpu6050.c ****     temp = (int16_t)(Rec_Data[6] << 8 | Rec_Data[7]);
+ 857              		.loc 1 167 29 view .LVU190
+ 858 0052 A4F80480 		strh	r8, [r4, #4]	@ movhi
+ 168:Core/Src/mpu6050.c ****     DataStruct->Gyro_X_RAW = (int16_t)(Rec_Data[8] << 8 | Rec_Data[9]);
+ 859              		.loc 1 168 5 is_stmt 1 view .LVU191
+ 168:Core/Src/mpu6050.c ****     DataStruct->Gyro_X_RAW = (int16_t)(Rec_Data[8] << 8 | Rec_Data[9]);
+ 860              		.loc 1 168 30 is_stmt 0 view .LVU192
+ 861 0056 9DF81660 		ldrb	r6, [sp, #22]	@ zero_extendqisi2
+ 168:Core/Src/mpu6050.c ****     DataStruct->Gyro_X_RAW = (int16_t)(Rec_Data[8] << 8 | Rec_Data[9]);
+ 862              		.loc 1 168 34 view .LVU193
+ 863 005a 3602     		lsls	r6, r6, #8
+ 168:Core/Src/mpu6050.c ****     DataStruct->Gyro_X_RAW = (int16_t)(Rec_Data[8] << 8 | Rec_Data[9]);
+ 864              		.loc 1 168 12 view .LVU194
+ 865 005c 36B2     		sxth	r6, r6
+ 168:Core/Src/mpu6050.c ****     DataStruct->Gyro_X_RAW = (int16_t)(Rec_Data[8] << 8 | Rec_Data[9]);
+ 866              		.loc 1 168 49 view .LVU195
+ 867 005e 9DF81730 		ldrb	r3, [sp, #23]	@ zero_extendqisi2
+ 168:Core/Src/mpu6050.c ****     DataStruct->Gyro_X_RAW = (int16_t)(Rec_Data[8] << 8 | Rec_Data[9]);
+ 868              		.loc 1 168 10 view .LVU196
+ 869 0062 1E43     		orrs	r6, r6, r3
+ 870              	.LVL77:
+ 169:Core/Src/mpu6050.c ****     DataStruct->Gyro_Y_RAW = (int16_t)(Rec_Data[10] << 8 | Rec_Data[11]);
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccDHwryO.s 			page 21
+
+
+ 871              		.loc 1 169 5 is_stmt 1 view .LVU197
+ 169:Core/Src/mpu6050.c ****     DataStruct->Gyro_Y_RAW = (int16_t)(Rec_Data[10] << 8 | Rec_Data[11]);
+ 872              		.loc 1 169 48 is_stmt 0 view .LVU198
+ 873 0064 9DF81830 		ldrb	r3, [sp, #24]	@ zero_extendqisi2
+ 169:Core/Src/mpu6050.c ****     DataStruct->Gyro_Y_RAW = (int16_t)(Rec_Data[10] << 8 | Rec_Data[11]);
+ 874              		.loc 1 169 67 view .LVU199
+ 875 0068 9DF819B0 		ldrb	fp, [sp, #25]	@ zero_extendqisi2
+ 169:Core/Src/mpu6050.c ****     DataStruct->Gyro_Y_RAW = (int16_t)(Rec_Data[10] << 8 | Rec_Data[11]);
+ 876              		.loc 1 169 30 view .LVU200
+ 877 006c 4BEA032B 		orr	fp, fp, r3, lsl #8
+ 878 0070 0FFA8BFB 		sxth	fp, fp
+ 169:Core/Src/mpu6050.c ****     DataStruct->Gyro_Y_RAW = (int16_t)(Rec_Data[10] << 8 | Rec_Data[11]);
+ 879              		.loc 1 169 28 view .LVU201
+ 880 0074 A4F820B0 		strh	fp, [r4, #32]	@ movhi
+ 170:Core/Src/mpu6050.c ****     DataStruct->Gyro_Z_RAW = (int16_t)(Rec_Data[12] << 8 | Rec_Data[13]);
+ 881              		.loc 1 170 5 is_stmt 1 view .LVU202
+ 170:Core/Src/mpu6050.c ****     DataStruct->Gyro_Z_RAW = (int16_t)(Rec_Data[12] << 8 | Rec_Data[13]);
+ 882              		.loc 1 170 48 is_stmt 0 view .LVU203
+ 883 0078 9DF81A30 		ldrb	r3, [sp, #26]	@ zero_extendqisi2
+ 170:Core/Src/mpu6050.c ****     DataStruct->Gyro_Z_RAW = (int16_t)(Rec_Data[12] << 8 | Rec_Data[13]);
+ 884              		.loc 1 170 68 view .LVU204
+ 885 007c 9DF81BA0 		ldrb	r10, [sp, #27]	@ zero_extendqisi2
+ 170:Core/Src/mpu6050.c ****     DataStruct->Gyro_Z_RAW = (int16_t)(Rec_Data[12] << 8 | Rec_Data[13]);
+ 886              		.loc 1 170 30 view .LVU205
+ 887 0080 4AEA032A 		orr	r10, r10, r3, lsl #8
+ 888 0084 0FFA8AFA 		sxth	r10, r10
+ 170:Core/Src/mpu6050.c ****     DataStruct->Gyro_Z_RAW = (int16_t)(Rec_Data[12] << 8 | Rec_Data[13]);
+ 889              		.loc 1 170 28 view .LVU206
+ 890 0088 A4F822A0 		strh	r10, [r4, #34]	@ movhi
+ 171:Core/Src/mpu6050.c **** 
+ 891              		.loc 1 171 5 is_stmt 1 view .LVU207
+ 171:Core/Src/mpu6050.c **** 
+ 892              		.loc 1 171 48 is_stmt 0 view .LVU208
+ 893 008c 9DF81C30 		ldrb	r3, [sp, #28]	@ zero_extendqisi2
+ 171:Core/Src/mpu6050.c **** 
+ 894              		.loc 1 171 68 view .LVU209
+ 895 0090 9DF81D70 		ldrb	r7, [sp, #29]	@ zero_extendqisi2
+ 171:Core/Src/mpu6050.c **** 
+ 896              		.loc 1 171 30 view .LVU210
+ 897 0094 47EA0327 		orr	r7, r7, r3, lsl #8
+ 898 0098 3FB2     		sxth	r7, r7
+ 171:Core/Src/mpu6050.c **** 
+ 899              		.loc 1 171 28 view .LVU211
+ 900 009a A784     		strh	r7, [r4, #36]	@ movhi
+ 173:Core/Src/mpu6050.c ****     DataStruct->Ay = DataStruct->Accel_Y_RAW / 16384.0;
+ 901              		.loc 1 173 5 is_stmt 1 view .LVU212
+ 173:Core/Src/mpu6050.c ****     DataStruct->Ay = DataStruct->Accel_Y_RAW / 16384.0;
+ 902              		.loc 1 173 46 is_stmt 0 view .LVU213
+ 903 009c FFF7FEFF 		bl	__aeabi_i2d
+ 904              	.LVL78:
+ 905 00a0 0022     		movs	r2, #0
+ 906 00a2 734B     		ldr	r3, .L39+16
+ 907 00a4 FFF7FEFF 		bl	__aeabi_dmul
+ 908              	.LVL79:
+ 173:Core/Src/mpu6050.c ****     DataStruct->Ay = DataStruct->Accel_Y_RAW / 16384.0;
+ 909              		.loc 1 173 20 view .LVU214
+ 910 00a8 C4E90201 		strd	r0, [r4, #8]
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccDHwryO.s 			page 22
+
+
+ 174:Core/Src/mpu6050.c ****     DataStruct->Az = DataStruct->Accel_Z_RAW / 16384.0;
+ 911              		.loc 1 174 5 is_stmt 1 view .LVU215
+ 174:Core/Src/mpu6050.c ****     DataStruct->Az = DataStruct->Accel_Z_RAW / 16384.0;
+ 912              		.loc 1 174 46 is_stmt 0 view .LVU216
+ 913 00ac 4846     		mov	r0, r9
+ 914 00ae FFF7FEFF 		bl	__aeabi_i2d
+ 915              	.LVL80:
+ 916 00b2 0022     		movs	r2, #0
+ 917 00b4 6E4B     		ldr	r3, .L39+16
+ 918 00b6 FFF7FEFF 		bl	__aeabi_dmul
+ 919              	.LVL81:
+ 174:Core/Src/mpu6050.c ****     DataStruct->Az = DataStruct->Accel_Z_RAW / 16384.0;
+ 920              		.loc 1 174 20 view .LVU217
+ 921 00ba C4E90401 		strd	r0, [r4, #16]
+ 175:Core/Src/mpu6050.c ****     DataStruct->Temperature = (float)((int16_t)temp / (float)340.0 + (float)36.53);
+ 922              		.loc 1 175 5 is_stmt 1 view .LVU218
+ 175:Core/Src/mpu6050.c ****     DataStruct->Temperature = (float)((int16_t)temp / (float)340.0 + (float)36.53);
+ 923              		.loc 1 175 46 is_stmt 0 view .LVU219
+ 924 00be 4046     		mov	r0, r8
+ 925 00c0 FFF7FEFF 		bl	__aeabi_i2d
+ 926              	.LVL82:
+ 927 00c4 0022     		movs	r2, #0
+ 928 00c6 6A4B     		ldr	r3, .L39+16
+ 929 00c8 FFF7FEFF 		bl	__aeabi_dmul
+ 930              	.LVL83:
+ 175:Core/Src/mpu6050.c ****     DataStruct->Temperature = (float)((int16_t)temp / (float)340.0 + (float)36.53);
+ 931              		.loc 1 175 20 view .LVU220
+ 932 00cc C4E90601 		strd	r0, [r4, #24]
+ 176:Core/Src/mpu6050.c ****     DataStruct->Gx = DataStruct->Gyro_X_RAW / 131.0;
+ 933              		.loc 1 176 5 is_stmt 1 view .LVU221
+ 176:Core/Src/mpu6050.c ****     DataStruct->Gx = DataStruct->Gyro_X_RAW / 131.0;
+ 934              		.loc 1 176 53 is_stmt 0 view .LVU222
+ 935 00d0 3046     		mov	r0, r6
+ 936 00d2 FFF7FEFF 		bl	__aeabi_i2f
+ 937              	.LVL84:
+ 938 00d6 6749     		ldr	r1, .L39+20
+ 939 00d8 FFF7FEFF 		bl	__aeabi_fdiv
+ 940              	.LVL85:
+ 176:Core/Src/mpu6050.c ****     DataStruct->Gx = DataStruct->Gyro_X_RAW / 131.0;
+ 941              		.loc 1 176 31 view .LVU223
+ 942 00dc 6649     		ldr	r1, .L39+24
+ 943 00de FFF7FEFF 		bl	__aeabi_fadd
+ 944              	.LVL86:
+ 176:Core/Src/mpu6050.c ****     DataStruct->Gx = DataStruct->Gyro_X_RAW / 131.0;
+ 945              		.loc 1 176 29 view .LVU224
+ 946 00e2 2064     		str	r0, [r4, #64]	@ float
+ 177:Core/Src/mpu6050.c ****     DataStruct->Gy = DataStruct->Gyro_Y_RAW / 131.0;
+ 947              		.loc 1 177 5 is_stmt 1 view .LVU225
+ 177:Core/Src/mpu6050.c ****     DataStruct->Gy = DataStruct->Gyro_Y_RAW / 131.0;
+ 948              		.loc 1 177 45 is_stmt 0 view .LVU226
+ 949 00e4 5846     		mov	r0, fp
+ 950 00e6 FFF7FEFF 		bl	__aeabi_i2d
+ 951              	.LVL87:
+ 952 00ea 5DA3     		adr	r3, .L39
+ 953 00ec D3E90023 		ldrd	r2, [r3]
+ 954 00f0 FFF7FEFF 		bl	__aeabi_ddiv
+ 955              	.LVL88:
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccDHwryO.s 			page 23
+
+
+ 177:Core/Src/mpu6050.c ****     DataStruct->Gy = DataStruct->Gyro_Y_RAW / 131.0;
+ 956              		.loc 1 177 20 view .LVU227
+ 957 00f4 C4E90A01 		strd	r0, [r4, #40]
+ 178:Core/Src/mpu6050.c ****     DataStruct->Gz = DataStruct->Gyro_Z_RAW / 131.0;
+ 958              		.loc 1 178 5 is_stmt 1 view .LVU228
+ 178:Core/Src/mpu6050.c ****     DataStruct->Gz = DataStruct->Gyro_Z_RAW / 131.0;
+ 959              		.loc 1 178 45 is_stmt 0 view .LVU229
+ 960 00f8 5046     		mov	r0, r10
+ 961 00fa FFF7FEFF 		bl	__aeabi_i2d
+ 962              	.LVL89:
+ 963 00fe 58A3     		adr	r3, .L39
+ 964 0100 D3E90023 		ldrd	r2, [r3]
+ 965 0104 FFF7FEFF 		bl	__aeabi_ddiv
+ 966              	.LVL90:
+ 178:Core/Src/mpu6050.c ****     DataStruct->Gz = DataStruct->Gyro_Z_RAW / 131.0;
+ 967              		.loc 1 178 20 view .LVU230
+ 968 0108 C4E90C01 		strd	r0, [r4, #48]
+ 179:Core/Src/mpu6050.c **** 
+ 969              		.loc 1 179 5 is_stmt 1 view .LVU231
+ 179:Core/Src/mpu6050.c **** 
+ 970              		.loc 1 179 45 is_stmt 0 view .LVU232
+ 971 010c 3846     		mov	r0, r7
+ 972 010e FFF7FEFF 		bl	__aeabi_i2d
+ 973              	.LVL91:
+ 974 0112 53A3     		adr	r3, .L39
+ 975 0114 D3E90023 		ldrd	r2, [r3]
+ 976 0118 FFF7FEFF 		bl	__aeabi_ddiv
+ 977              	.LVL92:
+ 179:Core/Src/mpu6050.c **** 
+ 978              		.loc 1 179 20 view .LVU233
+ 979 011c C4E90E01 		strd	r0, [r4, #56]
+ 182:Core/Src/mpu6050.c ****     timer = HAL_GetTick();
+ 980              		.loc 1 182 5 is_stmt 1 view .LVU234
+ 182:Core/Src/mpu6050.c ****     timer = HAL_GetTick();
+ 981              		.loc 1 182 26 is_stmt 0 view .LVU235
+ 982 0120 FFF7FEFF 		bl	HAL_GetTick
+ 983              	.LVL93:
+ 182:Core/Src/mpu6050.c ****     timer = HAL_GetTick();
+ 984              		.loc 1 182 40 view .LVU236
+ 985 0124 554D     		ldr	r5, .L39+28
+ 986 0126 2B68     		ldr	r3, [r5]
+ 182:Core/Src/mpu6050.c ****     timer = HAL_GetTick();
+ 987              		.loc 1 182 17 view .LVU237
+ 988 0128 C01A     		subs	r0, r0, r3
+ 989 012a FFF7FEFF 		bl	__aeabi_ui2d
+ 990              	.LVL94:
+ 182:Core/Src/mpu6050.c ****     timer = HAL_GetTick();
+ 991              		.loc 1 182 12 view .LVU238
+ 992 012e 0022     		movs	r2, #0
+ 993 0130 534B     		ldr	r3, .L39+32
+ 994 0132 FFF7FEFF 		bl	__aeabi_ddiv
+ 995              	.LVL95:
+ 996 0136 8046     		mov	r8, r0
+ 997 0138 8946     		mov	r9, r1
+ 998              	.LVL96:
+ 183:Core/Src/mpu6050.c ****     double roll;
+ 999              		.loc 1 183 5 is_stmt 1 view .LVU239
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccDHwryO.s 			page 24
+
+
+ 183:Core/Src/mpu6050.c ****     double roll;
+ 1000              		.loc 1 183 13 is_stmt 0 view .LVU240
+ 1001 013a FFF7FEFF 		bl	HAL_GetTick
+ 1002              	.LVL97:
+ 183:Core/Src/mpu6050.c ****     double roll;
+ 1003              		.loc 1 183 11 view .LVU241
+ 1004 013e 2860     		str	r0, [r5]
+ 184:Core/Src/mpu6050.c ****     double roll_sqrt = sqrt(
+ 1005              		.loc 1 184 5 is_stmt 1 view .LVU242
+ 185:Core/Src/mpu6050.c ****         DataStruct->Accel_X_RAW * DataStruct->Accel_X_RAW + DataStruct->Accel_Z_RAW * DataStruct->A
+ 1006              		.loc 1 185 5 view .LVU243
+ 186:Core/Src/mpu6050.c ****     if (roll_sqrt != 0.0)
+ 1007              		.loc 1 186 19 is_stmt 0 view .LVU244
+ 1008 0140 B4F90000 		ldrsh	r0, [r4]
+ 186:Core/Src/mpu6050.c ****     if (roll_sqrt != 0.0)
+ 1009              		.loc 1 186 71 view .LVU245
+ 1010 0144 B4F90430 		ldrsh	r3, [r4, #4]
+ 186:Core/Src/mpu6050.c ****     if (roll_sqrt != 0.0)
+ 1011              		.loc 1 186 85 view .LVU246
+ 1012 0148 03FB03F3 		mul	r3, r3, r3
+ 185:Core/Src/mpu6050.c ****         DataStruct->Accel_X_RAW * DataStruct->Accel_X_RAW + DataStruct->Accel_Z_RAW * DataStruct->A
+ 1013              		.loc 1 185 24 view .LVU247
+ 1014 014c 00FB0030 		mla	r0, r0, r0, r3
+ 1015 0150 FFF7FEFF 		bl	__aeabi_i2d
+ 1016              	.LVL98:
+ 1017 0154 FFF7FEFF 		bl	sqrt
+ 1018              	.LVL99:
+ 1019 0158 0646     		mov	r6, r0
+ 1020              	.LVL100:
+ 185:Core/Src/mpu6050.c ****         DataStruct->Accel_X_RAW * DataStruct->Accel_X_RAW + DataStruct->Accel_Z_RAW * DataStruct->A
+ 1021              		.loc 1 185 24 view .LVU248
+ 1022 015a 0F46     		mov	r7, r1
+ 1023              	.LVL101:
+ 187:Core/Src/mpu6050.c ****     {
+ 1024              		.loc 1 187 5 is_stmt 1 view .LVU249
+ 187:Core/Src/mpu6050.c ****     {
+ 1025              		.loc 1 187 8 is_stmt 0 view .LVU250
+ 1026 015c 0022     		movs	r2, #0
+ 1027 015e 0023     		movs	r3, #0
+ 1028 0160 FFF7FEFF 		bl	__aeabi_dcmpeq
+ 1029              	.LVL102:
+ 1030 0164 0028     		cmp	r0, #0
+ 1031 0166 66D1     		bne	.L37
+ 189:Core/Src/mpu6050.c ****     }
+ 1032              		.loc 1 189 9 is_stmt 1 view .LVU251
+ 189:Core/Src/mpu6050.c ****     }
+ 1033              		.loc 1 189 16 is_stmt 0 view .LVU252
+ 1034 0168 B4F90200 		ldrsh	r0, [r4, #2]
+ 1035 016c FFF7FEFF 		bl	__aeabi_i2d
+ 1036              	.LVL103:
+ 1037 0170 3246     		mov	r2, r6
+ 1038 0172 3B46     		mov	r3, r7
+ 1039 0174 FFF7FEFF 		bl	__aeabi_ddiv
+ 1040              	.LVL104:
+ 1041 0178 FFF7FEFF 		bl	atan
+ 1042              	.LVL105:
+ 189:Core/Src/mpu6050.c ****     }
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccDHwryO.s 			page 25
+
+
+ 1043              		.loc 1 189 14 view .LVU253
+ 1044 017c 3AA3     		adr	r3, .L39+8
+ 1045 017e D3E90023 		ldrd	r2, [r3]
+ 1046 0182 FFF7FEFF 		bl	__aeabi_dmul
+ 1047              	.LVL106:
+ 1048 0186 8246     		mov	r10, r0
+ 1049 0188 8B46     		mov	fp, r1
+ 1050              	.LVL107:
+ 1051              	.L21:
+ 195:Core/Src/mpu6050.c ****     if ((pitch < -90 && DataStruct->KalmanAngleY > 90) || (pitch > 90 && DataStruct->KalmanAngleY <
+ 1052              		.loc 1 195 5 is_stmt 1 view .LVU254
+ 195:Core/Src/mpu6050.c ****     if ((pitch < -90 && DataStruct->KalmanAngleY > 90) || (pitch > 90 && DataStruct->KalmanAngleY <
+ 1053              		.loc 1 195 37 is_stmt 0 view .LVU255
+ 1054 018a B4F90050 		ldrsh	r5, [r4]
+ 195:Core/Src/mpu6050.c ****     if ((pitch < -90 && DataStruct->KalmanAngleY > 90) || (pitch > 90 && DataStruct->KalmanAngleY <
+ 1055              		.loc 1 195 26 view .LVU256
+ 1056 018e 6D42     		rsbs	r5, r5, #0
+ 195:Core/Src/mpu6050.c ****     if ((pitch < -90 && DataStruct->KalmanAngleY > 90) || (pitch > 90 && DataStruct->KalmanAngleY <
+ 1057              		.loc 1 195 20 view .LVU257
+ 1058 0190 B4F90400 		ldrsh	r0, [r4, #4]
+ 1059 0194 FFF7FEFF 		bl	__aeabi_i2d
+ 1060              	.LVL108:
+ 1061 0198 0646     		mov	r6, r0
+ 1062              	.LVL109:
+ 195:Core/Src/mpu6050.c ****     if ((pitch < -90 && DataStruct->KalmanAngleY > 90) || (pitch > 90 && DataStruct->KalmanAngleY <
+ 1063              		.loc 1 195 20 view .LVU258
+ 1064 019a 0F46     		mov	r7, r1
+ 1065 019c 2846     		mov	r0, r5
+ 1066 019e FFF7FEFF 		bl	__aeabi_i2d
+ 1067              	.LVL110:
+ 1068 01a2 3246     		mov	r2, r6
+ 1069 01a4 3B46     		mov	r3, r7
+ 1070 01a6 FFF7FEFF 		bl	atan2
+ 1071              	.LVL111:
+ 195:Core/Src/mpu6050.c ****     if ((pitch < -90 && DataStruct->KalmanAngleY > 90) || (pitch > 90 && DataStruct->KalmanAngleY <
+ 1072              		.loc 1 195 12 view .LVU259
+ 1073 01aa 2FA3     		adr	r3, .L39+8
+ 1074 01ac D3E90023 		ldrd	r2, [r3]
+ 1075 01b0 FFF7FEFF 		bl	__aeabi_dmul
+ 1076              	.LVL112:
+ 1077 01b4 0646     		mov	r6, r0
+ 1078 01b6 0F46     		mov	r7, r1
+ 1079              	.LVL113:
+ 196:Core/Src/mpu6050.c ****     {
+ 1080              		.loc 1 196 5 is_stmt 1 view .LVU260
+ 196:Core/Src/mpu6050.c ****     {
+ 1081              		.loc 1 196 8 is_stmt 0 view .LVU261
+ 1082 01b8 0022     		movs	r2, #0
+ 1083 01ba 324B     		ldr	r3, .L39+36
+ 1084 01bc FFF7FEFF 		bl	__aeabi_dcmplt
+ 1085              	.LVL114:
+ 1086 01c0 30B1     		cbz	r0, .L23
+ 196:Core/Src/mpu6050.c ****     {
+ 1087              		.loc 1 196 22 discriminator 1 view .LVU262
+ 1088 01c2 0022     		movs	r2, #0
+ 1089 01c4 304B     		ldr	r3, .L39+40
+ 1090 01c6 D4E91401 		ldrd	r0, [r4, #80]
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccDHwryO.s 			page 26
+
+
+ 1091 01ca FFF7FEFF 		bl	__aeabi_dcmpgt
+ 1092              	.LVL115:
+ 1093 01ce 70B9     		cbnz	r0, .L25
+ 1094              	.L23:
+ 196:Core/Src/mpu6050.c ****     {
+ 1095              		.loc 1 196 56 discriminator 3 view .LVU263
+ 1096 01d0 0022     		movs	r2, #0
+ 1097 01d2 2D4B     		ldr	r3, .L39+40
+ 1098 01d4 3046     		mov	r0, r6
+ 1099 01d6 3946     		mov	r1, r7
+ 1100 01d8 FFF7FEFF 		bl	__aeabi_dcmpgt
+ 1101              	.LVL116:
+ 1102 01dc 0028     		cmp	r0, #0
+ 1103 01de 2FD0     		beq	.L26
+ 196:Core/Src/mpu6050.c ****     {
+ 1104              		.loc 1 196 71 discriminator 4 view .LVU264
+ 1105 01e0 0022     		movs	r2, #0
+ 1106 01e2 284B     		ldr	r3, .L39+36
+ 1107 01e4 D4E91401 		ldrd	r0, [r4, #80]
+ 1108 01e8 FFF7FEFF 		bl	__aeabi_dcmplt
+ 1109              	.LVL117:
+ 1110 01ec 40B3     		cbz	r0, .L26
+ 1111              	.L25:
+ 198:Core/Src/mpu6050.c ****         DataStruct->KalmanAngleY = pitch;
+ 1112              		.loc 1 198 9 is_stmt 1 view .LVU265
+ 198:Core/Src/mpu6050.c ****         DataStruct->KalmanAngleY = pitch;
+ 1113              		.loc 1 198 23 is_stmt 0 view .LVU266
+ 1114 01ee 274B     		ldr	r3, .L39+44
+ 1115 01f0 C3E90667 		strd	r6, [r3, #24]
+ 199:Core/Src/mpu6050.c ****     }
+ 1116              		.loc 1 199 9 is_stmt 1 view .LVU267
+ 199:Core/Src/mpu6050.c ****     }
+ 1117              		.loc 1 199 34 is_stmt 0 view .LVU268
+ 1118 01f4 C4E91467 		strd	r6, [r4, #80]
+ 1119              	.L29:
+ 205:Core/Src/mpu6050.c ****         DataStruct->Gx = -DataStruct->Gx;
+ 1120              		.loc 1 205 5 is_stmt 1 view .LVU269
+ 205:Core/Src/mpu6050.c ****         DataStruct->Gx = -DataStruct->Gx;
+ 1121              		.loc 1 205 24 is_stmt 0 view .LVU270
+ 1122 01f8 666D     		ldr	r6, [r4, #84]
+ 1123              	.LVL118:
+ 205:Core/Src/mpu6050.c ****         DataStruct->Gx = -DataStruct->Gx;
+ 1124              		.loc 1 205 8 view .LVU271
+ 1125 01fa 0022     		movs	r2, #0
+ 1126 01fc 224B     		ldr	r3, .L39+40
+ 1127 01fe 206D     		ldr	r0, [r4, #80]
+ 1128 0200 26F00041 		bic	r1, r6, #-2147483648
+ 1129 0204 FFF7FEFF 		bl	__aeabi_dcmpgt
+ 1130              	.LVL119:
+ 1131 0208 28B1     		cbz	r0, .L30
+ 206:Core/Src/mpu6050.c ****     DataStruct->KalmanAngleX = Kalman_getAngle(&KalmanX, roll, DataStruct->Gx, dt);
+ 1132              		.loc 1 206 9 is_stmt 1 view .LVU272
+ 206:Core/Src/mpu6050.c ****     DataStruct->KalmanAngleX = Kalman_getAngle(&KalmanX, roll, DataStruct->Gx, dt);
+ 1133              		.loc 1 206 37 is_stmt 0 view .LVU273
+ 1134 020a E16A     		ldr	r1, [r4, #44]
+ 206:Core/Src/mpu6050.c ****     DataStruct->KalmanAngleX = Kalman_getAngle(&KalmanX, roll, DataStruct->Gx, dt);
+ 1135              		.loc 1 206 24 view .LVU274
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccDHwryO.s 			page 27
+
+
+ 1136 020c A26A     		ldr	r2, [r4, #40]
+ 1137 020e 01F10043 		add	r3, r1, #-2147483648
+ 1138 0212 C4E90A23 		strd	r2, [r4, #40]
+ 1139              	.L30:
+ 207:Core/Src/mpu6050.c **** }
+ 1140              		.loc 1 207 5 is_stmt 1 view .LVU275
+ 207:Core/Src/mpu6050.c **** }
+ 1141              		.loc 1 207 32 is_stmt 0 view .LVU276
+ 1142 0216 CDE90289 		strd	r8, [sp, #8]
+ 1143 021a D4E90A23 		ldrd	r2, [r4, #40]
+ 1144 021e CDE90023 		strd	r2, [sp]
+ 1145 0222 5246     		mov	r2, r10
+ 1146 0224 5B46     		mov	r3, fp
+ 1147 0226 1A48     		ldr	r0, .L39+48
+ 1148 0228 FFF7FEFF 		bl	Kalman_getAngle
+ 1149              	.LVL120:
+ 207:Core/Src/mpu6050.c **** }
+ 1150              		.loc 1 207 30 view .LVU277
+ 1151 022c C4E91201 		strd	r0, [r4, #72]
+ 208:Core/Src/mpu6050.c **** 
+ 1152              		.loc 1 208 1 view .LVU278
+ 1153 0230 09B0     		add	sp, sp, #36
+ 1154              	.LCFI18:
+ 1155              		.cfi_remember_state
+ 1156              		.cfi_def_cfa_offset 36
+ 1157              		@ sp needed
+ 1158 0232 BDE8F08F 		pop	{r4, r5, r6, r7, r8, r9, r10, fp, pc}
+ 1159              	.LVL121:
+ 1160              	.L37:
+ 1161              	.LCFI19:
+ 1162              		.cfi_restore_state
+ 193:Core/Src/mpu6050.c ****     }
+ 1163              		.loc 1 193 14 view .LVU279
+ 1164 0236 4FF0000A 		mov	r10, #0
+ 1165 023a 4FF0000B 		mov	fp, #0
+ 1166 023e A4E7     		b	.L21
+ 1167              	.LVL122:
+ 1168              	.L26:
+ 203:Core/Src/mpu6050.c ****     }
+ 1169              		.loc 1 203 9 is_stmt 1 view .LVU280
+ 203:Core/Src/mpu6050.c ****     }
+ 1170              		.loc 1 203 36 is_stmt 0 view .LVU281
+ 1171 0240 CDE90289 		strd	r8, [sp, #8]
+ 1172 0244 D4E90C23 		ldrd	r2, [r4, #48]
+ 1173 0248 CDE90023 		strd	r2, [sp]
+ 1174 024c 3246     		mov	r2, r6
+ 1175 024e 3B46     		mov	r3, r7
+ 1176 0250 0E48     		ldr	r0, .L39+44
+ 1177 0252 FFF7FEFF 		bl	Kalman_getAngle
+ 1178              	.LVL123:
+ 203:Core/Src/mpu6050.c ****     }
+ 1179              		.loc 1 203 34 view .LVU282
+ 1180 0256 C4E91401 		strd	r0, [r4, #80]
+ 1181 025a CDE7     		b	.L29
+ 1182              	.L40:
+ 1183 025c AFF30080 		.align	3
+ 1184              	.L39:
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccDHwryO.s 			page 28
+
+
+ 1185 0260 00000000 		.word	0
+ 1186 0264 00606040 		.word	1080057856
+ 1187 0268 F8C1631A 		.word	442745336
+ 1188 026c DCA54C40 		.word	1078765020
+ 1189 0270 0000103F 		.word	1058013184
+ 1190 0274 0000AA43 		.word	1135214592
+ 1191 0278 B81E1242 		.word	1108483768
+ 1192 027c 00000000 		.word	.LANCHOR0
+ 1193 0280 00408F40 		.word	1083129856
+ 1194 0284 008056C0 		.word	-1068072960
+ 1195 0288 00805640 		.word	1079410688
+ 1196 028c 00000000 		.word	.LANCHOR1
+ 1197 0290 00000000 		.word	.LANCHOR2
+ 1198              		.cfi_endproc
+ 1199              	.LFE69:
+ 1201              		.global	KalmanY
+ 1202              		.global	KalmanX
+ 1203              		.global	timer
+ 1204              		.global	Accel_Z_corrector
+ 1205              		.global	i2c_timeout
+ 1206              		.section	.bss.timer,"aw",%nobits
+ 1207              		.align	2
+ 1208              		.set	.LANCHOR0,. + 0
+ 1211              	timer:
+ 1212 0000 00000000 		.space	4
+ 1213              		.section	.data.KalmanX,"aw"
+ 1214              		.align	3
+ 1215              		.set	.LANCHOR2,. + 0
+ 1218              	KalmanX:
+ 1219 0000 000000E0 		.word	-536870912
+ 1220 0004 4D62503F 		.word	1062232653
+ 1221 0008 000000C0 		.word	-1073741824
+ 1222 000c 7493683F 		.word	1063818100
+ 1223 0010 000000E0 		.word	-536870912
+ 1224 0014 51B89E3F 		.word	1067366481
+ 1225 0018 00000000 		.space	48
+ 1225      00000000 
+ 1225      00000000 
+ 1225      00000000 
+ 1225      00000000 
+ 1226              		.section	.data.KalmanY,"aw"
+ 1227              		.align	3
+ 1228              		.set	.LANCHOR1,. + 0
+ 1231              	KalmanY:
+ 1232 0000 000000E0 		.word	-536870912
+ 1233 0004 4D62503F 		.word	1062232653
+ 1234 0008 000000C0 		.word	-1073741824
+ 1235 000c 7493683F 		.word	1063818100
+ 1236 0010 000000E0 		.word	-536870912
+ 1237 0014 51B89E3F 		.word	1067366481
+ 1238 0018 00000000 		.space	48
+ 1238      00000000 
+ 1238      00000000 
+ 1238      00000000 
+ 1238      00000000 
+ 1239              		.section	.rodata.Accel_Z_corrector,"a"
+ 1240              		.align	3
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccDHwryO.s 			page 29
+
+
+ 1243              	Accel_Z_corrector:
+ 1244 0000 00000000 		.word	0
+ 1245 0004 0011D240 		.word	1087508736
+ 1246              		.section	.rodata.i2c_timeout,"a"
+ 1247              		.align	1
+ 1250              	i2c_timeout:
+ 1251 0000 6400     		.short	100
+ 1252              		.text
+ 1253              	.Letext0:
+ 1254              		.file 2 "d:\\tools\\gcc-arm-none-eabi-10.3-2021.07\\arm-none-eabi\\include\\machine\\_default_type
+ 1255              		.file 3 "d:\\tools\\gcc-arm-none-eabi-10.3-2021.07\\arm-none-eabi\\include\\sys\\_stdint.h"
+ 1256              		.file 4 "Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xb.h"
+ 1257              		.file 5 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_def.h"
+ 1258              		.file 6 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_dma.h"
+ 1259              		.file 7 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_i2c.h"
+ 1260              		.file 8 "Core/Inc/mpu6050.h"
+ 1261              		.file 9 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h"
+ 1262              		.file 10 "d:\\tools\\gcc-arm-none-eabi-10.3-2021.07\\arm-none-eabi\\include\\math.h"
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccDHwryO.s 			page 30
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 mpu6050.c
+C:\Users\Vento\AppData\Local\Temp\ccDHwryO.s:16     .text.MPU6050_Init:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\ccDHwryO.s:24     .text.MPU6050_Init:00000000 MPU6050_Init
+C:\Users\Vento\AppData\Local\Temp\ccDHwryO.s:146    .text.MPU6050_Read_Accel:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\ccDHwryO.s:153    .text.MPU6050_Read_Accel:00000000 MPU6050_Read_Accel
+C:\Users\Vento\AppData\Local\Temp\ccDHwryO.s:260    .text.MPU6050_Read_Accel:00000084 $d
+C:\Users\Vento\AppData\Local\Temp\ccDHwryO.s:266    .text.MPU6050_Read_Gyro:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\ccDHwryO.s:273    .text.MPU6050_Read_Gyro:00000000 MPU6050_Read_Gyro
+C:\Users\Vento\AppData\Local\Temp\ccDHwryO.s:380    .text.MPU6050_Read_Gyro:00000090 $d
+C:\Users\Vento\AppData\Local\Temp\ccDHwryO.s:389    .text.MPU6050_Read_Temp:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\ccDHwryO.s:396    .text.MPU6050_Read_Temp:00000000 MPU6050_Read_Temp
+C:\Users\Vento\AppData\Local\Temp\ccDHwryO.s:467    .text.MPU6050_Read_Temp:00000040 $d
+C:\Users\Vento\AppData\Local\Temp\ccDHwryO.s:475    .text.Kalman_getAngle:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\ccDHwryO.s:482    .text.Kalman_getAngle:00000000 Kalman_getAngle
+C:\Users\Vento\AppData\Local\Temp\ccDHwryO.s:782    .text.MPU6050_Read_All:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\ccDHwryO.s:789    .text.MPU6050_Read_All:00000000 MPU6050_Read_All
+C:\Users\Vento\AppData\Local\Temp\ccDHwryO.s:1185   .text.MPU6050_Read_All:00000260 $d
+C:\Users\Vento\AppData\Local\Temp\ccDHwryO.s:1231   .data.KalmanY:00000000 KalmanY
+C:\Users\Vento\AppData\Local\Temp\ccDHwryO.s:1218   .data.KalmanX:00000000 KalmanX
+C:\Users\Vento\AppData\Local\Temp\ccDHwryO.s:1211   .bss.timer:00000000 timer
+C:\Users\Vento\AppData\Local\Temp\ccDHwryO.s:1243   .rodata.Accel_Z_corrector:00000000 Accel_Z_corrector
+C:\Users\Vento\AppData\Local\Temp\ccDHwryO.s:1250   .rodata.i2c_timeout:00000000 i2c_timeout
+C:\Users\Vento\AppData\Local\Temp\ccDHwryO.s:1207   .bss.timer:00000000 $d
+C:\Users\Vento\AppData\Local\Temp\ccDHwryO.s:1214   .data.KalmanX:00000000 $d
+C:\Users\Vento\AppData\Local\Temp\ccDHwryO.s:1227   .data.KalmanY:00000000 $d
+C:\Users\Vento\AppData\Local\Temp\ccDHwryO.s:1240   .rodata.Accel_Z_corrector:00000000 $d
+C:\Users\Vento\AppData\Local\Temp\ccDHwryO.s:1247   .rodata.i2c_timeout:00000000 $d
+
+UNDEFINED SYMBOLS
+HAL_I2C_Mem_Read
+HAL_I2C_Mem_Write
+__aeabi_i2d
+__aeabi_dmul
+__aeabi_ddiv
+__aeabi_i2f
+__aeabi_fdiv
+__aeabi_fadd
+__aeabi_dsub
+__aeabi_dadd
+__aeabi_ui2d
+__aeabi_dcmpeq
+__aeabi_dcmplt
+__aeabi_dcmpgt
+HAL_GetTick
+sqrt
+atan
+atan2

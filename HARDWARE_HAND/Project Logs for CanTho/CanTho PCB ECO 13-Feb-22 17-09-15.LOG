@@ -1,0 +1,9 @@
+Removed Member From Class: ClassName=U_[01] - MCU Member=P3
+Removed Member From Class: ClassName=U_[01] - MCU Member=P4
+Change Component Footprint: Designator=S1 Old Footprint=SW-SMD New Footprint=SW 3x2x4
+Added Member To Class: ClassName=U_[01] - MCU Member=Component P1 0
+Added Member To Class: ClassName=U_[01] - MCU Member=Component P2 0
+Added Room: Name=U_[01] - MCU
+Added Room: Name=U_[02] - SIM
+Added Room: Name=U_[03] - SENSORs
+Added Room: Name=U_[04] - Power

@@ -1,0 +1,20 @@
+Removed Member From Class: ClassName=STATION Member=U3
+Change Component Designator: OldDesignator=IC1 NewDesignator=IC2
+Change Component Designator: OldDesignator=JP2 NewDesignator=JP3
+Change Component Designator: OldDesignator=JP3 NewDesignator=JP4
+Change Component Designator: OldDesignator=U1 NewDesignator=IC1
+Change Component Designator: OldDesignator=U2 NewDesignator=U1
+Change Component Designator: OldDesignator=U3 NewDesignator=U2
+Added Component: Designator=JP2(CON4)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "Value"; Value = "Connector 4"; VariantName = "[No Variations]"
+Added Pin To Net: NetName=3.3V Pin=JP2-1
+Added Pin To Net: NetName=ESP32-21-SDA Pin=JP2-2
+Added Pin To Net: NetName=ESP32-22-SCL Pin=JP2-3
+Added Pin To Net: NetName=GND Pin=JP2-4
+Added Pin To Net: NetName=ADC1 Pin=U1-8
+Change Net Name : Old Net Name=NetIC1_1 New Net Name=NetIC2_1
+Change Net Name : Old Net Name=NetIC1_4 New Net Name=NetIC2_4
+Added Member To Class: ClassName=STATION Member=Component IC2 MPS20N0040D-D
+Added Member To Class: ClassName=STATION Member=Component JP4 Valve
+Added Room: Name=STATION

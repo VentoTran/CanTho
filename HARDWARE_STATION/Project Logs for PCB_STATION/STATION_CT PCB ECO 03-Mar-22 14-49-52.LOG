@@ -1,0 +1,5 @@
+Added Pin To Net: NetName=ESP32-17-RS Pin=JP1-1
+Added Pin To Net: NetName=ESP32-16-DC Pin=JP1-3
+Added Member To Class: ClassName=STATION Member=Component JP2 JP4
+Added Member To Class: ClassName=STATION Member=Component U2 INA128UA
+Added Room: Name=STATION
