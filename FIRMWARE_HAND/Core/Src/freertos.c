@@ -78,8 +78,10 @@ uint8_t is_fall = 0;
 uint8_t is_MPU_OK = 0;
 
 char call[25] = "ATD+84816056426;\r\n";
-char SMSStrg[25] = "BENH NHAN DA BI NGA!\032";
-char Loc[20] = "10.035911,105.783660";
+char SMSStrg[110] = "BENH NHAN DA BI NGA!\nToa do benh nhan: https://www.google.com/maps/search/?api=1&query=10.035911,105.783660\n";
+// char InfoBV1[110] = "Benh vien Da khoa Hoan My Cuu Long, SDT: 02923917901\nBenh vien Da khoa S.I.S Can Tho, SDT: 18001115\n";
+// char InfoBV2[110] = "Benh vien Da khoa Thanh pho Can Tho, SDT: 02923821235\nBenh vien Da khoa Trung uong Can Tho, SDT: 0901215115\n";
+char Loc[25] = "10.035911,105.783660";
 
 /* USER CODE END Variables */
 /* Definitions for MQTT */
@@ -207,9 +209,9 @@ void MQTT_Task(void *argument)
   // SIM800_SendCommand("AT+CUSD=1,\"*101#\"\r\n", "OK\r\n", 5000);
 
   // SIM800_SendCommand("AT+CSCS?\r\n", "OK\r\n", 1000);
-  SIM800_SendCommand("AT+CSCS=\"IRA\"\r\n", "OK\r\n", 1000);
+  SIM800_SendCommand("AT+CSCS=\"GSM\"\r\n", "OK\r\n", 1000);
   // SIM800_SendCommand("AT+CSDH?\r\n", "OK\r\n", 1000);
-  SIM800_SendCommand("AT+CSMP=17,167,0,8\r\n", "OK\r\n", 1000);
+  SIM800_SendCommand("AT+CSMP=17,167,0,0\r\n", "OK\r\n", 1000);
   
 
   if (is_MPU_OK == 1)     HAL_IWDG_Refresh(&hiwdg);
@@ -225,18 +227,19 @@ void MQTT_Task(void *argument)
     osDelay(1000);
     if (is_fall == 1)
     {
-      if (SIM800_SendCommand("AT+CMGS=\"+84816056426\"\r\n", ">", 1000) == SIM_R_OK)
+      if (SIM800_SendCommand("AT+CMGS=\"0855484556\"\r\n", ">", 1000) == SIM_R_OK)
       {
-        
-        HAL_UART_Transmit_IT(UART_SIM800, (uint8_t *)"\"HELLO\"", 7);
+        osDelay(200);
+        HAL_UART_Transmit_IT(UART_SIM800, (uint8_t *)SMSStrg, (uint16_t)strlen(SMSStrg));
+        osDelay(200);
         huart1.Instance->DR = 0b00011010;
-        osDelay(5000);
+        osDelay(2000);
         MQTT_Pub("mandevices/stroke-medical/human/fall", "1");
         osDelay(2000);
         MQTT_Pub("mandevices/stroke-medical/human/fall/loc", Loc);
         osDelay(2000);
         // HAL_UART_Transmit_IT(UART_SIM800, call, strlen(call));
-        SIM800_SendCommand("ATD+84816056426;\r\n", "OK\r\n", 2000);
+        SIM800_SendCommand("ATD0855484556;\r\n", "OK\r\n", 2000);
         
         osDelay(30000);
         SIM800_SendCommand("ATH\r\n", "OK\r\n", 1000);
@@ -255,7 +258,6 @@ void MQTT_Task(void *argument)
       time = HAL_GetTick();
     }
     // 84914812925
-    // 84816056426
     // SIM800_SendCommand("AT+CGPSINF=0\r\n", "OK\r\n", 10000);
     // HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
   }

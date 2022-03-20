@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s 			page 1
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccHbfWGm.s 			page 1
 
 
    1              		.cpu cortex-m3
@@ -58,21 +58,21 @@ ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s 			page 1
   45      46554E3D 
   45      310D0A00 
   46              		.align	2
-ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s 			page 2
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccHbfWGm.s 			page 2
 
 
   47              	.LC10:
-  48 0054 41542B43 		.ascii	"AT+CSCS=\"IRA\"\015\012\000"
+  48 0054 41542B43 		.ascii	"AT+CSCS=\"GSM\"\015\012\000"
   48      5343533D 
-  48      22495241 
+  48      2247534D 
   48      220D0A00 
   49              		.align	2
   50              	.LC11:
-  51 0064 41542B43 		.ascii	"AT+CSMP=17,167,0,8\015\012\000"
+  51 0064 41542B43 		.ascii	"AT+CSMP=17,167,0,0\015\012\000"
   51      534D503D 
   51      31372C31 
   51      36372C30 
-  51      2C380D0A 
+  51      2C300D0A 
   52 0079 000000   		.align	2
   53              	.LC12:
   54 007c 3000     		.ascii	"0\000"
@@ -88,51 +88,47 @@ ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s 			page 1
   60 00a8 3E00     		.ascii	">\000"
   61 00aa 0000     		.align	2
   62              	.LC15:
-  63 00ac 41542B43 		.ascii	"AT+CMGS=\"+84816056426\"\015\012\000"
+  63 00ac 41542B43 		.ascii	"AT+CMGS=\"0855484556\"\015\012\000"
   63      4D47533D 
-  63      222B3834 
-  63      38313630 
-  63      35363432 
-  64 00c5 000000   		.align	2
+  63      22303835 
+  63      35343834 
+  63      35353622 
+  64 00c3 00       		.align	2
   65              	.LC16:
-  66 00c8 2248454C 		.ascii	"\"HELLO\"\000"
-  66      4C4F2200 
-  67              		.align	2
+  66 00c4 3100     		.ascii	"1\000"
+  67 00c6 0000     		.align	2
   68              	.LC17:
-  69 00d0 3100     		.ascii	"1\000"
-  70 00d2 0000     		.align	2
+  69 00c8 6D616E64 		.ascii	"mandevices/stroke-medical/human/fall/loc\000"
+  69      65766963 
+  69      65732F73 
+  69      74726F6B 
+  69      652D6D65 
+  70 00f1 000000   		.align	2
   71              	.LC18:
-  72 00d4 6D616E64 		.ascii	"mandevices/stroke-medical/human/fall/loc\000"
-  72      65766963 
-  72      65732F73 
-  72      74726F6B 
-  72      652D6D65 
-  73 00fd 000000   		.align	2
+  72 00f4 41544430 		.ascii	"ATD0855484556;\015\012\000"
+  72      38353534 
+  72      38343535 
+  72      363B0D0A 
+  72      00
+  73 0105 000000   		.align	2
   74              	.LC19:
-  75 0100 4154442B 		.ascii	"ATD+84816056426;\015\012\000"
-  75      38343831 
-  75      36303536 
-  75      3432363B 
-  75      0D0A00
-  76 0113 00       		.align	2
-  77              	.LC20:
-  78 0114 4154480D 		.ascii	"ATH\015\012\000"
-  78      0A00
-ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s 			page 3
+  75 0108 4154480D 		.ascii	"ATH\015\012\000"
+  75      0A00
+  76              		.section	.text.MQTT_Task,"ax",%progbits
+  77              		.align	1
+  78              		.global	MQTT_Task
+  79              		.arch armv7-m
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccHbfWGm.s 			page 3
 
 
-  79              		.section	.text.MQTT_Task,"ax",%progbits
-  80              		.align	1
-  81              		.global	MQTT_Task
-  82              		.arch armv7-m
-  83              		.syntax unified
-  84              		.thumb
-  85              		.thumb_func
-  86              		.fpu softvfp
-  88              	MQTT_Task:
-  89              	.LVL0:
-  90              	.LFB70:
-  91              		.file 1 "Core/Src/freertos.c"
+  80              		.syntax unified
+  81              		.thumb
+  82              		.thumb_func
+  83              		.fpu softvfp
+  85              	MQTT_Task:
+  86              	.LVL0:
+  87              	.LFB70:
+  88              		.file 1 "Core/Src/freertos.c"
    1:Core/Src/freertos.c **** /* USER CODE BEGIN Header */
    2:Core/Src/freertos.c **** /**
    3:Core/Src/freertos.c ****   ******************************************************************************
@@ -178,13 +174,13 @@ ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s 			page 1
   43:Core/Src/freertos.c ****   uint8_t MQTT;
   44:Core/Src/freertos.c **** } SIM800_St;
   45:Core/Src/freertos.c **** 
-ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s 			page 4
-
-
   46:Core/Src/freertos.c **** /* USER CODE END PTD */
   47:Core/Src/freertos.c **** 
   48:Core/Src/freertos.c **** /* Private define ------------------------------------------------------------*/
   49:Core/Src/freertos.c **** /* USER CODE BEGIN PD */
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccHbfWGm.s 			page 4
+
+
   50:Core/Src/freertos.c **** 
   51:Core/Src/freertos.c **** #define SIM_R_OK    0
   52:Core/Src/freertos.c **** #define SIM_R_nOK   1
@@ -216,1169 +212,1197 @@ ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s 			page 1
   78:Core/Src/freertos.c **** uint8_t is_MPU_OK = 0;
   79:Core/Src/freertos.c **** 
   80:Core/Src/freertos.c **** char call[25] = "ATD+84816056426;\r\n";
-  81:Core/Src/freertos.c **** char SMSStrg[25] = "BENH NHAN DA BI NGA!\032";
-  82:Core/Src/freertos.c **** char Loc[20] = "10.035911,105.783660";
-  83:Core/Src/freertos.c **** 
-  84:Core/Src/freertos.c **** /* USER CODE END Variables */
-  85:Core/Src/freertos.c **** /* Definitions for MQTT */
-  86:Core/Src/freertos.c **** osThreadId_t MQTTHandle;
-  87:Core/Src/freertos.c **** const osThreadAttr_t MQTT_attributes = {
-  88:Core/Src/freertos.c ****   .name = "MQTT",
-  89:Core/Src/freertos.c ****   .stack_size = 250 * 4,
-  90:Core/Src/freertos.c ****   .priority = (osPriority_t) osPriorityNormal,
-  91:Core/Src/freertos.c **** };
-  92:Core/Src/freertos.c **** /* Definitions for SENSORs */
-  93:Core/Src/freertos.c **** osThreadId_t SENSORsHandle;
-  94:Core/Src/freertos.c **** const osThreadAttr_t SENSORs_attributes = {
-  95:Core/Src/freertos.c ****   .name = "SENSORs",
-  96:Core/Src/freertos.c ****   .stack_size = 150 * 4,
-  97:Core/Src/freertos.c ****   .priority = (osPriority_t) osPriorityLow,
-  98:Core/Src/freertos.c **** };
-  99:Core/Src/freertos.c **** /* Definitions for SecTimer */
- 100:Core/Src/freertos.c **** osTimerId_t SecTimerHandle;
- 101:Core/Src/freertos.c **** const osTimerAttr_t SecTimer_attributes = {
- 102:Core/Src/freertos.c ****   .name = "SecTimer"
-ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s 			page 5
+  81:Core/Src/freertos.c **** char SMSStrg[110] = "BENH NHAN DA BI NGA!\nToa do benh nhan: https://www.google.com/maps/search/?ap
+  82:Core/Src/freertos.c **** // char InfoBV1[110] = "Benh vien Da khoa Hoan My Cuu Long, SDT: 02923917901\nBenh vien Da khoa S.I
+  83:Core/Src/freertos.c **** // char InfoBV2[110] = "Benh vien Da khoa Thanh pho Can Tho, SDT: 02923821235\nBenh vien Da khoa Tr
+  84:Core/Src/freertos.c **** char Loc[25] = "10.035911,105.783660";
+  85:Core/Src/freertos.c **** 
+  86:Core/Src/freertos.c **** /* USER CODE END Variables */
+  87:Core/Src/freertos.c **** /* Definitions for MQTT */
+  88:Core/Src/freertos.c **** osThreadId_t MQTTHandle;
+  89:Core/Src/freertos.c **** const osThreadAttr_t MQTT_attributes = {
+  90:Core/Src/freertos.c ****   .name = "MQTT",
+  91:Core/Src/freertos.c ****   .stack_size = 250 * 4,
+  92:Core/Src/freertos.c ****   .priority = (osPriority_t) osPriorityNormal,
+  93:Core/Src/freertos.c **** };
+  94:Core/Src/freertos.c **** /* Definitions for SENSORs */
+  95:Core/Src/freertos.c **** osThreadId_t SENSORsHandle;
+  96:Core/Src/freertos.c **** const osThreadAttr_t SENSORs_attributes = {
+  97:Core/Src/freertos.c ****   .name = "SENSORs",
+  98:Core/Src/freertos.c ****   .stack_size = 150 * 4,
+  99:Core/Src/freertos.c ****   .priority = (osPriority_t) osPriorityLow,
+ 100:Core/Src/freertos.c **** };
+ 101:Core/Src/freertos.c **** /* Definitions for SecTimer */
+ 102:Core/Src/freertos.c **** osTimerId_t SecTimerHandle;
+ 103:Core/Src/freertos.c **** const osTimerAttr_t SecTimer_attributes = {
+ 104:Core/Src/freertos.c ****   .name = "SecTimer"
+ 105:Core/Src/freertos.c **** };
+ 106:Core/Src/freertos.c **** 
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccHbfWGm.s 			page 5
 
 
- 103:Core/Src/freertos.c **** };
- 104:Core/Src/freertos.c **** 
- 105:Core/Src/freertos.c **** /* Private function prototypes -----------------------------------------------*/
- 106:Core/Src/freertos.c **** /* USER CODE BEGIN FunctionPrototypes */
- 107:Core/Src/freertos.c **** 
- 108:Core/Src/freertos.c **** 
+ 107:Core/Src/freertos.c **** /* Private function prototypes -----------------------------------------------*/
+ 108:Core/Src/freertos.c **** /* USER CODE BEGIN FunctionPrototypes */
  109:Core/Src/freertos.c **** 
- 110:Core/Src/freertos.c **** /* USER CODE END FunctionPrototypes */
+ 110:Core/Src/freertos.c **** 
  111:Core/Src/freertos.c **** 
- 112:Core/Src/freertos.c **** void MQTT_Task(void *argument);
- 113:Core/Src/freertos.c **** void Sensor_Task(void *argument);
- 114:Core/Src/freertos.c **** void Callback01(void *argument);
- 115:Core/Src/freertos.c **** 
- 116:Core/Src/freertos.c **** void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
+ 112:Core/Src/freertos.c **** /* USER CODE END FunctionPrototypes */
+ 113:Core/Src/freertos.c **** 
+ 114:Core/Src/freertos.c **** void MQTT_Task(void *argument);
+ 115:Core/Src/freertos.c **** void Sensor_Task(void *argument);
+ 116:Core/Src/freertos.c **** void Callback01(void *argument);
  117:Core/Src/freertos.c **** 
- 118:Core/Src/freertos.c **** /**
- 119:Core/Src/freertos.c ****   * @brief  FreeRTOS initialization
- 120:Core/Src/freertos.c ****   * @param  None
- 121:Core/Src/freertos.c ****   * @retval None
- 122:Core/Src/freertos.c ****   */
- 123:Core/Src/freertos.c **** void MX_FREERTOS_Init(void) {
- 124:Core/Src/freertos.c ****   /* USER CODE BEGIN Init */
- 125:Core/Src/freertos.c **** 
- 126:Core/Src/freertos.c ****   /* USER CODE END Init */
+ 118:Core/Src/freertos.c **** void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
+ 119:Core/Src/freertos.c **** 
+ 120:Core/Src/freertos.c **** /**
+ 121:Core/Src/freertos.c ****   * @brief  FreeRTOS initialization
+ 122:Core/Src/freertos.c ****   * @param  None
+ 123:Core/Src/freertos.c ****   * @retval None
+ 124:Core/Src/freertos.c ****   */
+ 125:Core/Src/freertos.c **** void MX_FREERTOS_Init(void) {
+ 126:Core/Src/freertos.c ****   /* USER CODE BEGIN Init */
  127:Core/Src/freertos.c **** 
- 128:Core/Src/freertos.c ****   /* USER CODE BEGIN RTOS_MUTEX */
- 129:Core/Src/freertos.c ****   /* add mutexes, ... */
- 130:Core/Src/freertos.c ****   /* USER CODE END RTOS_MUTEX */
- 131:Core/Src/freertos.c **** 
- 132:Core/Src/freertos.c ****   /* USER CODE BEGIN RTOS_SEMAPHORES */
- 133:Core/Src/freertos.c ****   /* add semaphores, ... */
- 134:Core/Src/freertos.c ****   /* USER CODE END RTOS_SEMAPHORES */
- 135:Core/Src/freertos.c **** 
- 136:Core/Src/freertos.c ****   /* Create the timer(s) */
- 137:Core/Src/freertos.c ****   /* creation of SecTimer */
- 138:Core/Src/freertos.c ****   SecTimerHandle = osTimerNew(Callback01, osTimerPeriodic, NULL, &SecTimer_attributes);
- 139:Core/Src/freertos.c **** 
- 140:Core/Src/freertos.c ****   /* USER CODE BEGIN RTOS_TIMERS */
- 141:Core/Src/freertos.c ****   /* start timers, add new ones, ... */
- 142:Core/Src/freertos.c ****   /* USER CODE END RTOS_TIMERS */
- 143:Core/Src/freertos.c **** 
- 144:Core/Src/freertos.c ****   /* USER CODE BEGIN RTOS_QUEUES */
- 145:Core/Src/freertos.c ****   /* add queues, ... */
- 146:Core/Src/freertos.c ****   /* USER CODE END RTOS_QUEUES */
- 147:Core/Src/freertos.c **** 
- 148:Core/Src/freertos.c ****   /* Create the thread(s) */
- 149:Core/Src/freertos.c ****   /* creation of MQTT */
- 150:Core/Src/freertos.c ****   MQTTHandle = osThreadNew(MQTT_Task, NULL, &MQTT_attributes);
- 151:Core/Src/freertos.c **** 
- 152:Core/Src/freertos.c ****   /* creation of SENSORs */
- 153:Core/Src/freertos.c ****   SENSORsHandle = osThreadNew(Sensor_Task, NULL, &SENSORs_attributes);
- 154:Core/Src/freertos.c **** 
- 155:Core/Src/freertos.c ****   /* USER CODE BEGIN RTOS_THREADS */
- 156:Core/Src/freertos.c ****   /* add threads, ... */
- 157:Core/Src/freertos.c ****   /* USER CODE END RTOS_THREADS */
- 158:Core/Src/freertos.c **** 
- 159:Core/Src/freertos.c ****   /* USER CODE BEGIN RTOS_EVENTS */
-ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s 			page 6
+ 128:Core/Src/freertos.c ****   /* USER CODE END Init */
+ 129:Core/Src/freertos.c **** 
+ 130:Core/Src/freertos.c ****   /* USER CODE BEGIN RTOS_MUTEX */
+ 131:Core/Src/freertos.c ****   /* add mutexes, ... */
+ 132:Core/Src/freertos.c ****   /* USER CODE END RTOS_MUTEX */
+ 133:Core/Src/freertos.c **** 
+ 134:Core/Src/freertos.c ****   /* USER CODE BEGIN RTOS_SEMAPHORES */
+ 135:Core/Src/freertos.c ****   /* add semaphores, ... */
+ 136:Core/Src/freertos.c ****   /* USER CODE END RTOS_SEMAPHORES */
+ 137:Core/Src/freertos.c **** 
+ 138:Core/Src/freertos.c ****   /* Create the timer(s) */
+ 139:Core/Src/freertos.c ****   /* creation of SecTimer */
+ 140:Core/Src/freertos.c ****   SecTimerHandle = osTimerNew(Callback01, osTimerPeriodic, NULL, &SecTimer_attributes);
+ 141:Core/Src/freertos.c **** 
+ 142:Core/Src/freertos.c ****   /* USER CODE BEGIN RTOS_TIMERS */
+ 143:Core/Src/freertos.c ****   /* start timers, add new ones, ... */
+ 144:Core/Src/freertos.c ****   /* USER CODE END RTOS_TIMERS */
+ 145:Core/Src/freertos.c **** 
+ 146:Core/Src/freertos.c ****   /* USER CODE BEGIN RTOS_QUEUES */
+ 147:Core/Src/freertos.c ****   /* add queues, ... */
+ 148:Core/Src/freertos.c ****   /* USER CODE END RTOS_QUEUES */
+ 149:Core/Src/freertos.c **** 
+ 150:Core/Src/freertos.c ****   /* Create the thread(s) */
+ 151:Core/Src/freertos.c ****   /* creation of MQTT */
+ 152:Core/Src/freertos.c ****   MQTTHandle = osThreadNew(MQTT_Task, NULL, &MQTT_attributes);
+ 153:Core/Src/freertos.c **** 
+ 154:Core/Src/freertos.c ****   /* creation of SENSORs */
+ 155:Core/Src/freertos.c ****   SENSORsHandle = osThreadNew(Sensor_Task, NULL, &SENSORs_attributes);
+ 156:Core/Src/freertos.c **** 
+ 157:Core/Src/freertos.c ****   /* USER CODE BEGIN RTOS_THREADS */
+ 158:Core/Src/freertos.c ****   /* add threads, ... */
+ 159:Core/Src/freertos.c ****   /* USER CODE END RTOS_THREADS */
+ 160:Core/Src/freertos.c **** 
+ 161:Core/Src/freertos.c ****   /* USER CODE BEGIN RTOS_EVENTS */
+ 162:Core/Src/freertos.c ****   /* add events, ... */
+ 163:Core/Src/freertos.c ****   /* USER CODE END RTOS_EVENTS */
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccHbfWGm.s 			page 6
 
 
- 160:Core/Src/freertos.c ****   /* add events, ... */
- 161:Core/Src/freertos.c ****   /* USER CODE END RTOS_EVENTS */
- 162:Core/Src/freertos.c **** 
- 163:Core/Src/freertos.c **** }
  164:Core/Src/freertos.c **** 
- 165:Core/Src/freertos.c **** /* USER CODE BEGIN Header_MQTT_Task */
- 166:Core/Src/freertos.c **** /**
- 167:Core/Src/freertos.c ****   * @brief  Function implementing the MQTT thread.
- 168:Core/Src/freertos.c ****   * @param  argument: Not used
- 169:Core/Src/freertos.c ****   * @retval None
- 170:Core/Src/freertos.c ****   */
- 171:Core/Src/freertos.c **** /* USER CODE END Header_MQTT_Task */
- 172:Core/Src/freertos.c **** void MQTT_Task(void *argument)
- 173:Core/Src/freertos.c **** {
-  92              		.loc 1 173 1 view -0
-  93              		.cfi_startproc
-  94              		@ args = 0, pretend = 0, frame = 0
-  95              		@ frame_needed = 0, uses_anonymous_args = 0
-  96              		.loc 1 173 1 is_stmt 0 view .LVU1
-  97 0000 38B5     		push	{r3, r4, r5, lr}
-  98              	.LCFI0:
-  99              		.cfi_def_cfa_offset 16
- 100              		.cfi_offset 3, -16
- 101              		.cfi_offset 4, -12
- 102              		.cfi_offset 5, -8
- 103              		.cfi_offset 14, -4
- 174:Core/Src/freertos.c ****   /* USER CODE BEGIN MQTT_Task */
- 175:Core/Src/freertos.c **** 
- 176:Core/Src/freertos.c ****   SIM800.sim.apn = "m3-world";
- 104              		.loc 1 176 3 is_stmt 1 view .LVU2
- 105              		.loc 1 176 18 is_stmt 0 view .LVU3
- 106 0002 6F4B     		ldr	r3, .L18
- 107 0004 6F4A     		ldr	r2, .L18+4
- 108 0006 1A60     		str	r2, [r3]
- 177:Core/Src/freertos.c ****   SIM800.sim.apn_user = "mms";
- 109              		.loc 1 177 3 is_stmt 1 view .LVU4
- 110              		.loc 1 177 23 is_stmt 0 view .LVU5
- 111 0008 6F4A     		ldr	r2, .L18+8
- 112 000a 5A60     		str	r2, [r3, #4]
- 178:Core/Src/freertos.c ****   SIM800.sim.apn_pass = "mms";
- 113              		.loc 1 178 3 is_stmt 1 view .LVU6
- 114              		.loc 1 178 23 is_stmt 0 view .LVU7
- 115 000c 9A60     		str	r2, [r3, #8]
- 179:Core/Src/freertos.c ****   SIM800.mqttServer.host = "hotrodotquy.vn";
- 116              		.loc 1 179 3 is_stmt 1 view .LVU8
- 117              		.loc 1 179 26 is_stmt 0 view .LVU9
- 118 000e 6F4A     		ldr	r2, .L18+12
- 119 0010 DA60     		str	r2, [r3, #12]
- 180:Core/Src/freertos.c ****   SIM800.mqttServer.port = 1883;
- 120              		.loc 1 180 3 is_stmt 1 view .LVU10
- 121              		.loc 1 180 26 is_stmt 0 view .LVU11
- 122 0012 40F25B72 		movw	r2, #1883
- 123 0016 1A82     		strh	r2, [r3, #16]	@ movhi
- 181:Core/Src/freertos.c ****   SIM800.mqttClient.username = "";
- 124              		.loc 1 181 3 is_stmt 1 view .LVU12
- 125              		.loc 1 181 30 is_stmt 0 view .LVU13
- 126 0018 6D4A     		ldr	r2, .L18+16
-ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s 			page 7
+ 165:Core/Src/freertos.c **** }
+ 166:Core/Src/freertos.c **** 
+ 167:Core/Src/freertos.c **** /* USER CODE BEGIN Header_MQTT_Task */
+ 168:Core/Src/freertos.c **** /**
+ 169:Core/Src/freertos.c ****   * @brief  Function implementing the MQTT thread.
+ 170:Core/Src/freertos.c ****   * @param  argument: Not used
+ 171:Core/Src/freertos.c ****   * @retval None
+ 172:Core/Src/freertos.c ****   */
+ 173:Core/Src/freertos.c **** /* USER CODE END Header_MQTT_Task */
+ 174:Core/Src/freertos.c **** void MQTT_Task(void *argument)
+ 175:Core/Src/freertos.c **** {
+  89              		.loc 1 175 1 view -0
+  90              		.cfi_startproc
+  91              		@ args = 0, pretend = 0, frame = 0
+  92              		@ frame_needed = 0, uses_anonymous_args = 0
+  93              		.loc 1 175 1 is_stmt 0 view .LVU1
+  94 0000 70B5     		push	{r4, r5, r6, lr}
+  95              	.LCFI0:
+  96              		.cfi_def_cfa_offset 16
+  97              		.cfi_offset 4, -16
+  98              		.cfi_offset 5, -12
+  99              		.cfi_offset 6, -8
+ 100              		.cfi_offset 14, -4
+ 176:Core/Src/freertos.c ****   /* USER CODE BEGIN MQTT_Task */
+ 177:Core/Src/freertos.c **** 
+ 178:Core/Src/freertos.c ****   SIM800.sim.apn = "m3-world";
+ 101              		.loc 1 178 3 is_stmt 1 view .LVU2
+ 102              		.loc 1 178 18 is_stmt 0 view .LVU3
+ 103 0002 744B     		ldr	r3, .L18
+ 104 0004 744A     		ldr	r2, .L18+4
+ 105 0006 1A60     		str	r2, [r3]
+ 179:Core/Src/freertos.c ****   SIM800.sim.apn_user = "mms";
+ 106              		.loc 1 179 3 is_stmt 1 view .LVU4
+ 107              		.loc 1 179 23 is_stmt 0 view .LVU5
+ 108 0008 744A     		ldr	r2, .L18+8
+ 109 000a 5A60     		str	r2, [r3, #4]
+ 180:Core/Src/freertos.c ****   SIM800.sim.apn_pass = "mms";
+ 110              		.loc 1 180 3 is_stmt 1 view .LVU6
+ 111              		.loc 1 180 23 is_stmt 0 view .LVU7
+ 112 000c 9A60     		str	r2, [r3, #8]
+ 181:Core/Src/freertos.c ****   SIM800.mqttServer.host = "hotrodotquy.vn";
+ 113              		.loc 1 181 3 is_stmt 1 view .LVU8
+ 114              		.loc 1 181 26 is_stmt 0 view .LVU9
+ 115 000e 744A     		ldr	r2, .L18+12
+ 116 0010 DA60     		str	r2, [r3, #12]
+ 182:Core/Src/freertos.c ****   SIM800.mqttServer.port = 1883;
+ 117              		.loc 1 182 3 is_stmt 1 view .LVU10
+ 118              		.loc 1 182 26 is_stmt 0 view .LVU11
+ 119 0012 40F25B72 		movw	r2, #1883
+ 120 0016 1A82     		strh	r2, [r3, #16]	@ movhi
+ 183:Core/Src/freertos.c ****   SIM800.mqttClient.username = "";
+ 121              		.loc 1 183 3 is_stmt 1 view .LVU12
+ 122              		.loc 1 183 30 is_stmt 0 view .LVU13
+ 123 0018 724A     		ldr	r2, .L18+16
+ 124 001a 5A61     		str	r2, [r3, #20]
+ 184:Core/Src/freertos.c ****   SIM800.mqttClient.clientID = "hm";
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccHbfWGm.s 			page 7
 
 
- 127 001a 5A61     		str	r2, [r3, #20]
- 182:Core/Src/freertos.c ****   SIM800.mqttClient.clientID = "hm";
- 128              		.loc 1 182 3 is_stmt 1 view .LVU14
- 129              		.loc 1 182 30 is_stmt 0 view .LVU15
- 130 001c 6D49     		ldr	r1, .L18+20
- 131 001e D961     		str	r1, [r3, #28]
- 183:Core/Src/freertos.c ****   SIM800.mqttClient.pass = "";
- 132              		.loc 1 183 3 is_stmt 1 view .LVU16
- 133              		.loc 1 183 26 is_stmt 0 view .LVU17
- 134 0020 9A61     		str	r2, [r3, #24]
- 184:Core/Src/freertos.c ****   SIM800.mqttClient.keepAliveInterval = 120;
- 135              		.loc 1 184 3 is_stmt 1 view .LVU18
- 136              		.loc 1 184 39 is_stmt 0 view .LVU19
- 137 0022 7822     		movs	r2, #120
- 138 0024 1A84     		strh	r2, [r3, #32]	@ movhi
- 185:Core/Src/freertos.c **** 
- 186:Core/Src/freertos.c ****   osDelay(100);
- 139              		.loc 1 186 3 is_stmt 1 view .LVU20
- 140 0026 6420     		movs	r0, #100
- 141              	.LVL1:
- 142              		.loc 1 186 3 is_stmt 0 view .LVU21
- 143 0028 FFF7FEFF 		bl	osDelay
- 144              	.LVL2:
+ 125              		.loc 1 184 3 is_stmt 1 view .LVU14
+ 126              		.loc 1 184 30 is_stmt 0 view .LVU15
+ 127 001c 7249     		ldr	r1, .L18+20
+ 128 001e D961     		str	r1, [r3, #28]
+ 185:Core/Src/freertos.c ****   SIM800.mqttClient.pass = "";
+ 129              		.loc 1 185 3 is_stmt 1 view .LVU16
+ 130              		.loc 1 185 26 is_stmt 0 view .LVU17
+ 131 0020 9A61     		str	r2, [r3, #24]
+ 186:Core/Src/freertos.c ****   SIM800.mqttClient.keepAliveInterval = 120;
+ 132              		.loc 1 186 3 is_stmt 1 view .LVU18
+ 133              		.loc 1 186 39 is_stmt 0 view .LVU19
+ 134 0022 7822     		movs	r2, #120
+ 135 0024 1A84     		strh	r2, [r3, #32]	@ movhi
  187:Core/Src/freertos.c **** 
- 188:Core/Src/freertos.c ****   if (SIM800_SendCommand("AT\r\n", "\r\n", CMD_DELAY) == SIM_R_nOK)
- 145              		.loc 1 188 3 is_stmt 1 view .LVU22
- 146              		.loc 1 188 7 is_stmt 0 view .LVU23
- 147 002c 4FF4FA62 		mov	r2, #2000
- 148 0030 6949     		ldr	r1, .L18+24
- 149 0032 6A48     		ldr	r0, .L18+28
- 150 0034 FFF7FEFF 		bl	SIM800_SendCommand
- 151              	.LVL3:
- 152              		.loc 1 188 6 view .LVU24
- 153 0038 0128     		cmp	r0, #1
- 154 003a 38D0     		beq	.L12
- 155              	.L2:
- 189:Core/Src/freertos.c ****   {
- 190:Core/Src/freertos.c ****     HAL_GPIO_WritePin(SIM_PWRKEY_GPIO_Port, SIM_PWRKEY_Pin, 1);
- 191:Core/Src/freertos.c ****     osDelay(2000);
- 192:Core/Src/freertos.c ****     HAL_GPIO_WritePin(SIM_PWRKEY_GPIO_Port, SIM_PWRKEY_Pin, 0);
- 193:Core/Src/freertos.c ****   }
- 194:Core/Src/freertos.c ****   
- 195:Core/Src/freertos.c ****   osDelay(4000);
- 156              		.loc 1 195 3 is_stmt 1 view .LVU25
- 157 003c 4FF47A60 		mov	r0, #4000
- 158 0040 FFF7FEFF 		bl	osDelay
- 159              	.LVL4:
- 196:Core/Src/freertos.c **** 
- 197:Core/Src/freertos.c ****   if (is_MPU_OK == 1)     HAL_IWDG_Refresh(&hiwdg);
- 160              		.loc 1 197 3 view .LVU26
- 161              		.loc 1 197 17 is_stmt 0 view .LVU27
- 162 0044 664B     		ldr	r3, .L18+32
- 163 0046 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
- 164              		.loc 1 197 6 view .LVU28
- 165 0048 012B     		cmp	r3, #1
- 166 004a 42D0     		beq	.L13
- 167              	.L3:
-ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s 			page 8
-
-
+ 188:Core/Src/freertos.c ****   osDelay(100);
+ 136              		.loc 1 188 3 is_stmt 1 view .LVU20
+ 137 0026 6420     		movs	r0, #100
+ 138              	.LVL1:
+ 139              		.loc 1 188 3 is_stmt 0 view .LVU21
+ 140 0028 FFF7FEFF 		bl	osDelay
+ 141              	.LVL2:
+ 189:Core/Src/freertos.c **** 
+ 190:Core/Src/freertos.c ****   if (SIM800_SendCommand("AT\r\n", "\r\n", CMD_DELAY) == SIM_R_nOK)
+ 142              		.loc 1 190 3 is_stmt 1 view .LVU22
+ 143              		.loc 1 190 7 is_stmt 0 view .LVU23
+ 144 002c 4FF4FA62 		mov	r2, #2000
+ 145 0030 6E49     		ldr	r1, .L18+24
+ 146 0032 6F48     		ldr	r0, .L18+28
+ 147 0034 FFF7FEFF 		bl	SIM800_SendCommand
+ 148              	.LVL3:
+ 149              		.loc 1 190 6 view .LVU24
+ 150 0038 0128     		cmp	r0, #1
+ 151 003a 38D0     		beq	.L12
+ 152              	.L2:
+ 191:Core/Src/freertos.c ****   {
+ 192:Core/Src/freertos.c ****     HAL_GPIO_WritePin(SIM_PWRKEY_GPIO_Port, SIM_PWRKEY_Pin, 1);
+ 193:Core/Src/freertos.c ****     osDelay(2000);
+ 194:Core/Src/freertos.c ****     HAL_GPIO_WritePin(SIM_PWRKEY_GPIO_Port, SIM_PWRKEY_Pin, 0);
+ 195:Core/Src/freertos.c ****   }
+ 196:Core/Src/freertos.c ****   
+ 197:Core/Src/freertos.c ****   osDelay(4000);
+ 153              		.loc 1 197 3 is_stmt 1 view .LVU25
+ 154 003c 4FF47A60 		mov	r0, #4000
+ 155 0040 FFF7FEFF 		bl	osDelay
+ 156              	.LVL4:
  198:Core/Src/freertos.c **** 
- 199:Core/Src/freertos.c ****   MQTT_Init();
- 168              		.loc 1 199 3 is_stmt 1 view .LVU29
- 169 004c FFF7FEFF 		bl	MQTT_Init
- 170              	.LVL5:
+ 199:Core/Src/freertos.c ****   if (is_MPU_OK == 1)     HAL_IWDG_Refresh(&hiwdg);
+ 157              		.loc 1 199 3 view .LVU26
+ 158              		.loc 1 199 17 is_stmt 0 view .LVU27
+ 159 0044 6B4B     		ldr	r3, .L18+32
+ 160 0046 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 161              		.loc 1 199 6 view .LVU28
+ 162 0048 012B     		cmp	r3, #1
+ 163 004a 42D0     		beq	.L13
+ 164              	.L3:
  200:Core/Src/freertos.c **** 
- 201:Core/Src/freertos.c ****   if (is_MPU_OK == 1)     HAL_IWDG_Refresh(&hiwdg);
- 171              		.loc 1 201 3 view .LVU30
- 172              		.loc 1 201 17 is_stmt 0 view .LVU31
- 173 0050 634B     		ldr	r3, .L18+32
- 174 0052 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
- 175              		.loc 1 201 6 view .LVU32
- 176 0054 012B     		cmp	r3, #1
- 177 0056 40D0     		beq	.L14
- 178              	.L4:
+ 201:Core/Src/freertos.c ****   MQTT_Init();
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccHbfWGm.s 			page 8
+
+
+ 165              		.loc 1 201 3 is_stmt 1 view .LVU29
+ 166 004c FFF7FEFF 		bl	MQTT_Init
+ 167              	.LVL5:
  202:Core/Src/freertos.c **** 
- 203:Core/Src/freertos.c ****   SIM800_SendCommand("AT+CMGF=1\r\n", "OK\r\n", 1000);
- 179              		.loc 1 203 3 is_stmt 1 view .LVU33
- 180 0058 624C     		ldr	r4, .L18+36
- 181 005a 4FF47A72 		mov	r2, #1000
- 182 005e 2146     		mov	r1, r4
- 183 0060 6148     		ldr	r0, .L18+40
- 184 0062 FFF7FEFF 		bl	SIM800_SendCommand
- 185              	.LVL6:
+ 203:Core/Src/freertos.c ****   if (is_MPU_OK == 1)     HAL_IWDG_Refresh(&hiwdg);
+ 168              		.loc 1 203 3 view .LVU30
+ 169              		.loc 1 203 17 is_stmt 0 view .LVU31
+ 170 0050 684B     		ldr	r3, .L18+32
+ 171 0052 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 172              		.loc 1 203 6 view .LVU32
+ 173 0054 012B     		cmp	r3, #1
+ 174 0056 40D0     		beq	.L14
+ 175              	.L4:
  204:Core/Src/freertos.c **** 
- 205:Core/Src/freertos.c ****   SIM800_SendCommand("AT+CFUN=1\r\n", "OK\r\n", 1000);
- 186              		.loc 1 205 3 view .LVU34
- 187 0066 4FF47A72 		mov	r2, #1000
- 188 006a 2146     		mov	r1, r4
- 189 006c 5F48     		ldr	r0, .L18+44
- 190 006e FFF7FEFF 		bl	SIM800_SendCommand
- 191              	.LVL7:
+ 205:Core/Src/freertos.c ****   SIM800_SendCommand("AT+CMGF=1\r\n", "OK\r\n", 1000);
+ 176              		.loc 1 205 3 is_stmt 1 view .LVU33
+ 177 0058 674C     		ldr	r4, .L18+36
+ 178 005a 4FF47A72 		mov	r2, #1000
+ 179 005e 2146     		mov	r1, r4
+ 180 0060 6648     		ldr	r0, .L18+40
+ 181 0062 FFF7FEFF 		bl	SIM800_SendCommand
+ 182              	.LVL6:
  206:Core/Src/freertos.c **** 
- 207:Core/Src/freertos.c ****   // SIM800_SendCommand("AT+CUSD=1,\"*101#\"\r\n", "OK\r\n", 5000);
+ 207:Core/Src/freertos.c ****   SIM800_SendCommand("AT+CFUN=1\r\n", "OK\r\n", 1000);
+ 183              		.loc 1 207 3 view .LVU34
+ 184 0066 4FF47A72 		mov	r2, #1000
+ 185 006a 2146     		mov	r1, r4
+ 186 006c 6448     		ldr	r0, .L18+44
+ 187 006e FFF7FEFF 		bl	SIM800_SendCommand
+ 188              	.LVL7:
  208:Core/Src/freertos.c **** 
- 209:Core/Src/freertos.c ****   // SIM800_SendCommand("AT+CSCS?\r\n", "OK\r\n", 1000);
- 210:Core/Src/freertos.c ****   SIM800_SendCommand("AT+CSCS=\"IRA\"\r\n", "OK\r\n", 1000);
- 192              		.loc 1 210 3 view .LVU35
- 193 0072 4FF47A72 		mov	r2, #1000
- 194 0076 2146     		mov	r1, r4
- 195 0078 5D48     		ldr	r0, .L18+48
- 196 007a FFF7FEFF 		bl	SIM800_SendCommand
- 197              	.LVL8:
- 211:Core/Src/freertos.c ****   // SIM800_SendCommand("AT+CSDH?\r\n", "OK\r\n", 1000);
- 212:Core/Src/freertos.c ****   SIM800_SendCommand("AT+CSMP=17,167,0,8\r\n", "OK\r\n", 1000);
- 198              		.loc 1 212 3 view .LVU36
- 199 007e 4FF47A72 		mov	r2, #1000
- 200 0082 2146     		mov	r1, r4
- 201 0084 5B48     		ldr	r0, .L18+52
- 202 0086 FFF7FEFF 		bl	SIM800_SendCommand
- 203              	.LVL9:
- 213:Core/Src/freertos.c ****   
- 214:Core/Src/freertos.c **** 
- 215:Core/Src/freertos.c ****   if (is_MPU_OK == 1)     HAL_IWDG_Refresh(&hiwdg);
- 204              		.loc 1 215 3 view .LVU37
- 205              		.loc 1 215 17 is_stmt 0 view .LVU38
- 206 008a 554B     		ldr	r3, .L18+32
-ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s 			page 9
-
-
- 207 008c 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
- 208              		.loc 1 215 6 view .LVU39
- 209 008e 012B     		cmp	r3, #1
- 210 0090 27D0     		beq	.L15
- 211              	.L5:
+ 209:Core/Src/freertos.c ****   // SIM800_SendCommand("AT+CUSD=1,\"*101#\"\r\n", "OK\r\n", 5000);
+ 210:Core/Src/freertos.c **** 
+ 211:Core/Src/freertos.c ****   // SIM800_SendCommand("AT+CSCS?\r\n", "OK\r\n", 1000);
+ 212:Core/Src/freertos.c ****   SIM800_SendCommand("AT+CSCS=\"GSM\"\r\n", "OK\r\n", 1000);
+ 189              		.loc 1 212 3 view .LVU35
+ 190 0072 4FF47A72 		mov	r2, #1000
+ 191 0076 2146     		mov	r1, r4
+ 192 0078 6248     		ldr	r0, .L18+48
+ 193 007a FFF7FEFF 		bl	SIM800_SendCommand
+ 194              	.LVL8:
+ 213:Core/Src/freertos.c ****   // SIM800_SendCommand("AT+CSDH?\r\n", "OK\r\n", 1000);
+ 214:Core/Src/freertos.c ****   SIM800_SendCommand("AT+CSMP=17,167,0,0\r\n", "OK\r\n", 1000);
+ 195              		.loc 1 214 3 view .LVU36
+ 196 007e 4FF47A72 		mov	r2, #1000
+ 197 0082 2146     		mov	r1, r4
+ 198 0084 6048     		ldr	r0, .L18+52
+ 199 0086 FFF7FEFF 		bl	SIM800_SendCommand
+ 200              	.LVL9:
+ 215:Core/Src/freertos.c ****   
  216:Core/Src/freertos.c **** 
- 217:Core/Src/freertos.c ****   osTimerStart(SecTimerHandle, 1000);
- 212              		.loc 1 217 3 is_stmt 1 view .LVU40
- 213 0092 4FF47A71 		mov	r1, #1000
- 214 0096 584B     		ldr	r3, .L18+56
- 215 0098 1868     		ldr	r0, [r3]
- 216 009a FFF7FEFF 		bl	osTimerStart
- 217              	.LVL10:
+ 217:Core/Src/freertos.c ****   if (is_MPU_OK == 1)     HAL_IWDG_Refresh(&hiwdg);
+ 201              		.loc 1 217 3 view .LVU37
+ 202              		.loc 1 217 17 is_stmt 0 view .LVU38
+ 203 008a 5A4B     		ldr	r3, .L18+32
+ 204 008c 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 205              		.loc 1 217 6 view .LVU39
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccHbfWGm.s 			page 9
+
+
+ 206 008e 012B     		cmp	r3, #1
+ 207 0090 27D0     		beq	.L15
+ 208              	.L5:
  218:Core/Src/freertos.c **** 
- 219:Core/Src/freertos.c ****   MQTT_Pub("mandevices/stroke-medical/human/fall", "0");
- 218              		.loc 1 219 3 view .LVU41
- 219 009e 5749     		ldr	r1, .L18+60
- 220 00a0 5748     		ldr	r0, .L18+64
- 221 00a2 FFF7FEFF 		bl	MQTT_Pub
- 222              	.LVL11:
- 220:Core/Src/freertos.c ****   uint32_t time = HAL_GetTick();
- 223              		.loc 1 220 3 view .LVU42
- 224              		.loc 1 220 19 is_stmt 0 view .LVU43
- 225 00a6 FFF7FEFF 		bl	HAL_GetTick
- 226              	.LVL12:
- 227 00aa 0446     		mov	r4, r0
- 228              	.LVL13:
- 229              		.loc 1 220 19 view .LVU44
- 230 00ac 68E0     		b	.L6
- 231              	.LVL14:
- 232              	.L12:
- 190:Core/Src/freertos.c ****     osDelay(2000);
- 233              		.loc 1 190 5 is_stmt 1 view .LVU45
- 234 00ae 554C     		ldr	r4, .L18+68
- 235 00b0 0122     		movs	r2, #1
- 236 00b2 4FF48071 		mov	r1, #256
- 237 00b6 2046     		mov	r0, r4
- 238 00b8 FFF7FEFF 		bl	HAL_GPIO_WritePin
- 239              	.LVL15:
- 191:Core/Src/freertos.c ****     HAL_GPIO_WritePin(SIM_PWRKEY_GPIO_Port, SIM_PWRKEY_Pin, 0);
- 240              		.loc 1 191 5 view .LVU46
- 241 00bc 4FF4FA60 		mov	r0, #2000
- 242 00c0 FFF7FEFF 		bl	osDelay
- 243              	.LVL16:
- 192:Core/Src/freertos.c ****   }
- 244              		.loc 1 192 5 view .LVU47
- 245 00c4 0022     		movs	r2, #0
- 246 00c6 4FF48071 		mov	r1, #256
- 247 00ca 2046     		mov	r0, r4
- 248 00cc FFF7FEFF 		bl	HAL_GPIO_WritePin
- 249              	.LVL17:
- 250 00d0 B4E7     		b	.L2
- 251              	.L13:
- 197:Core/Src/freertos.c **** 
- 252              		.loc 1 197 27 discriminator 1 view .LVU48
- 253 00d2 4D48     		ldr	r0, .L18+72
- 254 00d4 FFF7FEFF 		bl	HAL_IWDG_Refresh
-ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s 			page 10
+ 219:Core/Src/freertos.c ****   osTimerStart(SecTimerHandle, 1000);
+ 209              		.loc 1 219 3 is_stmt 1 view .LVU40
+ 210 0092 4FF47A71 		mov	r1, #1000
+ 211 0096 5D4B     		ldr	r3, .L18+56
+ 212 0098 1868     		ldr	r0, [r3]
+ 213 009a FFF7FEFF 		bl	osTimerStart
+ 214              	.LVL10:
+ 220:Core/Src/freertos.c **** 
+ 221:Core/Src/freertos.c ****   MQTT_Pub("mandevices/stroke-medical/human/fall", "0");
+ 215              		.loc 1 221 3 view .LVU41
+ 216 009e 5C49     		ldr	r1, .L18+60
+ 217 00a0 5C48     		ldr	r0, .L18+64
+ 218 00a2 FFF7FEFF 		bl	MQTT_Pub
+ 219              	.LVL11:
+ 222:Core/Src/freertos.c ****   uint32_t time = HAL_GetTick();
+ 220              		.loc 1 222 3 view .LVU42
+ 221              		.loc 1 222 19 is_stmt 0 view .LVU43
+ 222 00a6 FFF7FEFF 		bl	HAL_GetTick
+ 223              	.LVL12:
+ 224 00aa 0446     		mov	r4, r0
+ 225              	.LVL13:
+ 226              		.loc 1 222 19 view .LVU44
+ 227 00ac 72E0     		b	.L6
+ 228              	.LVL14:
+ 229              	.L12:
+ 192:Core/Src/freertos.c ****     osDelay(2000);
+ 230              		.loc 1 192 5 is_stmt 1 view .LVU45
+ 231 00ae 5A4C     		ldr	r4, .L18+68
+ 232 00b0 0122     		movs	r2, #1
+ 233 00b2 4FF48071 		mov	r1, #256
+ 234 00b6 2046     		mov	r0, r4
+ 235 00b8 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 236              	.LVL15:
+ 193:Core/Src/freertos.c ****     HAL_GPIO_WritePin(SIM_PWRKEY_GPIO_Port, SIM_PWRKEY_Pin, 0);
+ 237              		.loc 1 193 5 view .LVU46
+ 238 00bc 4FF4FA60 		mov	r0, #2000
+ 239 00c0 FFF7FEFF 		bl	osDelay
+ 240              	.LVL16:
+ 194:Core/Src/freertos.c ****   }
+ 241              		.loc 1 194 5 view .LVU47
+ 242 00c4 0022     		movs	r2, #0
+ 243 00c6 4FF48071 		mov	r1, #256
+ 244 00ca 2046     		mov	r0, r4
+ 245 00cc FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 246              	.LVL17:
+ 247 00d0 B4E7     		b	.L2
+ 248              	.L13:
+ 199:Core/Src/freertos.c **** 
+ 249              		.loc 1 199 27 discriminator 1 view .LVU48
+ 250 00d2 5248     		ldr	r0, .L18+72
+ 251 00d4 FFF7FEFF 		bl	HAL_IWDG_Refresh
+ 252              	.LVL18:
+ 253 00d8 B8E7     		b	.L3
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccHbfWGm.s 			page 10
 
 
- 255              	.LVL18:
- 256 00d8 B8E7     		b	.L3
- 257              	.L14:
- 201:Core/Src/freertos.c **** 
- 258              		.loc 1 201 27 discriminator 1 view .LVU49
- 259 00da 4B48     		ldr	r0, .L18+72
- 260 00dc FFF7FEFF 		bl	HAL_IWDG_Refresh
- 261              	.LVL19:
- 262 00e0 BAE7     		b	.L4
- 263              	.L15:
- 215:Core/Src/freertos.c **** 
- 264              		.loc 1 215 27 discriminator 1 view .LVU50
- 265 00e2 4948     		ldr	r0, .L18+72
- 266 00e4 FFF7FEFF 		bl	HAL_IWDG_Refresh
- 267              	.LVL20:
- 268 00e8 D3E7     		b	.L5
- 269              	.LVL21:
- 270              	.L16:
- 221:Core/Src/freertos.c **** 
- 222:Core/Src/freertos.c ****   /* Infinite loop */
- 223:Core/Src/freertos.c ****   for(;;)
- 224:Core/Src/freertos.c ****   {
- 225:Core/Src/freertos.c ****     osDelay(1000);
- 226:Core/Src/freertos.c ****     if (is_fall == 1)
- 227:Core/Src/freertos.c ****     {
- 228:Core/Src/freertos.c ****       if (SIM800_SendCommand("AT+CMGS=\"+84816056426\"\r\n", ">", 1000) == SIM_R_OK)
- 271              		.loc 1 228 7 view .LVU51
- 272              		.loc 1 228 11 is_stmt 0 view .LVU52
- 273 00ea 4FF47A72 		mov	r2, #1000
- 274 00ee 4749     		ldr	r1, .L18+76
- 275 00f0 4748     		ldr	r0, .L18+80
- 276 00f2 FFF7FEFF 		bl	SIM800_SendCommand
- 277              	.LVL22:
- 278              		.loc 1 228 10 view .LVU53
- 279 00f6 0028     		cmp	r0, #0
- 280 00f8 4AD1     		bne	.L7
- 229:Core/Src/freertos.c ****       {
- 230:Core/Src/freertos.c ****         
- 231:Core/Src/freertos.c ****         HAL_UART_Transmit_IT(UART_SIM800, (uint8_t *)"\"HELLO\"", 7);
- 281              		.loc 1 231 9 is_stmt 1 view .LVU54
- 282 00fa 464D     		ldr	r5, .L18+84
- 283 00fc 0722     		movs	r2, #7
- 284 00fe 4649     		ldr	r1, .L18+88
- 285 0100 2846     		mov	r0, r5
- 286 0102 FFF7FEFF 		bl	HAL_UART_Transmit_IT
- 287              	.LVL23:
- 232:Core/Src/freertos.c ****         huart1.Instance->DR = 0b00011010;
- 288              		.loc 1 232 9 view .LVU55
- 289              		.loc 1 232 15 is_stmt 0 view .LVU56
- 290 0106 2B68     		ldr	r3, [r5]
- 291              		.loc 1 232 29 view .LVU57
- 292 0108 1A22     		movs	r2, #26
- 293 010a 5A60     		str	r2, [r3, #4]
- 233:Core/Src/freertos.c ****         osDelay(5000);
- 294              		.loc 1 233 9 is_stmt 1 view .LVU58
- 295 010c 41F28830 		movw	r0, #5000
- 296 0110 FFF7FEFF 		bl	osDelay
-ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s 			page 11
+ 254              	.L14:
+ 203:Core/Src/freertos.c **** 
+ 255              		.loc 1 203 27 discriminator 1 view .LVU49
+ 256 00da 5048     		ldr	r0, .L18+72
+ 257 00dc FFF7FEFF 		bl	HAL_IWDG_Refresh
+ 258              	.LVL19:
+ 259 00e0 BAE7     		b	.L4
+ 260              	.L15:
+ 217:Core/Src/freertos.c **** 
+ 261              		.loc 1 217 27 discriminator 1 view .LVU50
+ 262 00e2 4E48     		ldr	r0, .L18+72
+ 263 00e4 FFF7FEFF 		bl	HAL_IWDG_Refresh
+ 264              	.LVL20:
+ 265 00e8 D3E7     		b	.L5
+ 266              	.LVL21:
+ 267              	.L16:
+ 223:Core/Src/freertos.c **** 
+ 224:Core/Src/freertos.c ****   /* Infinite loop */
+ 225:Core/Src/freertos.c ****   for(;;)
+ 226:Core/Src/freertos.c ****   {
+ 227:Core/Src/freertos.c ****     osDelay(1000);
+ 228:Core/Src/freertos.c ****     if (is_fall == 1)
+ 229:Core/Src/freertos.c ****     {
+ 230:Core/Src/freertos.c ****       if (SIM800_SendCommand("AT+CMGS=\"0855484556\"\r\n", ">", 1000) == SIM_R_OK)
+ 268              		.loc 1 230 7 view .LVU51
+ 269              		.loc 1 230 11 is_stmt 0 view .LVU52
+ 270 00ea 4FF47A72 		mov	r2, #1000
+ 271 00ee 4C49     		ldr	r1, .L18+76
+ 272 00f0 4C48     		ldr	r0, .L18+80
+ 273 00f2 FFF7FEFF 		bl	SIM800_SendCommand
+ 274              	.LVL22:
+ 275              		.loc 1 230 10 view .LVU53
+ 276 00f6 0028     		cmp	r0, #0
+ 277 00f8 54D1     		bne	.L7
+ 231:Core/Src/freertos.c ****       {
+ 232:Core/Src/freertos.c ****         osDelay(200);
+ 278              		.loc 1 232 9 is_stmt 1 view .LVU54
+ 279 00fa C820     		movs	r0, #200
+ 280 00fc FFF7FEFF 		bl	osDelay
+ 281              	.LVL23:
+ 233:Core/Src/freertos.c ****         HAL_UART_Transmit_IT(UART_SIM800, (uint8_t *)SMSStrg, (uint16_t)strlen(SMSStrg));
+ 282              		.loc 1 233 9 view .LVU55
+ 283              		.loc 1 233 73 is_stmt 0 view .LVU56
+ 284 0100 494E     		ldr	r6, .L18+84
+ 285 0102 3046     		mov	r0, r6
+ 286 0104 FFF7FEFF 		bl	strlen
+ 287              	.LVL24:
+ 288              		.loc 1 233 9 view .LVU57
+ 289 0108 484D     		ldr	r5, .L18+88
+ 290 010a 82B2     		uxth	r2, r0
+ 291 010c 3146     		mov	r1, r6
+ 292 010e 2846     		mov	r0, r5
+ 293 0110 FFF7FEFF 		bl	HAL_UART_Transmit_IT
+ 294              	.LVL25:
+ 234:Core/Src/freertos.c ****         osDelay(200);
+ 295              		.loc 1 234 9 is_stmt 1 view .LVU58
+ 296 0114 C820     		movs	r0, #200
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccHbfWGm.s 			page 11
 
 
- 297              	.LVL24:
- 234:Core/Src/freertos.c ****         MQTT_Pub("mandevices/stroke-medical/human/fall", "1");
- 298              		.loc 1 234 9 view .LVU59
- 299 0114 4149     		ldr	r1, .L18+92
- 300 0116 3A48     		ldr	r0, .L18+64
- 301 0118 FFF7FEFF 		bl	MQTT_Pub
- 302              	.LVL25:
- 235:Core/Src/freertos.c ****         osDelay(2000);
- 303              		.loc 1 235 9 view .LVU60
- 304 011c 4FF4FA60 		mov	r0, #2000
- 305 0120 FFF7FEFF 		bl	osDelay
- 306              	.LVL26:
- 236:Core/Src/freertos.c ****         MQTT_Pub("mandevices/stroke-medical/human/fall/loc", Loc);
- 307              		.loc 1 236 9 view .LVU61
- 308 0124 3E49     		ldr	r1, .L18+96
- 309 0126 3F48     		ldr	r0, .L18+100
- 310 0128 FFF7FEFF 		bl	MQTT_Pub
- 311              	.LVL27:
- 237:Core/Src/freertos.c ****         osDelay(2000);
- 312              		.loc 1 237 9 view .LVU62
- 313 012c 4FF4FA60 		mov	r0, #2000
- 314 0130 FFF7FEFF 		bl	osDelay
- 315              	.LVL28:
- 238:Core/Src/freertos.c ****         // HAL_UART_Transmit_IT(UART_SIM800, call, strlen(call));
- 239:Core/Src/freertos.c ****         SIM800_SendCommand("ATD+84816056426;\r\n", "OK\r\n", 2000);
- 316              		.loc 1 239 9 view .LVU63
- 317 0134 2B4D     		ldr	r5, .L18+36
- 318 0136 4FF4FA62 		mov	r2, #2000
- 319 013a 2946     		mov	r1, r5
- 320 013c 3A48     		ldr	r0, .L18+104
- 321 013e FFF7FEFF 		bl	SIM800_SendCommand
- 322              	.LVL29:
- 240:Core/Src/freertos.c ****         
- 241:Core/Src/freertos.c ****         osDelay(30000);
- 323              		.loc 1 241 9 view .LVU64
- 324 0142 47F23050 		movw	r0, #30000
- 325 0146 FFF7FEFF 		bl	osDelay
- 326              	.LVL30:
- 242:Core/Src/freertos.c ****         SIM800_SendCommand("ATH\r\n", "OK\r\n", 1000);
- 327              		.loc 1 242 9 view .LVU65
- 328 014a 4FF47A72 		mov	r2, #1000
- 329 014e 2946     		mov	r1, r5
- 330 0150 3648     		ldr	r0, .L18+108
- 331 0152 FFF7FEFF 		bl	SIM800_SendCommand
- 332              	.LVL31:
- 243:Core/Src/freertos.c ****         is_fall = 0;
- 333              		.loc 1 243 9 view .LVU66
- 334              		.loc 1 243 17 is_stmt 0 view .LVU67
- 335 0156 364B     		ldr	r3, .L18+112
- 336 0158 0022     		movs	r2, #0
- 337 015a 1A70     		strb	r2, [r3]
- 338 015c 18E0     		b	.L7
- 339              	.L17:
- 244:Core/Src/freertos.c ****       }
- 245:Core/Src/freertos.c ****     }
- 246:Core/Src/freertos.c ****     if ((HAL_GetTick() - time) >= 30000)
- 247:Core/Src/freertos.c ****     {
-ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s 			page 12
+ 297 0116 FFF7FEFF 		bl	osDelay
+ 298              	.LVL26:
+ 235:Core/Src/freertos.c ****         huart1.Instance->DR = 0b00011010;
+ 299              		.loc 1 235 9 view .LVU59
+ 300              		.loc 1 235 15 is_stmt 0 view .LVU60
+ 301 011a 2B68     		ldr	r3, [r5]
+ 302              		.loc 1 235 29 view .LVU61
+ 303 011c 1A22     		movs	r2, #26
+ 304 011e 5A60     		str	r2, [r3, #4]
+ 236:Core/Src/freertos.c ****         osDelay(5000);
+ 305              		.loc 1 236 9 is_stmt 1 view .LVU62
+ 306 0120 41F28830 		movw	r0, #5000
+ 307 0124 FFF7FEFF 		bl	osDelay
+ 308              	.LVL27:
+ 237:Core/Src/freertos.c ****         MQTT_Pub("mandevices/stroke-medical/human/fall", "1");
+ 309              		.loc 1 237 9 view .LVU63
+ 310 0128 4149     		ldr	r1, .L18+92
+ 311 012a 3A48     		ldr	r0, .L18+64
+ 312 012c FFF7FEFF 		bl	MQTT_Pub
+ 313              	.LVL28:
+ 238:Core/Src/freertos.c ****         osDelay(2000);
+ 314              		.loc 1 238 9 view .LVU64
+ 315 0130 4FF4FA60 		mov	r0, #2000
+ 316 0134 FFF7FEFF 		bl	osDelay
+ 317              	.LVL29:
+ 239:Core/Src/freertos.c ****         MQTT_Pub("mandevices/stroke-medical/human/fall/loc", Loc);
+ 318              		.loc 1 239 9 view .LVU65
+ 319 0138 3E49     		ldr	r1, .L18+96
+ 320 013a 3F48     		ldr	r0, .L18+100
+ 321 013c FFF7FEFF 		bl	MQTT_Pub
+ 322              	.LVL30:
+ 240:Core/Src/freertos.c ****         osDelay(2000);
+ 323              		.loc 1 240 9 view .LVU66
+ 324 0140 4FF4FA60 		mov	r0, #2000
+ 325 0144 FFF7FEFF 		bl	osDelay
+ 326              	.LVL31:
+ 241:Core/Src/freertos.c ****         // HAL_UART_Transmit_IT(UART_SIM800, call, strlen(call));
+ 242:Core/Src/freertos.c ****         SIM800_SendCommand("ATD0855484556;\r\n", "OK\r\n", 2000);
+ 327              		.loc 1 242 9 view .LVU67
+ 328 0148 2B4D     		ldr	r5, .L18+36
+ 329 014a 4FF4FA62 		mov	r2, #2000
+ 330 014e 2946     		mov	r1, r5
+ 331 0150 3A48     		ldr	r0, .L18+104
+ 332 0152 FFF7FEFF 		bl	SIM800_SendCommand
+ 333              	.LVL32:
+ 243:Core/Src/freertos.c ****         
+ 244:Core/Src/freertos.c ****         osDelay(30000);
+ 334              		.loc 1 244 9 view .LVU68
+ 335 0156 47F23050 		movw	r0, #30000
+ 336 015a FFF7FEFF 		bl	osDelay
+ 337              	.LVL33:
+ 245:Core/Src/freertos.c ****         SIM800_SendCommand("ATH\r\n", "OK\r\n", 1000);
+ 338              		.loc 1 245 9 view .LVU69
+ 339 015e 4FF47A72 		mov	r2, #1000
+ 340 0162 2946     		mov	r1, r5
+ 341 0164 3648     		ldr	r0, .L18+108
+ 342 0166 FFF7FEFF 		bl	SIM800_SendCommand
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccHbfWGm.s 			page 12
 
 
- 248:Core/Src/freertos.c ****       MQTT_Pub("mandevices/stroke-medical/human/fall", "0");
- 340              		.loc 1 248 7 is_stmt 1 view .LVU68
- 341 015e 2749     		ldr	r1, .L18+60
- 342 0160 2748     		ldr	r0, .L18+64
- 343 0162 FFF7FEFF 		bl	MQTT_Pub
- 344              	.LVL32:
- 249:Core/Src/freertos.c ****       time = HAL_GetTick();
- 345              		.loc 1 249 7 view .LVU69
- 346              		.loc 1 249 14 is_stmt 0 view .LVU70
- 347 0166 FFF7FEFF 		bl	HAL_GetTick
- 348              	.LVL33:
- 349 016a 0446     		mov	r4, r0
- 350              	.LVL34:
- 351              		.loc 1 249 14 view .LVU71
- 352 016c 17E0     		b	.L8
- 353              	.LVL35:
- 354              	.L9:
- 250:Core/Src/freertos.c ****     }
- 251:Core/Src/freertos.c ****     if((SIM800.mqttServer.connect == 0) || (SIM800_Status.SIM == 0) || (SIM800_Status.GPRS == 0) ||
- 252:Core/Src/freertos.c ****     {
- 253:Core/Src/freertos.c ****       MQTT_Init();
- 355              		.loc 1 253 7 is_stmt 1 view .LVU72
- 356 016e FFF7FEFF 		bl	MQTT_Init
- 357              	.LVL36:
- 254:Core/Src/freertos.c ****       MQTT_Pub("mandevices/stroke-medical/human/fall", "0");
- 358              		.loc 1 254 7 view .LVU73
- 359 0172 2249     		ldr	r1, .L18+60
- 360 0174 2248     		ldr	r0, .L18+64
- 361 0176 FFF7FEFF 		bl	MQTT_Pub
- 362              	.LVL37:
- 255:Core/Src/freertos.c ****       time = HAL_GetTick();
- 363              		.loc 1 255 7 view .LVU74
- 364              		.loc 1 255 14 is_stmt 0 view .LVU75
- 365 017a FFF7FEFF 		bl	HAL_GetTick
- 366              	.LVL38:
- 367 017e 0446     		mov	r4, r0
+ 343              	.LVL34:
+ 246:Core/Src/freertos.c ****         is_fall = 0;
+ 344              		.loc 1 246 9 view .LVU70
+ 345              		.loc 1 246 17 is_stmt 0 view .LVU71
+ 346 016a 364B     		ldr	r3, .L18+112
+ 347 016c 0022     		movs	r2, #0
+ 348 016e 1A70     		strb	r2, [r3]
+ 349 0170 18E0     		b	.L7
+ 350              	.L17:
+ 247:Core/Src/freertos.c ****       }
+ 248:Core/Src/freertos.c ****     }
+ 249:Core/Src/freertos.c ****     if ((HAL_GetTick() - time) >= 30000)
+ 250:Core/Src/freertos.c ****     {
+ 251:Core/Src/freertos.c ****       MQTT_Pub("mandevices/stroke-medical/human/fall", "0");
+ 351              		.loc 1 251 7 is_stmt 1 view .LVU72
+ 352 0172 2749     		ldr	r1, .L18+60
+ 353 0174 2748     		ldr	r0, .L18+64
+ 354 0176 FFF7FEFF 		bl	MQTT_Pub
+ 355              	.LVL35:
+ 252:Core/Src/freertos.c ****       time = HAL_GetTick();
+ 356              		.loc 1 252 7 view .LVU73
+ 357              		.loc 1 252 14 is_stmt 0 view .LVU74
+ 358 017a FFF7FEFF 		bl	HAL_GetTick
+ 359              	.LVL36:
+ 360 017e 0446     		mov	r4, r0
+ 361              	.LVL37:
+ 362              		.loc 1 252 14 view .LVU75
+ 363 0180 17E0     		b	.L8
+ 364              	.LVL38:
+ 365              	.L9:
+ 253:Core/Src/freertos.c ****     }
+ 254:Core/Src/freertos.c ****     if((SIM800.mqttServer.connect == 0) || (SIM800_Status.SIM == 0) || (SIM800_Status.GPRS == 0) ||
+ 255:Core/Src/freertos.c ****     {
+ 256:Core/Src/freertos.c ****       MQTT_Init();
+ 366              		.loc 1 256 7 is_stmt 1 view .LVU76
+ 367 0182 FFF7FEFF 		bl	MQTT_Init
  368              	.LVL39:
- 369              	.L6:
- 223:Core/Src/freertos.c ****   {
- 370              		.loc 1 223 3 is_stmt 1 view .LVU76
- 225:Core/Src/freertos.c ****     if (is_fall == 1)
- 371              		.loc 1 225 5 view .LVU77
- 372 0180 4FF47A70 		mov	r0, #1000
- 373 0184 FFF7FEFF 		bl	osDelay
- 374              	.LVL40:
- 226:Core/Src/freertos.c ****     {
- 375              		.loc 1 226 5 view .LVU78
- 226:Core/Src/freertos.c ****     {
- 376              		.loc 1 226 17 is_stmt 0 view .LVU79
- 377 0188 294B     		ldr	r3, .L18+112
- 378 018a 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
- 226:Core/Src/freertos.c ****     {
- 379              		.loc 1 226 8 view .LVU80
- 380 018c 012B     		cmp	r3, #1
- 381 018e ACD0     		beq	.L16
- 382              	.L7:
- 246:Core/Src/freertos.c ****     {
-ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s 			page 13
+ 257:Core/Src/freertos.c ****       MQTT_Pub("mandevices/stroke-medical/human/fall", "0");
+ 369              		.loc 1 257 7 view .LVU77
+ 370 0186 2249     		ldr	r1, .L18+60
+ 371 0188 2248     		ldr	r0, .L18+64
+ 372 018a FFF7FEFF 		bl	MQTT_Pub
+ 373              	.LVL40:
+ 258:Core/Src/freertos.c ****       time = HAL_GetTick();
+ 374              		.loc 1 258 7 view .LVU78
+ 375              		.loc 1 258 14 is_stmt 0 view .LVU79
+ 376 018e FFF7FEFF 		bl	HAL_GetTick
+ 377              	.LVL41:
+ 378 0192 0446     		mov	r4, r0
+ 379              	.LVL42:
+ 380              	.L6:
+ 225:Core/Src/freertos.c ****   {
+ 381              		.loc 1 225 3 is_stmt 1 view .LVU80
+ 227:Core/Src/freertos.c ****     if (is_fall == 1)
+ 382              		.loc 1 227 5 view .LVU81
+ 383 0194 4FF47A70 		mov	r0, #1000
+ 384 0198 FFF7FEFF 		bl	osDelay
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccHbfWGm.s 			page 13
 
 
- 383              		.loc 1 246 5 is_stmt 1 view .LVU81
- 246:Core/Src/freertos.c ****     {
- 384              		.loc 1 246 10 is_stmt 0 view .LVU82
- 385 0190 FFF7FEFF 		bl	HAL_GetTick
- 386              	.LVL41:
- 246:Core/Src/freertos.c ****     {
- 387              		.loc 1 246 24 view .LVU83
- 388 0194 001B     		subs	r0, r0, r4
- 246:Core/Src/freertos.c ****     {
- 389              		.loc 1 246 8 view .LVU84
- 390 0196 47F22F53 		movw	r3, #29999
- 391 019a 9842     		cmp	r0, r3
- 392 019c DFD8     		bhi	.L17
- 393              	.L8:
- 251:Core/Src/freertos.c ****     {
- 394              		.loc 1 251 5 is_stmt 1 view .LVU85
- 251:Core/Src/freertos.c ****     {
- 395              		.loc 1 251 26 is_stmt 0 view .LVU86
- 396 019e 084B     		ldr	r3, .L18
- 397 01a0 9B7C     		ldrb	r3, [r3, #18]	@ zero_extendqisi2
- 251:Core/Src/freertos.c ****     {
- 398              		.loc 1 251 7 view .LVU87
- 399 01a2 002B     		cmp	r3, #0
- 400 01a4 E3D0     		beq	.L9
- 251:Core/Src/freertos.c ****     {
- 401              		.loc 1 251 58 discriminator 1 view .LVU88
- 402 01a6 234B     		ldr	r3, .L18+116
- 403 01a8 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
- 251:Core/Src/freertos.c ****     {
- 404              		.loc 1 251 41 discriminator 1 view .LVU89
- 405 01aa 002B     		cmp	r3, #0
- 406 01ac DFD0     		beq	.L9
- 251:Core/Src/freertos.c ****     {
- 407              		.loc 1 251 86 discriminator 2 view .LVU90
- 408 01ae 214B     		ldr	r3, .L18+116
- 409 01b0 5B78     		ldrb	r3, [r3, #1]	@ zero_extendqisi2
- 251:Core/Src/freertos.c ****     {
- 410              		.loc 1 251 69 discriminator 2 view .LVU91
- 411 01b2 002B     		cmp	r3, #0
- 412 01b4 DBD0     		beq	.L9
- 251:Core/Src/freertos.c ****     {
- 413              		.loc 1 251 115 discriminator 3 view .LVU92
- 414 01b6 1F4B     		ldr	r3, .L18+116
- 415 01b8 9B78     		ldrb	r3, [r3, #2]	@ zero_extendqisi2
- 251:Core/Src/freertos.c ****     {
- 416              		.loc 1 251 98 discriminator 3 view .LVU93
- 417 01ba 002B     		cmp	r3, #0
- 418 01bc E0D1     		bne	.L6
- 419 01be D6E7     		b	.L9
- 420              	.L19:
- 421              		.align	2
- 422              	.L18:
- 423 01c0 00000000 		.word	SIM800
- 424 01c4 00000000 		.word	.LC0
- 425 01c8 0C000000 		.word	.LC1
- 426 01cc 10000000 		.word	.LC2
- 427 01d0 20000000 		.word	.LC3
-ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s 			page 14
+ 385              	.LVL43:
+ 228:Core/Src/freertos.c ****     {
+ 386              		.loc 1 228 5 view .LVU82
+ 228:Core/Src/freertos.c ****     {
+ 387              		.loc 1 228 17 is_stmt 0 view .LVU83
+ 388 019c 294B     		ldr	r3, .L18+112
+ 389 019e 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 228:Core/Src/freertos.c ****     {
+ 390              		.loc 1 228 8 view .LVU84
+ 391 01a0 012B     		cmp	r3, #1
+ 392 01a2 A2D0     		beq	.L16
+ 393              	.L7:
+ 249:Core/Src/freertos.c ****     {
+ 394              		.loc 1 249 5 is_stmt 1 view .LVU85
+ 249:Core/Src/freertos.c ****     {
+ 395              		.loc 1 249 10 is_stmt 0 view .LVU86
+ 396 01a4 FFF7FEFF 		bl	HAL_GetTick
+ 397              	.LVL44:
+ 249:Core/Src/freertos.c ****     {
+ 398              		.loc 1 249 24 view .LVU87
+ 399 01a8 001B     		subs	r0, r0, r4
+ 249:Core/Src/freertos.c ****     {
+ 400              		.loc 1 249 8 view .LVU88
+ 401 01aa 47F22F53 		movw	r3, #29999
+ 402 01ae 9842     		cmp	r0, r3
+ 403 01b0 DFD8     		bhi	.L17
+ 404              	.L8:
+ 254:Core/Src/freertos.c ****     {
+ 405              		.loc 1 254 5 is_stmt 1 view .LVU89
+ 254:Core/Src/freertos.c ****     {
+ 406              		.loc 1 254 26 is_stmt 0 view .LVU90
+ 407 01b2 084B     		ldr	r3, .L18
+ 408 01b4 9B7C     		ldrb	r3, [r3, #18]	@ zero_extendqisi2
+ 254:Core/Src/freertos.c ****     {
+ 409              		.loc 1 254 7 view .LVU91
+ 410 01b6 002B     		cmp	r3, #0
+ 411 01b8 E3D0     		beq	.L9
+ 254:Core/Src/freertos.c ****     {
+ 412              		.loc 1 254 58 discriminator 1 view .LVU92
+ 413 01ba 234B     		ldr	r3, .L18+116
+ 414 01bc 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 254:Core/Src/freertos.c ****     {
+ 415              		.loc 1 254 41 discriminator 1 view .LVU93
+ 416 01be 002B     		cmp	r3, #0
+ 417 01c0 DFD0     		beq	.L9
+ 254:Core/Src/freertos.c ****     {
+ 418              		.loc 1 254 86 discriminator 2 view .LVU94
+ 419 01c2 214B     		ldr	r3, .L18+116
+ 420 01c4 5B78     		ldrb	r3, [r3, #1]	@ zero_extendqisi2
+ 254:Core/Src/freertos.c ****     {
+ 421              		.loc 1 254 69 discriminator 2 view .LVU95
+ 422 01c6 002B     		cmp	r3, #0
+ 423 01c8 DBD0     		beq	.L9
+ 254:Core/Src/freertos.c ****     {
+ 424              		.loc 1 254 115 discriminator 3 view .LVU96
+ 425 01ca 1F4B     		ldr	r3, .L18+116
+ 426 01cc 9B78     		ldrb	r3, [r3, #2]	@ zero_extendqisi2
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccHbfWGm.s 			page 14
 
 
- 428 01d4 24000000 		.word	.LC4
- 429 01d8 28000000 		.word	.LC5
- 430 01dc 2C000000 		.word	.LC6
- 431 01e0 00000000 		.word	.LANCHOR0
- 432 01e4 34000000 		.word	.LC7
- 433 01e8 3C000000 		.word	.LC8
- 434 01ec 48000000 		.word	.LC9
- 435 01f0 54000000 		.word	.LC10
- 436 01f4 64000000 		.word	.LC11
- 437 01f8 00000000 		.word	.LANCHOR1
- 438 01fc 7C000000 		.word	.LC12
- 439 0200 80000000 		.word	.LC13
- 440 0204 00080140 		.word	1073809408
- 441 0208 00000000 		.word	hiwdg
- 442 020c A8000000 		.word	.LC14
- 443 0210 AC000000 		.word	.LC15
- 444 0214 00000000 		.word	huart1
- 445 0218 C8000000 		.word	.LC16
- 446 021c D0000000 		.word	.LC17
- 447 0220 00000000 		.word	.LANCHOR3
- 448 0224 D4000000 		.word	.LC18
- 449 0228 00010000 		.word	.LC19
- 450 022c 14010000 		.word	.LC20
- 451 0230 00000000 		.word	.LANCHOR2
- 452 0234 00000000 		.word	SIM800_Status
- 453              		.cfi_endproc
- 454              	.LFE70:
- 456              		.global	__aeabi_dmul
- 457              		.global	__aeabi_dadd
- 458              		.global	__aeabi_d2f
- 459              		.global	__aeabi_f2d
- 460              		.global	__aeabi_dcmplt
- 461              		.global	__aeabi_fcmpeq
- 462              		.section	.text.Sensor_Task,"ax",%progbits
- 463              		.align	1
- 464              		.global	Sensor_Task
- 465              		.syntax unified
- 466              		.thumb
- 467              		.thumb_func
- 468              		.fpu softvfp
- 470              	Sensor_Task:
- 471              	.LFB71:
- 256:Core/Src/freertos.c ****     }
- 257:Core/Src/freertos.c ****     // 84914812925
- 258:Core/Src/freertos.c ****     // 84816056426
- 259:Core/Src/freertos.c ****     // SIM800_SendCommand("AT+CGPSINF=0\r\n", "OK\r\n", 10000);
- 260:Core/Src/freertos.c ****     // HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
- 261:Core/Src/freertos.c ****   }
- 262:Core/Src/freertos.c ****   /* USER CODE END MQTT_Task */
- 263:Core/Src/freertos.c **** }
- 264:Core/Src/freertos.c **** 
- 265:Core/Src/freertos.c **** /* USER CODE BEGIN Header_Sensor_Task */
- 266:Core/Src/freertos.c **** /**
- 267:Core/Src/freertos.c **** * @brief Function implementing the SENSORs thread.
- 268:Core/Src/freertos.c **** * @param argument: Not used
- 269:Core/Src/freertos.c **** * @retval None
- 270:Core/Src/freertos.c **** */
-ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s 			page 15
+ 254:Core/Src/freertos.c ****     {
+ 427              		.loc 1 254 98 discriminator 3 view .LVU97
+ 428 01ce 002B     		cmp	r3, #0
+ 429 01d0 E0D1     		bne	.L6
+ 430 01d2 D6E7     		b	.L9
+ 431              	.L19:
+ 432              		.align	2
+ 433              	.L18:
+ 434 01d4 00000000 		.word	SIM800
+ 435 01d8 00000000 		.word	.LC0
+ 436 01dc 0C000000 		.word	.LC1
+ 437 01e0 10000000 		.word	.LC2
+ 438 01e4 20000000 		.word	.LC3
+ 439 01e8 24000000 		.word	.LC4
+ 440 01ec 28000000 		.word	.LC5
+ 441 01f0 2C000000 		.word	.LC6
+ 442 01f4 00000000 		.word	.LANCHOR0
+ 443 01f8 34000000 		.word	.LC7
+ 444 01fc 3C000000 		.word	.LC8
+ 445 0200 48000000 		.word	.LC9
+ 446 0204 54000000 		.word	.LC10
+ 447 0208 64000000 		.word	.LC11
+ 448 020c 00000000 		.word	.LANCHOR1
+ 449 0210 7C000000 		.word	.LC12
+ 450 0214 80000000 		.word	.LC13
+ 451 0218 00080140 		.word	1073809408
+ 452 021c 00000000 		.word	hiwdg
+ 453 0220 A8000000 		.word	.LC14
+ 454 0224 AC000000 		.word	.LC15
+ 455 0228 00000000 		.word	.LANCHOR3
+ 456 022c 00000000 		.word	huart1
+ 457 0230 C4000000 		.word	.LC16
+ 458 0234 00000000 		.word	.LANCHOR4
+ 459 0238 C8000000 		.word	.LC17
+ 460 023c F4000000 		.word	.LC18
+ 461 0240 08010000 		.word	.LC19
+ 462 0244 00000000 		.word	.LANCHOR2
+ 463 0248 00000000 		.word	SIM800_Status
+ 464              		.cfi_endproc
+ 465              	.LFE70:
+ 467              		.global	__aeabi_dmul
+ 468              		.global	__aeabi_dadd
+ 469              		.global	__aeabi_d2f
+ 470              		.global	__aeabi_f2d
+ 471              		.global	__aeabi_dcmplt
+ 472              		.global	__aeabi_fcmpeq
+ 473              		.section	.text.Sensor_Task,"ax",%progbits
+ 474              		.align	1
+ 475              		.global	Sensor_Task
+ 476              		.syntax unified
+ 477              		.thumb
+ 478              		.thumb_func
+ 479              		.fpu softvfp
+ 481              	Sensor_Task:
+ 482              	.LFB71:
+ 259:Core/Src/freertos.c ****     }
+ 260:Core/Src/freertos.c ****     // 84914812925
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccHbfWGm.s 			page 15
 
 
- 271:Core/Src/freertos.c **** /* USER CODE END Header_Sensor_Task */
- 272:Core/Src/freertos.c **** void Sensor_Task(void *argument)
- 273:Core/Src/freertos.c **** {
- 472              		.loc 1 273 1 is_stmt 1 view -0
- 473              		.cfi_startproc
- 474              		@ Volatile: function does not return.
- 475              		@ args = 0, pretend = 0, frame = 0
- 476              		@ frame_needed = 0, uses_anonymous_args = 0
- 477              	.LVL42:
- 478              		.loc 1 273 1 is_stmt 0 view .LVU95
- 479 0000 80B5     		push	{r7, lr}
- 480              	.LCFI1:
- 481              		.cfi_def_cfa_offset 8
- 482              		.cfi_offset 7, -8
- 483              		.cfi_offset 14, -4
- 484              	.LVL43:
- 485              	.L21:
- 274:Core/Src/freertos.c ****   /* USER CODE BEGIN Sensor_Task */
- 275:Core/Src/freertos.c **** 
- 276:Core/Src/freertos.c ****   while(MPU6050_Init(&hi2c1) == MPU_nOK);
- 486              		.loc 1 276 41 is_stmt 1 discriminator 1 view .LVU96
- 487              		.loc 1 276 8 discriminator 1 view .LVU97
- 488              		.loc 1 276 9 is_stmt 0 discriminator 1 view .LVU98
- 489 0002 2D48     		ldr	r0, .L29+8
- 490 0004 FFF7FEFF 		bl	MPU6050_Init
- 491              	.LVL44:
- 492              		.loc 1 276 8 discriminator 1 view .LVU99
- 493 0008 0128     		cmp	r0, #1
- 494 000a FAD0     		beq	.L21
- 277:Core/Src/freertos.c ****   // osTimerStart(SecTimerHandle, 1000);
- 278:Core/Src/freertos.c ****   is_MPU_OK = 1;
- 495              		.loc 1 278 3 is_stmt 1 view .LVU100
- 496              		.loc 1 278 13 is_stmt 0 view .LVU101
- 497 000c 2B4B     		ldr	r3, .L29+12
- 498 000e 0122     		movs	r2, #1
- 499 0010 1A70     		strb	r2, [r3]
- 500 0012 05E0     		b	.L25
- 501              	.L22:
- 279:Core/Src/freertos.c **** 
- 280:Core/Src/freertos.c ****   /* Infinite loop */
- 281:Core/Src/freertos.c ****   for(;;)
- 282:Core/Src/freertos.c ****   {
- 283:Core/Src/freertos.c ****     MPU6050_Read_Accel(&hi2c1, &MPU6050);
- 284:Core/Src/freertos.c **** 
- 285:Core/Src/freertos.c ****     gGravity = sqrt((MPU6050.Ax)*(MPU6050.Ax) + (MPU6050.Ay)*(MPU6050.Ay) + (MPU6050.Az)*(MPU6050.A
+ 261:Core/Src/freertos.c ****     // 84816056426
+ 262:Core/Src/freertos.c ****     // SIM800_SendCommand("AT+CGPSINF=0\r\n", "OK\r\n", 10000);
+ 263:Core/Src/freertos.c ****     // HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
+ 264:Core/Src/freertos.c ****   }
+ 265:Core/Src/freertos.c ****   /* USER CODE END MQTT_Task */
+ 266:Core/Src/freertos.c **** }
+ 267:Core/Src/freertos.c **** 
+ 268:Core/Src/freertos.c **** /* USER CODE BEGIN Header_Sensor_Task */
+ 269:Core/Src/freertos.c **** /**
+ 270:Core/Src/freertos.c **** * @brief Function implementing the SENSORs thread.
+ 271:Core/Src/freertos.c **** * @param argument: Not used
+ 272:Core/Src/freertos.c **** * @retval None
+ 273:Core/Src/freertos.c **** */
+ 274:Core/Src/freertos.c **** /* USER CODE END Header_Sensor_Task */
+ 275:Core/Src/freertos.c **** void Sensor_Task(void *argument)
+ 276:Core/Src/freertos.c **** {
+ 483              		.loc 1 276 1 is_stmt 1 view -0
+ 484              		.cfi_startproc
+ 485              		@ Volatile: function does not return.
+ 486              		@ args = 0, pretend = 0, frame = 0
+ 487              		@ frame_needed = 0, uses_anonymous_args = 0
+ 488              	.LVL45:
+ 489              		.loc 1 276 1 is_stmt 0 view .LVU99
+ 490 0000 80B5     		push	{r7, lr}
+ 491              	.LCFI1:
+ 492              		.cfi_def_cfa_offset 8
+ 493              		.cfi_offset 7, -8
+ 494              		.cfi_offset 14, -4
+ 495              	.LVL46:
+ 496              	.L21:
+ 277:Core/Src/freertos.c ****   /* USER CODE BEGIN Sensor_Task */
+ 278:Core/Src/freertos.c **** 
+ 279:Core/Src/freertos.c ****   while(MPU6050_Init(&hi2c1) == MPU_nOK);
+ 497              		.loc 1 279 41 is_stmt 1 discriminator 1 view .LVU100
+ 498              		.loc 1 279 8 discriminator 1 view .LVU101
+ 499              		.loc 1 279 9 is_stmt 0 discriminator 1 view .LVU102
+ 500 0002 2D48     		ldr	r0, .L29+8
+ 501 0004 FFF7FEFF 		bl	MPU6050_Init
+ 502              	.LVL47:
+ 503              		.loc 1 279 8 discriminator 1 view .LVU103
+ 504 0008 0128     		cmp	r0, #1
+ 505 000a FAD0     		beq	.L21
+ 280:Core/Src/freertos.c ****   // osTimerStart(SecTimerHandle, 1000);
+ 281:Core/Src/freertos.c ****   is_MPU_OK = 1;
+ 506              		.loc 1 281 3 is_stmt 1 view .LVU104
+ 507              		.loc 1 281 13 is_stmt 0 view .LVU105
+ 508 000c 2B4B     		ldr	r3, .L29+12
+ 509 000e 0122     		movs	r2, #1
+ 510 0010 1A70     		strb	r2, [r3]
+ 511 0012 05E0     		b	.L25
+ 512              	.L22:
+ 282:Core/Src/freertos.c **** 
+ 283:Core/Src/freertos.c ****   /* Infinite loop */
+ 284:Core/Src/freertos.c ****   for(;;)
+ 285:Core/Src/freertos.c ****   {
+ 286:Core/Src/freertos.c ****     MPU6050_Read_Accel(&hi2c1, &MPU6050);
+ 287:Core/Src/freertos.c **** 
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccHbfWGm.s 			page 16
+
+
+ 288:Core/Src/freertos.c ****     gGravity = sqrt((MPU6050.Ax)*(MPU6050.Ax) + (MPU6050.Ay)*(MPU6050.Ay) + (MPU6050.Az)*(MPU6050.A
+ 289:Core/Src/freertos.c **** 
+ 290:Core/Src/freertos.c ****     if ((gGravity < 0.10) && (is_fall == 0) && (gGravity != 0))
+ 291:Core/Src/freertos.c ****     {
+ 292:Core/Src/freertos.c ****       is_fall = 1;
+ 293:Core/Src/freertos.c ****       // vTaskResume(MQTTHandle);
+ 294:Core/Src/freertos.c ****     }
+ 295:Core/Src/freertos.c ****     HAL_IWDG_Refresh(&hiwdg);
+ 513              		.loc 1 295 5 is_stmt 1 view .LVU106
+ 514 0014 2A48     		ldr	r0, .L29+16
+ 515 0016 FFF7FEFF 		bl	HAL_IWDG_Refresh
+ 516              	.LVL48:
+ 296:Core/Src/freertos.c ****     osDelay(10);
+ 517              		.loc 1 296 5 view .LVU107
+ 518 001a 0A20     		movs	r0, #10
+ 519 001c FFF7FEFF 		bl	osDelay
+ 520              	.LVL49:
+ 284:Core/Src/freertos.c ****   {
+ 521              		.loc 1 284 8 view .LVU108
+ 522              	.L25:
+ 284:Core/Src/freertos.c ****   {
+ 523              		.loc 1 284 3 view .LVU109
  286:Core/Src/freertos.c **** 
- 287:Core/Src/freertos.c ****     if ((gGravity < 0.10) && (is_fall == 0) && (gGravity != 0))
- 288:Core/Src/freertos.c ****     {
- 289:Core/Src/freertos.c ****       is_fall = 1;
- 290:Core/Src/freertos.c ****       // vTaskResume(MQTTHandle);
- 291:Core/Src/freertos.c ****     }
- 292:Core/Src/freertos.c ****     HAL_IWDG_Refresh(&hiwdg);
- 502              		.loc 1 292 5 is_stmt 1 view .LVU102
- 503 0014 2A48     		ldr	r0, .L29+16
- 504 0016 FFF7FEFF 		bl	HAL_IWDG_Refresh
- 505              	.LVL45:
- 293:Core/Src/freertos.c ****     osDelay(10);
-ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s 			page 16
+ 524              		.loc 1 286 5 view .LVU110
+ 525 0020 284C     		ldr	r4, .L29+20
+ 526 0022 2146     		mov	r1, r4
+ 527 0024 2448     		ldr	r0, .L29+8
+ 528 0026 FFF7FEFF 		bl	MPU6050_Read_Accel
+ 529              	.LVL50:
+ 288:Core/Src/freertos.c **** 
+ 530              		.loc 1 288 5 view .LVU111
+ 288:Core/Src/freertos.c **** 
+ 531              		.loc 1 288 29 is_stmt 0 view .LVU112
+ 532 002a D4E90201 		ldrd	r0, [r4, #8]
+ 288:Core/Src/freertos.c **** 
+ 533              		.loc 1 288 33 view .LVU113
+ 534 002e 0246     		mov	r2, r0
+ 535 0030 0B46     		mov	r3, r1
+ 536 0032 FFF7FEFF 		bl	__aeabi_dmul
+ 537              	.LVL51:
+ 538 0036 0646     		mov	r6, r0
+ 539 0038 0F46     		mov	r7, r1
+ 288:Core/Src/freertos.c **** 
+ 540              		.loc 1 288 57 view .LVU114
+ 541 003a D4E90401 		ldrd	r0, [r4, #16]
+ 288:Core/Src/freertos.c **** 
+ 542              		.loc 1 288 61 view .LVU115
+ 543 003e 0246     		mov	r2, r0
+ 544 0040 0B46     		mov	r3, r1
+ 545 0042 FFF7FEFF 		bl	__aeabi_dmul
+ 546              	.LVL52:
+ 547 0046 0246     		mov	r2, r0
+ 548 0048 0B46     		mov	r3, r1
+ 288:Core/Src/freertos.c **** 
+ 549              		.loc 1 288 47 view .LVU116
+ 550 004a 3046     		mov	r0, r6
+ 551 004c 3946     		mov	r1, r7
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccHbfWGm.s 			page 17
 
 
- 506              		.loc 1 293 5 view .LVU103
- 507 001a 0A20     		movs	r0, #10
- 508 001c FFF7FEFF 		bl	osDelay
- 509              	.LVL46:
- 281:Core/Src/freertos.c ****   {
- 510              		.loc 1 281 8 view .LVU104
- 511              	.L25:
- 281:Core/Src/freertos.c ****   {
- 512              		.loc 1 281 3 view .LVU105
- 283:Core/Src/freertos.c **** 
- 513              		.loc 1 283 5 view .LVU106
- 514 0020 284C     		ldr	r4, .L29+20
- 515 0022 2146     		mov	r1, r4
- 516 0024 2448     		ldr	r0, .L29+8
- 517 0026 FFF7FEFF 		bl	MPU6050_Read_Accel
- 518              	.LVL47:
- 285:Core/Src/freertos.c **** 
- 519              		.loc 1 285 5 view .LVU107
- 285:Core/Src/freertos.c **** 
- 520              		.loc 1 285 29 is_stmt 0 view .LVU108
- 521 002a D4E90201 		ldrd	r0, [r4, #8]
- 285:Core/Src/freertos.c **** 
- 522              		.loc 1 285 33 view .LVU109
- 523 002e 0246     		mov	r2, r0
- 524 0030 0B46     		mov	r3, r1
- 525 0032 FFF7FEFF 		bl	__aeabi_dmul
- 526              	.LVL48:
- 527 0036 0646     		mov	r6, r0
- 528 0038 0F46     		mov	r7, r1
- 285:Core/Src/freertos.c **** 
- 529              		.loc 1 285 57 view .LVU110
- 530 003a D4E90401 		ldrd	r0, [r4, #16]
- 285:Core/Src/freertos.c **** 
- 531              		.loc 1 285 61 view .LVU111
- 532 003e 0246     		mov	r2, r0
- 533 0040 0B46     		mov	r3, r1
- 534 0042 FFF7FEFF 		bl	__aeabi_dmul
- 535              	.LVL49:
- 536 0046 0246     		mov	r2, r0
- 537 0048 0B46     		mov	r3, r1
- 285:Core/Src/freertos.c **** 
- 538              		.loc 1 285 47 view .LVU112
- 539 004a 3046     		mov	r0, r6
- 540 004c 3946     		mov	r1, r7
- 541 004e FFF7FEFF 		bl	__aeabi_dadd
- 542              	.LVL50:
- 543 0052 0646     		mov	r6, r0
- 544 0054 0F46     		mov	r7, r1
- 285:Core/Src/freertos.c **** 
- 545              		.loc 1 285 85 view .LVU113
- 546 0056 D4E90601 		ldrd	r0, [r4, #24]
- 285:Core/Src/freertos.c **** 
- 547              		.loc 1 285 89 view .LVU114
- 548 005a 0246     		mov	r2, r0
- 549 005c 0B46     		mov	r3, r1
- 550 005e FFF7FEFF 		bl	__aeabi_dmul
- 551              	.LVL51:
-ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s 			page 17
-
-
- 552 0062 0246     		mov	r2, r0
- 553 0064 0B46     		mov	r3, r1
- 285:Core/Src/freertos.c **** 
- 554              		.loc 1 285 16 view .LVU115
- 555 0066 3046     		mov	r0, r6
- 556 0068 3946     		mov	r1, r7
- 557 006a FFF7FEFF 		bl	__aeabi_dadd
- 558              	.LVL52:
- 559 006e FFF7FEFF 		bl	sqrt
- 560              	.LVL53:
- 561 0072 FFF7FEFF 		bl	__aeabi_d2f
+ 552 004e FFF7FEFF 		bl	__aeabi_dadd
+ 553              	.LVL53:
+ 554 0052 0646     		mov	r6, r0
+ 555 0054 0F46     		mov	r7, r1
+ 288:Core/Src/freertos.c **** 
+ 556              		.loc 1 288 85 view .LVU117
+ 557 0056 D4E90601 		ldrd	r0, [r4, #24]
+ 288:Core/Src/freertos.c **** 
+ 558              		.loc 1 288 89 view .LVU118
+ 559 005a 0246     		mov	r2, r0
+ 560 005c 0B46     		mov	r3, r1
+ 561 005e FFF7FEFF 		bl	__aeabi_dmul
  562              	.LVL54:
- 563 0076 0446     		mov	r4, r0
- 285:Core/Src/freertos.c **** 
- 564              		.loc 1 285 14 view .LVU116
- 565 0078 134B     		ldr	r3, .L29+24
- 566 007a 1860     		str	r0, [r3]	@ float
- 287:Core/Src/freertos.c ****     {
- 567              		.loc 1 287 5 is_stmt 1 view .LVU117
- 287:Core/Src/freertos.c ****     {
- 568              		.loc 1 287 19 is_stmt 0 view .LVU118
- 569 007c FFF7FEFF 		bl	__aeabi_f2d
- 570              	.LVL55:
- 287:Core/Src/freertos.c ****     {
- 571              		.loc 1 287 8 view .LVU119
- 572 0080 0BA3     		adr	r3, .L29
- 573 0082 D3E90023 		ldrd	r2, [r3]
- 574 0086 FFF7FEFF 		bl	__aeabi_dcmplt
- 575              	.LVL56:
- 576 008a 0028     		cmp	r0, #0
- 577 008c C2D0     		beq	.L22
- 287:Core/Src/freertos.c ****     {
- 578              		.loc 1 287 39 discriminator 1 view .LVU120
- 579 008e 0F4B     		ldr	r3, .L29+28
- 580 0090 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
- 287:Core/Src/freertos.c ****     {
- 581              		.loc 1 287 27 discriminator 1 view .LVU121
- 582 0092 002B     		cmp	r3, #0
- 583 0094 BED1     		bne	.L22
- 287:Core/Src/freertos.c ****     {
- 584              		.loc 1 287 45 discriminator 2 view .LVU122
- 585 0096 0021     		movs	r1, #0
- 586 0098 2046     		mov	r0, r4
- 587 009a FFF7FEFF 		bl	__aeabi_fcmpeq
- 588              	.LVL57:
- 589 009e 0028     		cmp	r0, #0
- 590 00a0 B8D1     		bne	.L22
- 289:Core/Src/freertos.c ****       // vTaskResume(MQTTHandle);
- 591              		.loc 1 289 7 is_stmt 1 view .LVU123
- 289:Core/Src/freertos.c ****       // vTaskResume(MQTTHandle);
- 592              		.loc 1 289 15 is_stmt 0 view .LVU124
- 593 00a2 0A4B     		ldr	r3, .L29+28
- 594 00a4 0122     		movs	r2, #1
- 595 00a6 1A70     		strb	r2, [r3]
- 596 00a8 B4E7     		b	.L22
- 597              	.L30:
- 598 00aa 00BFAFF3 		.align	3
-ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s 			page 18
+ 563 0062 0246     		mov	r2, r0
+ 564 0064 0B46     		mov	r3, r1
+ 288:Core/Src/freertos.c **** 
+ 565              		.loc 1 288 16 view .LVU119
+ 566 0066 3046     		mov	r0, r6
+ 567 0068 3946     		mov	r1, r7
+ 568 006a FFF7FEFF 		bl	__aeabi_dadd
+ 569              	.LVL55:
+ 570 006e FFF7FEFF 		bl	sqrt
+ 571              	.LVL56:
+ 572 0072 FFF7FEFF 		bl	__aeabi_d2f
+ 573              	.LVL57:
+ 574 0076 0446     		mov	r4, r0
+ 288:Core/Src/freertos.c **** 
+ 575              		.loc 1 288 14 view .LVU120
+ 576 0078 134B     		ldr	r3, .L29+24
+ 577 007a 1860     		str	r0, [r3]	@ float
+ 290:Core/Src/freertos.c ****     {
+ 578              		.loc 1 290 5 is_stmt 1 view .LVU121
+ 290:Core/Src/freertos.c ****     {
+ 579              		.loc 1 290 19 is_stmt 0 view .LVU122
+ 580 007c FFF7FEFF 		bl	__aeabi_f2d
+ 581              	.LVL58:
+ 290:Core/Src/freertos.c ****     {
+ 582              		.loc 1 290 8 view .LVU123
+ 583 0080 0BA3     		adr	r3, .L29
+ 584 0082 D3E90023 		ldrd	r2, [r3]
+ 585 0086 FFF7FEFF 		bl	__aeabi_dcmplt
+ 586              	.LVL59:
+ 587 008a 0028     		cmp	r0, #0
+ 588 008c C2D0     		beq	.L22
+ 290:Core/Src/freertos.c ****     {
+ 589              		.loc 1 290 39 discriminator 1 view .LVU124
+ 590 008e 0F4B     		ldr	r3, .L29+28
+ 591 0090 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 290:Core/Src/freertos.c ****     {
+ 592              		.loc 1 290 27 discriminator 1 view .LVU125
+ 593 0092 002B     		cmp	r3, #0
+ 594 0094 BED1     		bne	.L22
+ 290:Core/Src/freertos.c ****     {
+ 595              		.loc 1 290 45 discriminator 2 view .LVU126
+ 596 0096 0021     		movs	r1, #0
+ 597 0098 2046     		mov	r0, r4
+ 598 009a FFF7FEFF 		bl	__aeabi_fcmpeq
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccHbfWGm.s 			page 18
 
 
- 598      0080
- 599              	.L29:
- 600 00b0 9A999999 		.word	-1717986918
- 601 00b4 9999B93F 		.word	1069128089
- 602 00b8 00000000 		.word	hi2c1
- 603 00bc 00000000 		.word	.LANCHOR0
- 604 00c0 00000000 		.word	hiwdg
- 605 00c4 00000000 		.word	.LANCHOR4
- 606 00c8 00000000 		.word	.LANCHOR5
- 607 00cc 00000000 		.word	.LANCHOR2
- 608              		.cfi_endproc
- 609              	.LFE71:
- 611              		.section	.text.Callback01,"ax",%progbits
- 612              		.align	1
- 613              		.global	Callback01
- 614              		.syntax unified
- 615              		.thumb
- 616              		.thumb_func
- 617              		.fpu softvfp
- 619              	Callback01:
- 620              	.LVL58:
- 621              	.LFB72:
- 294:Core/Src/freertos.c ****   }
- 295:Core/Src/freertos.c ****   /* USER CODE END Sensor_Task */
- 296:Core/Src/freertos.c **** }
- 297:Core/Src/freertos.c **** 
- 298:Core/Src/freertos.c **** /* Callback01 function */
- 299:Core/Src/freertos.c **** void Callback01(void *argument)
- 300:Core/Src/freertos.c **** {
- 622              		.loc 1 300 1 is_stmt 1 view -0
- 623              		.cfi_startproc
- 624              		@ args = 0, pretend = 0, frame = 0
- 625              		@ frame_needed = 0, uses_anonymous_args = 0
- 626              		.loc 1 300 1 is_stmt 0 view .LVU126
- 627 0000 08B5     		push	{r3, lr}
- 628              	.LCFI2:
- 629              		.cfi_def_cfa_offset 8
- 630              		.cfi_offset 3, -8
- 631              		.cfi_offset 14, -4
- 301:Core/Src/freertos.c ****   /* USER CODE BEGIN Callback01 */
- 302:Core/Src/freertos.c ****   if (is_MPU_OK == 1)     HAL_IWDG_Refresh(&hiwdg);
- 632              		.loc 1 302 3 is_stmt 1 view .LVU127
- 633              		.loc 1 302 17 is_stmt 0 view .LVU128
- 634 0002 074B     		ldr	r3, .L35
- 635 0004 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
- 636              		.loc 1 302 6 view .LVU129
- 637 0006 012B     		cmp	r3, #1
- 638 0008 05D0     		beq	.L34
- 639              	.LVL59:
- 640              	.L32:
- 303:Core/Src/freertos.c ****   HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
- 641              		.loc 1 303 3 is_stmt 1 view .LVU130
- 642 000a 4FF40051 		mov	r1, #8192
- 643 000e 0548     		ldr	r0, .L35+4
- 644 0010 FFF7FEFF 		bl	HAL_GPIO_TogglePin
- 645              	.LVL60:
- 304:Core/Src/freertos.c ****   /* USER CODE END Callback01 */
-ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s 			page 19
+ 599              	.LVL60:
+ 600 009e 0028     		cmp	r0, #0
+ 601 00a0 B8D1     		bne	.L22
+ 292:Core/Src/freertos.c ****       // vTaskResume(MQTTHandle);
+ 602              		.loc 1 292 7 is_stmt 1 view .LVU127
+ 292:Core/Src/freertos.c ****       // vTaskResume(MQTTHandle);
+ 603              		.loc 1 292 15 is_stmt 0 view .LVU128
+ 604 00a2 0A4B     		ldr	r3, .L29+28
+ 605 00a4 0122     		movs	r2, #1
+ 606 00a6 1A70     		strb	r2, [r3]
+ 607 00a8 B4E7     		b	.L22
+ 608              	.L30:
+ 609 00aa 00BFAFF3 		.align	3
+ 609      0080
+ 610              	.L29:
+ 611 00b0 9A999999 		.word	-1717986918
+ 612 00b4 9999B93F 		.word	1069128089
+ 613 00b8 00000000 		.word	hi2c1
+ 614 00bc 00000000 		.word	.LANCHOR0
+ 615 00c0 00000000 		.word	hiwdg
+ 616 00c4 00000000 		.word	.LANCHOR5
+ 617 00c8 00000000 		.word	.LANCHOR6
+ 618 00cc 00000000 		.word	.LANCHOR2
+ 619              		.cfi_endproc
+ 620              	.LFE71:
+ 622              		.section	.text.Callback01,"ax",%progbits
+ 623              		.align	1
+ 624              		.global	Callback01
+ 625              		.syntax unified
+ 626              		.thumb
+ 627              		.thumb_func
+ 628              		.fpu softvfp
+ 630              	Callback01:
+ 631              	.LVL61:
+ 632              	.LFB72:
+ 297:Core/Src/freertos.c ****   }
+ 298:Core/Src/freertos.c ****   /* USER CODE END Sensor_Task */
+ 299:Core/Src/freertos.c **** }
+ 300:Core/Src/freertos.c **** 
+ 301:Core/Src/freertos.c **** /* Callback01 function */
+ 302:Core/Src/freertos.c **** void Callback01(void *argument)
+ 303:Core/Src/freertos.c **** {
+ 633              		.loc 1 303 1 is_stmt 1 view -0
+ 634              		.cfi_startproc
+ 635              		@ args = 0, pretend = 0, frame = 0
+ 636              		@ frame_needed = 0, uses_anonymous_args = 0
+ 637              		.loc 1 303 1 is_stmt 0 view .LVU130
+ 638 0000 08B5     		push	{r3, lr}
+ 639              	.LCFI2:
+ 640              		.cfi_def_cfa_offset 8
+ 641              		.cfi_offset 3, -8
+ 642              		.cfi_offset 14, -4
+ 304:Core/Src/freertos.c ****   /* USER CODE BEGIN Callback01 */
+ 305:Core/Src/freertos.c ****   if (is_MPU_OK == 1)     HAL_IWDG_Refresh(&hiwdg);
+ 643              		.loc 1 305 3 is_stmt 1 view .LVU131
+ 644              		.loc 1 305 17 is_stmt 0 view .LVU132
+ 645 0002 074B     		ldr	r3, .L35
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccHbfWGm.s 			page 19
 
 
- 305:Core/Src/freertos.c **** }
- 646              		.loc 1 305 1 is_stmt 0 view .LVU131
- 647 0014 08BD     		pop	{r3, pc}
- 648              	.LVL61:
- 649              	.L34:
- 302:Core/Src/freertos.c ****   HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
- 650              		.loc 1 302 27 is_stmt 1 discriminator 1 view .LVU132
- 651 0016 0448     		ldr	r0, .L35+8
- 652              	.LVL62:
- 302:Core/Src/freertos.c ****   HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
- 653              		.loc 1 302 27 is_stmt 0 discriminator 1 view .LVU133
- 654 0018 FFF7FEFF 		bl	HAL_IWDG_Refresh
- 655              	.LVL63:
- 656 001c F5E7     		b	.L32
- 657              	.L36:
- 658 001e 00BF     		.align	2
- 659              	.L35:
- 660 0020 00000000 		.word	.LANCHOR0
- 661 0024 00100140 		.word	1073811456
- 662 0028 00000000 		.word	hiwdg
- 663              		.cfi_endproc
- 664              	.LFE72:
- 666              		.section	.text.MX_FREERTOS_Init,"ax",%progbits
- 667              		.align	1
- 668              		.global	MX_FREERTOS_Init
- 669              		.syntax unified
- 670              		.thumb
- 671              		.thumb_func
- 672              		.fpu softvfp
- 674              	MX_FREERTOS_Init:
- 675              	.LFB69:
- 123:Core/Src/freertos.c ****   /* USER CODE BEGIN Init */
- 676              		.loc 1 123 29 is_stmt 1 view -0
- 677              		.cfi_startproc
- 678              		@ args = 0, pretend = 0, frame = 0
- 679              		@ frame_needed = 0, uses_anonymous_args = 0
- 680 0000 08B5     		push	{r3, lr}
- 681              	.LCFI3:
- 682              		.cfi_def_cfa_offset 8
- 683              		.cfi_offset 3, -8
- 684              		.cfi_offset 14, -4
- 138:Core/Src/freertos.c **** 
- 685              		.loc 1 138 3 view .LVU135
- 138:Core/Src/freertos.c **** 
- 686              		.loc 1 138 20 is_stmt 0 view .LVU136
- 687 0002 0B4B     		ldr	r3, .L39
- 688 0004 0022     		movs	r2, #0
- 689 0006 0121     		movs	r1, #1
- 690 0008 0A48     		ldr	r0, .L39+4
- 691 000a FFF7FEFF 		bl	osTimerNew
- 692              	.LVL64:
- 138:Core/Src/freertos.c **** 
- 693              		.loc 1 138 18 view .LVU137
- 694 000e 0A4B     		ldr	r3, .L39+8
- 695 0010 1860     		str	r0, [r3]
- 150:Core/Src/freertos.c **** 
- 696              		.loc 1 150 3 is_stmt 1 view .LVU138
-ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s 			page 20
+ 646 0004 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 647              		.loc 1 305 6 view .LVU133
+ 648 0006 012B     		cmp	r3, #1
+ 649 0008 05D0     		beq	.L34
+ 650              	.LVL62:
+ 651              	.L32:
+ 306:Core/Src/freertos.c ****   HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
+ 652              		.loc 1 306 3 is_stmt 1 view .LVU134
+ 653 000a 4FF40051 		mov	r1, #8192
+ 654 000e 0548     		ldr	r0, .L35+4
+ 655 0010 FFF7FEFF 		bl	HAL_GPIO_TogglePin
+ 656              	.LVL63:
+ 307:Core/Src/freertos.c ****   /* USER CODE END Callback01 */
+ 308:Core/Src/freertos.c **** }
+ 657              		.loc 1 308 1 is_stmt 0 view .LVU135
+ 658 0014 08BD     		pop	{r3, pc}
+ 659              	.LVL64:
+ 660              	.L34:
+ 305:Core/Src/freertos.c ****   HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
+ 661              		.loc 1 305 27 is_stmt 1 discriminator 1 view .LVU136
+ 662 0016 0448     		ldr	r0, .L35+8
+ 663              	.LVL65:
+ 305:Core/Src/freertos.c ****   HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
+ 664              		.loc 1 305 27 is_stmt 0 discriminator 1 view .LVU137
+ 665 0018 FFF7FEFF 		bl	HAL_IWDG_Refresh
+ 666              	.LVL66:
+ 667 001c F5E7     		b	.L32
+ 668              	.L36:
+ 669 001e 00BF     		.align	2
+ 670              	.L35:
+ 671 0020 00000000 		.word	.LANCHOR0
+ 672 0024 00100140 		.word	1073811456
+ 673 0028 00000000 		.word	hiwdg
+ 674              		.cfi_endproc
+ 675              	.LFE72:
+ 677              		.section	.text.MX_FREERTOS_Init,"ax",%progbits
+ 678              		.align	1
+ 679              		.global	MX_FREERTOS_Init
+ 680              		.syntax unified
+ 681              		.thumb
+ 682              		.thumb_func
+ 683              		.fpu softvfp
+ 685              	MX_FREERTOS_Init:
+ 686              	.LFB69:
+ 125:Core/Src/freertos.c ****   /* USER CODE BEGIN Init */
+ 687              		.loc 1 125 29 is_stmt 1 view -0
+ 688              		.cfi_startproc
+ 689              		@ args = 0, pretend = 0, frame = 0
+ 690              		@ frame_needed = 0, uses_anonymous_args = 0
+ 691 0000 08B5     		push	{r3, lr}
+ 692              	.LCFI3:
+ 693              		.cfi_def_cfa_offset 8
+ 694              		.cfi_offset 3, -8
+ 695              		.cfi_offset 14, -4
+ 140:Core/Src/freertos.c **** 
+ 696              		.loc 1 140 3 view .LVU139
+ 140:Core/Src/freertos.c **** 
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccHbfWGm.s 			page 20
 
 
- 150:Core/Src/freertos.c **** 
- 697              		.loc 1 150 16 is_stmt 0 view .LVU139
- 698 0012 0A4A     		ldr	r2, .L39+12
- 699 0014 0021     		movs	r1, #0
- 700 0016 0A48     		ldr	r0, .L39+16
- 701 0018 FFF7FEFF 		bl	osThreadNew
- 702              	.LVL65:
- 150:Core/Src/freertos.c **** 
- 703              		.loc 1 150 14 view .LVU140
- 704 001c 094B     		ldr	r3, .L39+20
- 705 001e 1860     		str	r0, [r3]
- 153:Core/Src/freertos.c **** 
- 706              		.loc 1 153 3 is_stmt 1 view .LVU141
- 153:Core/Src/freertos.c **** 
- 707              		.loc 1 153 19 is_stmt 0 view .LVU142
- 708 0020 094A     		ldr	r2, .L39+24
- 709 0022 0021     		movs	r1, #0
- 710 0024 0948     		ldr	r0, .L39+28
- 711 0026 FFF7FEFF 		bl	osThreadNew
- 712              	.LVL66:
- 153:Core/Src/freertos.c **** 
- 713              		.loc 1 153 17 view .LVU143
- 714 002a 094B     		ldr	r3, .L39+32
- 715 002c 1860     		str	r0, [r3]
- 163:Core/Src/freertos.c **** 
- 716              		.loc 1 163 1 view .LVU144
- 717 002e 08BD     		pop	{r3, pc}
- 718              	.L40:
- 719              		.align	2
- 720              	.L39:
- 721 0030 00000000 		.word	.LANCHOR6
- 722 0034 00000000 		.word	Callback01
- 723 0038 00000000 		.word	.LANCHOR1
- 724 003c 00000000 		.word	.LANCHOR7
- 725 0040 00000000 		.word	MQTT_Task
- 726 0044 00000000 		.word	.LANCHOR8
- 727 0048 00000000 		.word	.LANCHOR9
- 728 004c 00000000 		.word	Sensor_Task
- 729 0050 00000000 		.word	.LANCHOR10
- 730              		.cfi_endproc
- 731              	.LFE69:
- 733              		.global	SecTimer_attributes
- 734              		.section	.rodata.str1.4,"aMS",%progbits,1
- 735              		.align	2
- 736              	.LC21:
- 737 0000 53656354 		.ascii	"SecTimer\000"
- 737      696D6572 
- 737      00
- 738              		.global	SecTimerHandle
- 739              		.global	SENSORs_attributes
- 740 0009 000000   		.align	2
- 741              	.LC22:
- 742 000c 53454E53 		.ascii	"SENSORs\000"
- 742      4F527300 
- 743              		.global	SENSORsHandle
- 744              		.global	MQTT_attributes
- 745              		.align	2
-ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s 			page 21
+ 697              		.loc 1 140 20 is_stmt 0 view .LVU140
+ 698 0002 0B4B     		ldr	r3, .L39
+ 699 0004 0022     		movs	r2, #0
+ 700 0006 0121     		movs	r1, #1
+ 701 0008 0A48     		ldr	r0, .L39+4
+ 702 000a FFF7FEFF 		bl	osTimerNew
+ 703              	.LVL67:
+ 140:Core/Src/freertos.c **** 
+ 704              		.loc 1 140 18 view .LVU141
+ 705 000e 0A4B     		ldr	r3, .L39+8
+ 706 0010 1860     		str	r0, [r3]
+ 152:Core/Src/freertos.c **** 
+ 707              		.loc 1 152 3 is_stmt 1 view .LVU142
+ 152:Core/Src/freertos.c **** 
+ 708              		.loc 1 152 16 is_stmt 0 view .LVU143
+ 709 0012 0A4A     		ldr	r2, .L39+12
+ 710 0014 0021     		movs	r1, #0
+ 711 0016 0A48     		ldr	r0, .L39+16
+ 712 0018 FFF7FEFF 		bl	osThreadNew
+ 713              	.LVL68:
+ 152:Core/Src/freertos.c **** 
+ 714              		.loc 1 152 14 view .LVU144
+ 715 001c 094B     		ldr	r3, .L39+20
+ 716 001e 1860     		str	r0, [r3]
+ 155:Core/Src/freertos.c **** 
+ 717              		.loc 1 155 3 is_stmt 1 view .LVU145
+ 155:Core/Src/freertos.c **** 
+ 718              		.loc 1 155 19 is_stmt 0 view .LVU146
+ 719 0020 094A     		ldr	r2, .L39+24
+ 720 0022 0021     		movs	r1, #0
+ 721 0024 0948     		ldr	r0, .L39+28
+ 722 0026 FFF7FEFF 		bl	osThreadNew
+ 723              	.LVL69:
+ 155:Core/Src/freertos.c **** 
+ 724              		.loc 1 155 17 view .LVU147
+ 725 002a 094B     		ldr	r3, .L39+32
+ 726 002c 1860     		str	r0, [r3]
+ 165:Core/Src/freertos.c **** 
+ 727              		.loc 1 165 1 view .LVU148
+ 728 002e 08BD     		pop	{r3, pc}
+ 729              	.L40:
+ 730              		.align	2
+ 731              	.L39:
+ 732 0030 00000000 		.word	.LANCHOR7
+ 733 0034 00000000 		.word	Callback01
+ 734 0038 00000000 		.word	.LANCHOR1
+ 735 003c 00000000 		.word	.LANCHOR8
+ 736 0040 00000000 		.word	MQTT_Task
+ 737 0044 00000000 		.word	.LANCHOR9
+ 738 0048 00000000 		.word	.LANCHOR10
+ 739 004c 00000000 		.word	Sensor_Task
+ 740 0050 00000000 		.word	.LANCHOR11
+ 741              		.cfi_endproc
+ 742              	.LFE69:
+ 744              		.global	SecTimer_attributes
+ 745              		.section	.rodata.str1.4,"aMS",%progbits,1
+ 746              		.align	2
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccHbfWGm.s 			page 21
 
 
- 746              	.LC23:
- 747 0014 4D515454 		.ascii	"MQTT\000"
- 747      00
- 748              		.global	MQTTHandle
- 749              		.global	Loc
- 750              		.global	SMSStrg
- 751              		.global	call
- 752              		.global	is_MPU_OK
- 753              		.global	is_fall
- 754              		.global	gGravity
- 755              		.global	MPU6050
- 756              		.section	.bss.MPU6050,"aw",%nobits
- 757              		.align	3
- 758              		.set	.LANCHOR4,. + 0
- 761              	MPU6050:
- 762 0000 00000000 		.space	88
- 762      00000000 
- 762      00000000 
- 762      00000000 
- 762      00000000 
- 763              		.section	.bss.MQTTHandle,"aw",%nobits
- 764              		.align	2
- 765              		.set	.LANCHOR8,. + 0
- 768              	MQTTHandle:
- 769 0000 00000000 		.space	4
- 770              		.section	.bss.SENSORsHandle,"aw",%nobits
- 771              		.align	2
- 772              		.set	.LANCHOR10,. + 0
- 775              	SENSORsHandle:
- 776 0000 00000000 		.space	4
- 777              		.section	.bss.SecTimerHandle,"aw",%nobits
- 778              		.align	2
- 779              		.set	.LANCHOR1,. + 0
- 782              	SecTimerHandle:
- 783 0000 00000000 		.space	4
- 784              		.section	.bss.gGravity,"aw",%nobits
- 785              		.align	2
- 786              		.set	.LANCHOR5,. + 0
- 789              	gGravity:
- 790 0000 00000000 		.space	4
- 791              		.section	.bss.is_MPU_OK,"aw",%nobits
- 792              		.set	.LANCHOR0,. + 0
- 795              	is_MPU_OK:
- 796 0000 00       		.space	1
- 797              		.section	.bss.is_fall,"aw",%nobits
- 798              		.set	.LANCHOR2,. + 0
- 801              	is_fall:
- 802 0000 00       		.space	1
- 803              		.section	.data.Loc,"aw"
- 804              		.align	2
- 805              		.set	.LANCHOR3,. + 0
- 808              	Loc:
- 809 0000 31302E30 		.ascii	"10.035911,105.783660"
- 809      33353931 
- 809      312C3130 
- 809      352E3738 
- 809      33363630 
-ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s 			page 22
+ 747              	.LC20:
+ 748 0000 53656354 		.ascii	"SecTimer\000"
+ 748      696D6572 
+ 748      00
+ 749              		.global	SecTimerHandle
+ 750              		.global	SENSORs_attributes
+ 751 0009 000000   		.align	2
+ 752              	.LC21:
+ 753 000c 53454E53 		.ascii	"SENSORs\000"
+ 753      4F527300 
+ 754              		.global	SENSORsHandle
+ 755              		.global	MQTT_attributes
+ 756              		.align	2
+ 757              	.LC22:
+ 758 0014 4D515454 		.ascii	"MQTT\000"
+ 758      00
+ 759              		.global	MQTTHandle
+ 760              		.global	Loc
+ 761              		.global	SMSStrg
+ 762              		.global	call
+ 763              		.global	is_MPU_OK
+ 764              		.global	is_fall
+ 765              		.global	gGravity
+ 766              		.global	MPU6050
+ 767              		.section	.bss.MPU6050,"aw",%nobits
+ 768              		.align	3
+ 769              		.set	.LANCHOR5,. + 0
+ 772              	MPU6050:
+ 773 0000 00000000 		.space	88
+ 773      00000000 
+ 773      00000000 
+ 773      00000000 
+ 773      00000000 
+ 774              		.section	.bss.MQTTHandle,"aw",%nobits
+ 775              		.align	2
+ 776              		.set	.LANCHOR9,. + 0
+ 779              	MQTTHandle:
+ 780 0000 00000000 		.space	4
+ 781              		.section	.bss.SENSORsHandle,"aw",%nobits
+ 782              		.align	2
+ 783              		.set	.LANCHOR11,. + 0
+ 786              	SENSORsHandle:
+ 787 0000 00000000 		.space	4
+ 788              		.section	.bss.SecTimerHandle,"aw",%nobits
+ 789              		.align	2
+ 790              		.set	.LANCHOR1,. + 0
+ 793              	SecTimerHandle:
+ 794 0000 00000000 		.space	4
+ 795              		.section	.bss.gGravity,"aw",%nobits
+ 796              		.align	2
+ 797              		.set	.LANCHOR6,. + 0
+ 800              	gGravity:
+ 801 0000 00000000 		.space	4
+ 802              		.section	.bss.is_MPU_OK,"aw",%nobits
+ 803              		.set	.LANCHOR0,. + 0
+ 806              	is_MPU_OK:
+ 807 0000 00       		.space	1
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccHbfWGm.s 			page 22
 
 
- 810              		.section	.data.SMSStrg,"aw"
- 811              		.align	2
- 814              	SMSStrg:
- 815 0000 42454E48 		.ascii	"BENH NHAN DA BI NGA!\032\000"
- 815      204E4841 
- 815      4E204441 
- 815      20424920 
- 815      4E474121 
- 816 0016 000000   		.space	3
- 817              		.section	.data.call,"aw"
- 818              		.align	2
- 821              	call:
- 822 0000 4154442B 		.ascii	"ATD+84816056426;\015\012\000"
- 822      38343831 
- 822      36303536 
- 822      3432363B 
- 822      0D0A00
- 823 0013 00000000 		.space	6
- 823      0000
- 824              		.section	.rodata.MQTT_attributes,"a"
- 825              		.align	2
- 826              		.set	.LANCHOR7,. + 0
- 829              	MQTT_attributes:
- 830 0000 14000000 		.word	.LC23
- 831 0004 00000000 		.space	16
- 831      00000000 
- 831      00000000 
- 831      00000000 
- 832 0014 E8030000 		.word	1000
- 833 0018 18000000 		.word	24
- 834 001c 00000000 		.space	8
- 834      00000000 
- 835              		.section	.rodata.SENSORs_attributes,"a"
- 836              		.align	2
- 837              		.set	.LANCHOR9,. + 0
- 840              	SENSORs_attributes:
- 841 0000 0C000000 		.word	.LC22
- 842 0004 00000000 		.space	16
- 842      00000000 
- 842      00000000 
- 842      00000000 
- 843 0014 58020000 		.word	600
- 844 0018 08000000 		.word	8
- 845 001c 00000000 		.space	8
- 845      00000000 
- 846              		.section	.rodata.SecTimer_attributes,"a"
- 847              		.align	2
- 848              		.set	.LANCHOR6,. + 0
- 851              	SecTimer_attributes:
- 852 0000 00000000 		.word	.LC21
- 853 0004 00000000 		.space	12
- 853      00000000 
- 853      00000000 
- 854              		.text
- 855              	.Letext0:
- 856              		.file 2 "d:\\tools\\gcc-arm-none-eabi-10.3-2021.07\\arm-none-eabi\\include\\machine\\_default_type
- 857              		.file 3 "d:\\tools\\gcc-arm-none-eabi-10.3-2021.07\\arm-none-eabi\\include\\sys\\_stdint.h"
-ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s 			page 23
+ 808              		.section	.bss.is_fall,"aw",%nobits
+ 809              		.set	.LANCHOR2,. + 0
+ 812              	is_fall:
+ 813 0000 00       		.space	1
+ 814              		.section	.data.Loc,"aw"
+ 815              		.align	2
+ 816              		.set	.LANCHOR4,. + 0
+ 819              	Loc:
+ 820 0000 31302E30 		.ascii	"10.035911,105.783660\000"
+ 820      33353931 
+ 820      312C3130 
+ 820      352E3738 
+ 820      33363630 
+ 821 0015 00000000 		.space	4
+ 822              		.section	.data.SMSStrg,"aw"
+ 823              		.align	2
+ 824              		.set	.LANCHOR3,. + 0
+ 827              	SMSStrg:
+ 828 0000 42454E48 		.ascii	"BENH NHAN DA BI NGA!\012Toa do benh nhan: https://w"
+ 828      204E4841 
+ 828      4E204441 
+ 828      20424920 
+ 828      4E474121 
+ 829 0030 77772E67 		.ascii	"ww.google.com/maps/search/?api=1&query=10.035911,10"
+ 829      6F6F676C 
+ 829      652E636F 
+ 829      6D2F6D61 
+ 829      70732F73 
+ 830 0063 352E3738 		.ascii	"5.783660\012\000"
+ 830      33363630 
+ 830      0A00
+ 831 006d 00       		.space	1
+ 832              		.section	.data.call,"aw"
+ 833              		.align	2
+ 836              	call:
+ 837 0000 4154442B 		.ascii	"ATD+84816056426;\015\012\000"
+ 837      38343831 
+ 837      36303536 
+ 837      3432363B 
+ 837      0D0A00
+ 838 0013 00000000 		.space	6
+ 838      0000
+ 839              		.section	.rodata.MQTT_attributes,"a"
+ 840              		.align	2
+ 841              		.set	.LANCHOR8,. + 0
+ 844              	MQTT_attributes:
+ 845 0000 14000000 		.word	.LC22
+ 846 0004 00000000 		.space	16
+ 846      00000000 
+ 846      00000000 
+ 846      00000000 
+ 847 0014 E8030000 		.word	1000
+ 848 0018 18000000 		.word	24
+ 849 001c 00000000 		.space	8
+ 849      00000000 
+ 850              		.section	.rodata.SENSORs_attributes,"a"
+ 851              		.align	2
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccHbfWGm.s 			page 23
 
 
- 858              		.file 4 "Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xb.h"
- 859              		.file 5 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_def.h"
- 860              		.file 6 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_dma.h"
- 861              		.file 7 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_i2c.h"
- 862              		.file 8 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_iwdg.h"
- 863              		.file 9 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h"
- 864              		.file 10 "Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h"
- 865              		.file 11 "Core/Inc/MQTTSim800.h"
- 866              		.file 12 "Core/Inc/mpu6050.h"
- 867              		.file 13 "Core/Inc/i2c.h"
- 868              		.file 14 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_gpio.h"
- 869              		.file 15 "d:\\tools\\gcc-arm-none-eabi-10.3-2021.07\\arm-none-eabi\\include\\math.h"
- 870              		.file 16 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h"
-ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s 			page 24
+ 852              		.set	.LANCHOR10,. + 0
+ 855              	SENSORs_attributes:
+ 856 0000 0C000000 		.word	.LC21
+ 857 0004 00000000 		.space	16
+ 857      00000000 
+ 857      00000000 
+ 857      00000000 
+ 858 0014 58020000 		.word	600
+ 859 0018 08000000 		.word	8
+ 860 001c 00000000 		.space	8
+ 860      00000000 
+ 861              		.section	.rodata.SecTimer_attributes,"a"
+ 862              		.align	2
+ 863              		.set	.LANCHOR7,. + 0
+ 866              	SecTimer_attributes:
+ 867 0000 00000000 		.word	.LC20
+ 868 0004 00000000 		.space	12
+ 868      00000000 
+ 868      00000000 
+ 869              		.text
+ 870              	.Letext0:
+ 871              		.file 2 "d:\\tools\\gcc-arm-none-eabi-10.3-2021.07\\arm-none-eabi\\include\\machine\\_default_type
+ 872              		.file 3 "d:\\tools\\gcc-arm-none-eabi-10.3-2021.07\\arm-none-eabi\\include\\sys\\_stdint.h"
+ 873              		.file 4 "Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xb.h"
+ 874              		.file 5 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_def.h"
+ 875              		.file 6 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_dma.h"
+ 876              		.file 7 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_i2c.h"
+ 877              		.file 8 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_iwdg.h"
+ 878              		.file 9 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h"
+ 879              		.file 10 "Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h"
+ 880              		.file 11 "Core/Inc/MQTTSim800.h"
+ 881              		.file 12 "Core/Inc/mpu6050.h"
+ 882              		.file 13 "Core/Inc/i2c.h"
+ 883              		.file 14 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_gpio.h"
+ 884              		.file 15 "d:\\tools\\gcc-arm-none-eabi-10.3-2021.07\\arm-none-eabi\\include\\math.h"
+ 885              		.file 16 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h"
+ 886              		.file 17 "d:\\tools\\gcc-arm-none-eabi-10.3-2021.07\\arm-none-eabi\\include\\string.h"
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccHbfWGm.s 			page 24
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 freertos.c
-C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s:16     .rodata.MQTT_Task.str1.4:00000000 $d
-C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s:80     .text.MQTT_Task:00000000 $t
-C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s:88     .text.MQTT_Task:00000000 MQTT_Task
-C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s:423    .text.MQTT_Task:000001c0 $d
-C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s:463    .text.Sensor_Task:00000000 $t
-C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s:470    .text.Sensor_Task:00000000 Sensor_Task
-C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s:600    .text.Sensor_Task:000000b0 $d
-C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s:612    .text.Callback01:00000000 $t
-C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s:619    .text.Callback01:00000000 Callback01
-C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s:660    .text.Callback01:00000020 $d
-C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s:667    .text.MX_FREERTOS_Init:00000000 $t
-C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s:674    .text.MX_FREERTOS_Init:00000000 MX_FREERTOS_Init
-C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s:721    .text.MX_FREERTOS_Init:00000030 $d
-C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s:851    .rodata.SecTimer_attributes:00000000 SecTimer_attributes
-C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s:735    .rodata.str1.4:00000000 $d
-C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s:782    .bss.SecTimerHandle:00000000 SecTimerHandle
-C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s:840    .rodata.SENSORs_attributes:00000000 SENSORs_attributes
-C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s:775    .bss.SENSORsHandle:00000000 SENSORsHandle
-C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s:829    .rodata.MQTT_attributes:00000000 MQTT_attributes
-C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s:768    .bss.MQTTHandle:00000000 MQTTHandle
-C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s:808    .data.Loc:00000000 Loc
-C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s:814    .data.SMSStrg:00000000 SMSStrg
-C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s:821    .data.call:00000000 call
-C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s:795    .bss.is_MPU_OK:00000000 is_MPU_OK
-C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s:801    .bss.is_fall:00000000 is_fall
-C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s:789    .bss.gGravity:00000000 gGravity
-C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s:761    .bss.MPU6050:00000000 MPU6050
-C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s:757    .bss.MPU6050:00000000 $d
-C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s:764    .bss.MQTTHandle:00000000 $d
-C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s:771    .bss.SENSORsHandle:00000000 $d
-C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s:778    .bss.SecTimerHandle:00000000 $d
-C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s:785    .bss.gGravity:00000000 $d
-C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s:796    .bss.is_MPU_OK:00000000 $d
-C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s:802    .bss.is_fall:00000000 $d
-C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s:804    .data.Loc:00000000 $d
-C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s:811    .data.SMSStrg:00000000 $d
-C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s:818    .data.call:00000000 $d
-C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s:825    .rodata.MQTT_attributes:00000000 $d
-C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s:836    .rodata.SENSORs_attributes:00000000 $d
-C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s:847    .rodata.SecTimer_attributes:00000000 $d
+C:\Users\Vento\AppData\Local\Temp\ccHbfWGm.s:16     .rodata.MQTT_Task.str1.4:00000000 $d
+C:\Users\Vento\AppData\Local\Temp\ccHbfWGm.s:77     .text.MQTT_Task:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\ccHbfWGm.s:85     .text.MQTT_Task:00000000 MQTT_Task
+C:\Users\Vento\AppData\Local\Temp\ccHbfWGm.s:434    .text.MQTT_Task:000001d4 $d
+C:\Users\Vento\AppData\Local\Temp\ccHbfWGm.s:474    .text.Sensor_Task:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\ccHbfWGm.s:481    .text.Sensor_Task:00000000 Sensor_Task
+C:\Users\Vento\AppData\Local\Temp\ccHbfWGm.s:611    .text.Sensor_Task:000000b0 $d
+C:\Users\Vento\AppData\Local\Temp\ccHbfWGm.s:623    .text.Callback01:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\ccHbfWGm.s:630    .text.Callback01:00000000 Callback01
+C:\Users\Vento\AppData\Local\Temp\ccHbfWGm.s:671    .text.Callback01:00000020 $d
+C:\Users\Vento\AppData\Local\Temp\ccHbfWGm.s:678    .text.MX_FREERTOS_Init:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\ccHbfWGm.s:685    .text.MX_FREERTOS_Init:00000000 MX_FREERTOS_Init
+C:\Users\Vento\AppData\Local\Temp\ccHbfWGm.s:732    .text.MX_FREERTOS_Init:00000030 $d
+C:\Users\Vento\AppData\Local\Temp\ccHbfWGm.s:866    .rodata.SecTimer_attributes:00000000 SecTimer_attributes
+C:\Users\Vento\AppData\Local\Temp\ccHbfWGm.s:746    .rodata.str1.4:00000000 $d
+C:\Users\Vento\AppData\Local\Temp\ccHbfWGm.s:793    .bss.SecTimerHandle:00000000 SecTimerHandle
+C:\Users\Vento\AppData\Local\Temp\ccHbfWGm.s:855    .rodata.SENSORs_attributes:00000000 SENSORs_attributes
+C:\Users\Vento\AppData\Local\Temp\ccHbfWGm.s:786    .bss.SENSORsHandle:00000000 SENSORsHandle
+C:\Users\Vento\AppData\Local\Temp\ccHbfWGm.s:844    .rodata.MQTT_attributes:00000000 MQTT_attributes
+C:\Users\Vento\AppData\Local\Temp\ccHbfWGm.s:779    .bss.MQTTHandle:00000000 MQTTHandle
+C:\Users\Vento\AppData\Local\Temp\ccHbfWGm.s:819    .data.Loc:00000000 Loc
+C:\Users\Vento\AppData\Local\Temp\ccHbfWGm.s:827    .data.SMSStrg:00000000 SMSStrg
+C:\Users\Vento\AppData\Local\Temp\ccHbfWGm.s:836    .data.call:00000000 call
+C:\Users\Vento\AppData\Local\Temp\ccHbfWGm.s:806    .bss.is_MPU_OK:00000000 is_MPU_OK
+C:\Users\Vento\AppData\Local\Temp\ccHbfWGm.s:812    .bss.is_fall:00000000 is_fall
+C:\Users\Vento\AppData\Local\Temp\ccHbfWGm.s:800    .bss.gGravity:00000000 gGravity
+C:\Users\Vento\AppData\Local\Temp\ccHbfWGm.s:772    .bss.MPU6050:00000000 MPU6050
+C:\Users\Vento\AppData\Local\Temp\ccHbfWGm.s:768    .bss.MPU6050:00000000 $d
+C:\Users\Vento\AppData\Local\Temp\ccHbfWGm.s:775    .bss.MQTTHandle:00000000 $d
+C:\Users\Vento\AppData\Local\Temp\ccHbfWGm.s:782    .bss.SENSORsHandle:00000000 $d
+C:\Users\Vento\AppData\Local\Temp\ccHbfWGm.s:789    .bss.SecTimerHandle:00000000 $d
+C:\Users\Vento\AppData\Local\Temp\ccHbfWGm.s:796    .bss.gGravity:00000000 $d
+C:\Users\Vento\AppData\Local\Temp\ccHbfWGm.s:807    .bss.is_MPU_OK:00000000 $d
+C:\Users\Vento\AppData\Local\Temp\ccHbfWGm.s:813    .bss.is_fall:00000000 $d
+C:\Users\Vento\AppData\Local\Temp\ccHbfWGm.s:815    .data.Loc:00000000 $d
+C:\Users\Vento\AppData\Local\Temp\ccHbfWGm.s:823    .data.SMSStrg:00000000 $d
+C:\Users\Vento\AppData\Local\Temp\ccHbfWGm.s:833    .data.call:00000000 $d
+C:\Users\Vento\AppData\Local\Temp\ccHbfWGm.s:840    .rodata.MQTT_attributes:00000000 $d
+C:\Users\Vento\AppData\Local\Temp\ccHbfWGm.s:851    .rodata.SENSORs_attributes:00000000 $d
+C:\Users\Vento\AppData\Local\Temp\ccHbfWGm.s:862    .rodata.SecTimer_attributes:00000000 $d
 
 UNDEFINED SYMBOLS
 osDelay
@@ -1389,14 +1413,15 @@ MQTT_Pub
 HAL_GetTick
 HAL_GPIO_WritePin
 HAL_IWDG_Refresh
+strlen
 HAL_UART_Transmit_IT
 SIM800
 hiwdg
 huart1
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccHbfWGm.s 			page 25
+
+
 SIM800_Status
-ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccDSz6tz.s 			page 25
-
-
 __aeabi_dmul
 __aeabi_dadd
 __aeabi_d2f
