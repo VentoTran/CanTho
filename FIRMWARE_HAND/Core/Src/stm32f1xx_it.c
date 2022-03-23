@@ -57,7 +57,6 @@
 /* External variables --------------------------------------------------------*/
 extern I2C_HandleTypeDef hi2c1;
 extern UART_HandleTypeDef huart1;
-extern UART_HandleTypeDef huart3;
 extern TIM_HandleTypeDef htim1;
 
 /* USER CODE BEGIN EV */
@@ -205,17 +204,17 @@ void USART1_IRQHandler(void)
 }
 
 /**
-  * @brief This function handles USART3 global interrupt.
+  * @brief This function handles EXTI line[15:10] interrupts.
   */
-void USART3_IRQHandler(void)
+void EXTI15_10_IRQHandler(void)
 {
-  /* USER CODE BEGIN USART3_IRQn 0 */
+  /* USER CODE BEGIN EXTI15_10_IRQn 0 */
 
-  /* USER CODE END USART3_IRQn 0 */
-  HAL_UART_IRQHandler(&huart3);
-  /* USER CODE BEGIN USART3_IRQn 1 */
+  /* USER CODE END EXTI15_10_IRQn 0 */
+  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_10);
+  /* USER CODE BEGIN EXTI15_10_IRQn 1 */
 
-  /* USER CODE END USART3_IRQn 1 */
+  /* USER CODE END EXTI15_10_IRQn 1 */
 }
 
 /* USER CODE BEGIN 1 */

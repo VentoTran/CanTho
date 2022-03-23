@@ -285,7 +285,7 @@ int MQTT_Init(void)
     SIM800.mqttServer.connect = 0;
     volatile int error = 0;
     char str[32] = {0};
-    HAL_UART_Receive_IT(UART_SIM800, &rx_data, 1);
+    // HAL_UART_Receive_IT(UART_SIM800, &rx_data, 1);
 
     SIM800_SendCommand("AT\r\n", "OK\r\n", CMD_DELAY);
     SIM800_SendCommand("ATE0\r\n", "OK\r\n", CMD_DELAY);

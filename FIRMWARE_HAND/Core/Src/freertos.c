@@ -30,6 +30,7 @@
 #include "mpu6050.h"
 #include "math.h"
 #include "string.h"
+#include "stdio.h"
 
 /* USER CODE END Includes */
 
@@ -74,6 +75,10 @@ extern SIM800_St SIM800_Status;
 MPU6050_t MPU6050;
 
 float gGravity = 0.0;
+uint8_t gScore = 0;
+
+uint8_t is_test = 0;
+uint8_t is_done = 0;
 uint8_t is_fall = 0;
 uint8_t is_MPU_OK = 0;
 
@@ -186,8 +191,11 @@ void MQTT_Task(void *argument)
   SIM800.mqttClient.keepAliveInterval = 120;
 
   osDelay(100);
+  HAL_UART_Receive_IT(UART_SIM800, &rx_data, 1);
 
-  if (SIM800_SendCommand("AT\r\n", "\r\n", CMD_DELAY) == SIM_R_nOK)
+  // SIM800_SendCommand("AT\r\n", "\r\n", CMD_DELAY);
+
+  if (SIM800_SendCommand("AT\r\n", "OK\r\n", CMD_DELAY) == SIM_R_nOK)
   {
     HAL_GPIO_WritePin(SIM_PWRKEY_GPIO_Port, SIM_PWRKEY_Pin, 1);
     osDelay(2000);
@@ -219,6 +227,7 @@ void MQTT_Task(void *argument)
   osTimerStart(SecTimerHandle, 1000);
 
   MQTT_Pub("mandevices/stroke-medical/human/fall", "0");
+  osDelay(2000);
   uint32_t time = HAL_GetTick();
 
   /* Infinite loop */
@@ -233,16 +242,19 @@ void MQTT_Task(void *argument)
         HAL_UART_Transmit_IT(UART_SIM800, (uint8_t *)SMSStrg, (uint16_t)strlen(SMSStrg));
         osDelay(200);
         huart1.Instance->DR = 0b00011010;
-        osDelay(2000);
+        HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
+        osDelay(5000);
         MQTT_Pub("mandevices/stroke-medical/human/fall", "1");
         osDelay(2000);
         MQTT_Pub("mandevices/stroke-medical/human/fall/loc", Loc);
         osDelay(2000);
+        HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
         // HAL_UART_Transmit_IT(UART_SIM800, call, strlen(call));
         SIM800_SendCommand("ATD0855484556;\r\n", "OK\r\n", 2000);
-        
         osDelay(30000);
         SIM800_SendCommand("ATH\r\n", "OK\r\n", 1000);
+        HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
+        time = HAL_GetTick();
         is_fall = 0;
       }
     }
@@ -251,15 +263,24 @@ void MQTT_Task(void *argument)
       MQTT_Pub("mandevices/stroke-medical/human/fall", "0");
       time = HAL_GetTick();
     }
-    if((SIM800.mqttServer.connect == 0) || (SIM800_Status.SIM == 0) || (SIM800_Status.GPRS == 0) || (SIM800_Status.MQTT == 0))
+    if ((SIM800.mqttServer.connect == 0) || (SIM800_Status.SIM == 0) || (SIM800_Status.GPRS == 0) || (SIM800_Status.MQTT == 0))
     {
       MQTT_Init();
       MQTT_Pub("mandevices/stroke-medical/human/fall", "0");
       time = HAL_GetTick();
     }
-    // 84914812925
+    if (is_done == 1)
+    {
+      is_done = 0;
+      char str[2];
+      sprintf(str, "%d\0", gScore);
+      MQTT_Pub("mandevices/stroke-medical/human/test/score", str);
+      HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
+      time = HAL_GetTick();
+    }
     // SIM800_SendCommand("AT+CGPSINF=0\r\n", "OK\r\n", 10000);
     // HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
+    // 0855484556
   }
   /* USER CODE END MQTT_Task */
 }
@@ -275,10 +296,11 @@ void Sensor_Task(void *argument)
 {
   /* USER CODE BEGIN Sensor_Task */
 
+  osDelay(1000);
   while(MPU6050_Init(&hi2c1) == MPU_nOK);
   // osTimerStart(SecTimerHandle, 1000);
   is_MPU_OK = 1;
-
+  float data[20];
   /* Infinite loop */
   for(;;)
   {
@@ -286,13 +308,74 @@ void Sensor_Task(void *argument)
 
     gGravity = sqrt((MPU6050.Ax)*(MPU6050.Ax) + (MPU6050.Ay)*(MPU6050.Ay) + (MPU6050.Az)*(MPU6050.Az));
 
-    if ((gGravity < 0.10) && (is_fall == 0) && (gGravity != 0))
+    if (gGravity == 0)
+    {
+      is_MPU_OK = 0;
+    }
+    if ((gGravity < 0.20) && (is_fall == 0) && (gGravity != 0))
     {
       is_fall = 1;
+      HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
       // vTaskResume(MQTTHandle);
     }
+    if (is_test == 1)
+    {
+      HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
+      while(MPU6050_Init(&hi2c1) == MPU_nOK);
+      is_test = 0;
+      for (uint8_t i = 0; i < 20; i++)
+      {
+        MPU6050_Read_Accel(&hi2c1, &MPU6050);
+        data[i] = MPU6050.Az;
+        osDelay(500);
+      }
+      uint8_t lowestAngelPos = 0;
+      float error = 0;
+      for(uint8_t i = 1; i < 20; i++)
+      {
+        error = data[lowestAngelPos] - data[i];
+        if (error >= 0.03) 
+        {
+          lowestAngelPos = i;
+        }
+      }
+      if (data[lowestAngelPos] > 0.9)
+      {
+        gScore = 0;
+      }
+      else
+      {
+        if (((data[lowestAngelPos] < 0.6) && (lowestAngelPos <= 10)) || (data[lowestAngelPos] < 0.4))
+        {
+          gScore = 3;
+        }
+        else if (lowestAngelPos < 10)
+        {
+          gScore = 1;
+        }
+        else
+        {
+          gScore = 2;
+        }
+      }
+      uint8_t dead = 1;
+      for(uint8_t i = 0; i < 20; i++)
+      {
+        if(data[i] > 0.25)
+        {
+          dead = 0;
+        }
+      }
+      if(dead)
+      {
+        gScore = 4;
+      }
+      is_done = 1;
+      HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
+    }
+
     HAL_IWDG_Refresh(&hiwdg);
-    osDelay(10);
+    osDelay(20);
   }
   /* USER CODE END Sensor_Task */
 }
@@ -302,12 +385,21 @@ void Callback01(void *argument)
 {
   /* USER CODE BEGIN Callback01 */
   if (is_MPU_OK == 1)     HAL_IWDG_Refresh(&hiwdg);
-  HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
   /* USER CODE END Callback01 */
 }
 
 /* Private application code --------------------------------------------------*/
 /* USER CODE BEGIN Application */
-
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+  if ((is_test == 0) && (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_10) == 0))   
+  {
+    for (int i = 0; i < 100000; i++);
+    if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_10) == 0)
+    {
+      is_test = 1;
+    }
+  }
+}
 /* USER CODE END Application */
 
