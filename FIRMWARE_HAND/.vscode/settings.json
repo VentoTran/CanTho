@@ -9,7 +9,10 @@
         "stdbool.h": "c",
         "touch.h": "c",
         "timers.h": "c",
-        "mqttformat.h": "c"
+        "mqttformat.h": "c",
+        "compare": "c",
+        "exception": "c",
+        "type_traits": "c"
     },
     "C_Cpp.errorSquiggles": "Enabled"
 }
