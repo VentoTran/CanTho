@@ -251,8 +251,8 @@ void MQTT_Task(void *argument)
         HAL_UART_Transmit_IT(UART_SIM800, (uint8_t *)SMSStrg, (uint16_t)strlen(SMSStrg));
         osDelay(200);
         huart1.Instance->DR = 0b00011010;
-        HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
         osDelay(5000);
+        HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
         // GUI BAN TIN MQTT BENH NHAN NGA
         MQTT_Pub("mandevices/stroke-medical/human/fall", "1");
         osDelay(2000);
@@ -279,6 +279,7 @@ void MQTT_Task(void *argument)
     {
       // ket noi lai MQTT
       MQTT_Init();
+      osDelay(2000);
       MQTT_Pub("mandevices/stroke-medical/human/fall", "0");
       time = HAL_GetTick();
     }

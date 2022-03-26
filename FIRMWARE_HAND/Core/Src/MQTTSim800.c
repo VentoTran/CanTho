@@ -300,8 +300,7 @@ int MQTT_Init(void)
     error += SIM800_SendCommand("AT+CGATT=1\r\n", "OK\r\n", CMD_DELAY);
     error += SIM800_SendCommand("AT+CIPMODE=0\r\n", "OK\r\n", CMD_DELAY);
 
-    snprintf(str, sizeof(str), "AT+CSTT=\"%s\",\"%s\",\"%s\"\r\n", SIM800.sim.apn, SIM800.sim.apn_user,
-            SIM800.sim.apn_pass);
+    snprintf(str, sizeof(str), "AT+CSTT=\"%s\",\"%s\",\"%s\"\r\n", SIM800.sim.apn, SIM800.sim.apn_user, SIM800.sim.apn_pass);
     error += SIM800_SendCommand(str, "OK\r\n", CMD_DELAY);
 
     error += SIM800_SendCommand("AT+CIICR\r\n", "OK\r\n", CMD_DELAY);

@@ -1,6 +1,0 @@
-Added Component: Designator=L1(L-0805)
-Add component. Clean all parameters for all variants
-Add component (AddParameter): Name = "Value"; Value = "150 mH"; VariantName = "[No Variations]"
-Added Pin To Net: NetName=VDD_EXT Pin=L1-1
-Added Pin To Net: NetName=NetL1_2 Pin=L1-2
-Added Member To Class: ClassName=Sheet1 Member=Component L1 47nH
