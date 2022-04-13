@@ -360,7 +360,6 @@ void BT_Task(void* parameter)
       }
     }
   }
-  
 }
 
 
