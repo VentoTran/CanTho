@@ -49,6 +49,7 @@
 
 /* USER CODE BEGIN PV */
 SIM800_t SIM800;
+GPS_Sta_t myGPS;
 
 /* USER CODE END PV */
 

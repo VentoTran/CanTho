@@ -1,0 +1,981 @@
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccaYGb5c.s 			page 1
+
+
+   1              		.cpu cortex-m3
+   2              		.eabi_attribute 20, 1
+   3              		.eabi_attribute 21, 1
+   4              		.eabi_attribute 23, 3
+   5              		.eabi_attribute 24, 1
+   6              		.eabi_attribute 25, 1
+   7              		.eabi_attribute 26, 1
+   8              		.eabi_attribute 30, 1
+   9              		.eabi_attribute 34, 1
+  10              		.eabi_attribute 18, 4
+  11              		.file	"MQTTFormat.c"
+  12              		.text
+  13              	.Ltext0:
+  14              		.cfi_sections	.debug_frame
+  15              		.section	.text.MQTTPacket_getName,"ax",%progbits
+  16              		.align	1
+  17              		.global	MQTTPacket_getName
+  18              		.arch armv7-m
+  19              		.syntax unified
+  20              		.thumb
+  21              		.thumb_func
+  22              		.fpu softvfp
+  24              	MQTTPacket_getName:
+  25              	.LVL0:
+  26              	.LFB3:
+  27              		.file 1 "Core/Src/MQTTFormat.c"
+   1:Core/Src/MQTTFormat.c **** /*******************************************************************************
+   2:Core/Src/MQTTFormat.c ****  * Copyright (c) 2014 IBM Corp.
+   3:Core/Src/MQTTFormat.c ****  *
+   4:Core/Src/MQTTFormat.c ****  * All rights reserved. This program and the accompanying materials
+   5:Core/Src/MQTTFormat.c ****  * are made available under the terms of the Eclipse Public License v1.0
+   6:Core/Src/MQTTFormat.c ****  * and Eclipse Distribution License v1.0 which accompany this distribution.
+   7:Core/Src/MQTTFormat.c ****  *
+   8:Core/Src/MQTTFormat.c ****  * The Eclipse Public License is available at
+   9:Core/Src/MQTTFormat.c ****  *    http://www.eclipse.org/legal/epl-v10.html
+  10:Core/Src/MQTTFormat.c ****  * and the Eclipse Distribution License is available at
+  11:Core/Src/MQTTFormat.c ****  *   http://www.eclipse.org/org/documents/edl-v10.php.
+  12:Core/Src/MQTTFormat.c ****  *
+  13:Core/Src/MQTTFormat.c ****  * Contributors:
+  14:Core/Src/MQTTFormat.c ****  *    Ian Craggs - initial API and implementation and/or initial documentation
+  15:Core/Src/MQTTFormat.c ****  *******************************************************************************/
+  16:Core/Src/MQTTFormat.c **** 
+  17:Core/Src/MQTTFormat.c **** #include "StackTrace.h"
+  18:Core/Src/MQTTFormat.c **** #include "MQTTPacket.h"
+  19:Core/Src/MQTTFormat.c **** 
+  20:Core/Src/MQTTFormat.c **** #include <string.h>
+  21:Core/Src/MQTTFormat.c **** 
+  22:Core/Src/MQTTFormat.c **** 
+  23:Core/Src/MQTTFormat.c **** const char* MQTTPacket_names[] =
+  24:Core/Src/MQTTFormat.c **** {
+  25:Core/Src/MQTTFormat.c **** 	"RESERVED", "CONNECT", "CONNACK", "PUBLISH", "PUBACK", "PUBREC", "PUBREL",
+  26:Core/Src/MQTTFormat.c **** 	"PUBCOMP", "SUBSCRIBE", "SUBACK", "UNSUBSCRIBE", "UNSUBACK",
+  27:Core/Src/MQTTFormat.c **** 	"PINGREQ", "PINGRESP", "DISCONNECT"
+  28:Core/Src/MQTTFormat.c **** };
+  29:Core/Src/MQTTFormat.c **** 
+  30:Core/Src/MQTTFormat.c **** 
+  31:Core/Src/MQTTFormat.c **** const char* MQTTPacket_getName(unsigned short packetid)
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccaYGb5c.s 			page 2
+
+
+  32:Core/Src/MQTTFormat.c **** {
+  28              		.loc 1 32 1 view -0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              		@ link register save eliminated.
+  33:Core/Src/MQTTFormat.c **** 	return MQTTPacket_names[packetid];
+  33              		.loc 1 33 2 view .LVU1
+  34:Core/Src/MQTTFormat.c **** }
+  34              		.loc 1 34 1 is_stmt 0 view .LVU2
+  35 0000 014B     		ldr	r3, .L2
+  36 0002 53F82000 		ldr	r0, [r3, r0, lsl #2]
+  37              	.LVL1:
+  38              		.loc 1 34 1 view .LVU3
+  39 0006 7047     		bx	lr
+  40              	.L3:
+  41              		.align	2
+  42              	.L2:
+  43 0008 00000000 		.word	.LANCHOR0
+  44              		.cfi_endproc
+  45              	.LFE3:
+  47              		.section	.rodata.MQTTStringFormat_connect.str1.4,"aMS",%progbits,1
+  48              		.align	2
+  49              	.LC0:
+  50 0000 434F4E4E 		.ascii	"CONNECT MQTT version %d, client id %.*s, clean sess"
+  50      45435420 
+  50      4D515454 
+  50      20766572 
+  50      73696F6E 
+  51 0033 696F6E20 		.ascii	"ion %d, keep alive %d\000"
+  51      25642C20 
+  51      6B656570 
+  51      20616C69 
+  51      76652025 
+  52 0049 000000   		.align	2
+  53              	.LC1:
+  54 004c 2C207769 		.ascii	", will QoS %d, will retain %d, will topic %.*s, wil"
+  54      6C6C2051 
+  54      6F532025 
+  54      642C2077 
+  54      696C6C20 
+  55 007f 6C206D65 		.ascii	"l message %.*s\000"
+  55      73736167 
+  55      6520252E 
+  55      2A7300
+  56 008e 0000     		.align	2
+  57              	.LC2:
+  58 0090 2C207573 		.ascii	", user name %.*s\000"
+  58      6572206E 
+  58      616D6520 
+  58      252E2A73 
+  58      00
+  59 00a1 000000   		.align	2
+  60              	.LC3:
+  61 00a4 2C207061 		.ascii	", password %.*s\000"
+  61      7373776F 
+  61      72642025 
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccaYGb5c.s 			page 3
+
+
+  61      2E2A7300 
+  62              		.section	.text.MQTTStringFormat_connect,"ax",%progbits
+  63              		.align	1
+  64              		.global	MQTTStringFormat_connect
+  65              		.syntax unified
+  66              		.thumb
+  67              		.thumb_func
+  68              		.fpu softvfp
+  70              	MQTTStringFormat_connect:
+  71              	.LVL2:
+  72              	.LFB4:
+  35:Core/Src/MQTTFormat.c **** 
+  36:Core/Src/MQTTFormat.c **** 
+  37:Core/Src/MQTTFormat.c **** int MQTTStringFormat_connect(char* strbuf, int strbuflen, MQTTPacket_connectData* data)
+  38:Core/Src/MQTTFormat.c **** {
+  73              		.loc 1 38 1 is_stmt 1 view -0
+  74              		.cfi_startproc
+  75              		@ args = 0, pretend = 0, frame = 0
+  76              		@ frame_needed = 0, uses_anonymous_args = 0
+  77              		.loc 1 38 1 is_stmt 0 view .LVU5
+  78 0000 F0B5     		push	{r4, r5, r6, r7, lr}
+  79              	.LCFI0:
+  80              		.cfi_def_cfa_offset 20
+  81              		.cfi_offset 4, -20
+  82              		.cfi_offset 5, -16
+  83              		.cfi_offset 6, -12
+  84              		.cfi_offset 7, -8
+  85              		.cfi_offset 14, -4
+  86 0002 87B0     		sub	sp, sp, #28
+  87              	.LCFI1:
+  88              		.cfi_def_cfa_offset 48
+  89 0004 0646     		mov	r6, r0
+  90 0006 0F46     		mov	r7, r1
+  91 0008 1446     		mov	r4, r2
+  39:Core/Src/MQTTFormat.c **** 	int strindex = 0;
+  92              		.loc 1 39 2 is_stmt 1 view .LVU6
+  93              	.LVL3:
+  40:Core/Src/MQTTFormat.c **** 
+  41:Core/Src/MQTTFormat.c **** 	strindex = snprintf(strbuf, strbuflen,
+  94              		.loc 1 41 2 view .LVU7
+  42:Core/Src/MQTTFormat.c **** 			"CONNECT MQTT version %d, client id %.*s, clean session %d, keep alive %d",
+  43:Core/Src/MQTTFormat.c **** 			(int)data->MQTTVersion, data->clientID.lenstring.len, data->clientID.lenstring.data,
+  44:Core/Src/MQTTFormat.c **** 			(int)data->cleansession, data->keepAliveInterval);
+  95              		.loc 1 44 13 is_stmt 0 view .LVU8
+  96 000a 937E     		ldrb	r3, [r2, #26]	@ zero_extendqisi2
+  97              		.loc 1 44 33 view .LVU9
+  98 000c 128B     		ldrh	r2, [r2, #24]
+  99              	.LVL4:
+  41:Core/Src/MQTTFormat.c **** 			"CONNECT MQTT version %d, client id %.*s, clean session %d, keep alive %d",
+ 100              		.loc 1 41 13 view .LVU10
+ 101 000e 0392     		str	r2, [sp, #12]
+ 102 0010 0293     		str	r3, [sp, #8]
+ 103 0012 6369     		ldr	r3, [r4, #20]
+ 104 0014 0193     		str	r3, [sp, #4]
+ 105 0016 2369     		ldr	r3, [r4, #16]
+ 106 0018 0093     		str	r3, [sp]
+ 107 001a 237A     		ldrb	r3, [r4, #8]	@ zero_extendqisi2
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccaYGb5c.s 			page 4
+
+
+ 108 001c 1B4A     		ldr	r2, .L12
+ 109 001e FFF7FEFF 		bl	snprintf
+ 110              	.LVL5:
+  41:Core/Src/MQTTFormat.c **** 			"CONNECT MQTT version %d, client id %.*s, clean session %d, keep alive %d",
+ 111              		.loc 1 41 13 view .LVU11
+ 112 0022 0546     		mov	r5, r0
+ 113              	.LVL6:
+  45:Core/Src/MQTTFormat.c **** 	if (data->willFlag)
+ 114              		.loc 1 45 2 is_stmt 1 view .LVU12
+ 115              		.loc 1 45 10 is_stmt 0 view .LVU13
+ 116 0024 E37E     		ldrb	r3, [r4, #27]	@ zero_extendqisi2
+ 117              		.loc 1 45 5 view .LVU14
+ 118 0026 63B9     		cbnz	r3, .L9
+ 119              	.LVL7:
+ 120              	.L5:
+  46:Core/Src/MQTTFormat.c **** 		strindex += snprintf(&strbuf[strindex], strbuflen - strindex,
+  47:Core/Src/MQTTFormat.c **** 				", will QoS %d, will retain %d, will topic %.*s, will message %.*s",
+  48:Core/Src/MQTTFormat.c **** 				data->will.qos, data->will.retained,
+  49:Core/Src/MQTTFormat.c **** 				data->will.topicName.lenstring.len, data->will.topicName.lenstring.data,
+  50:Core/Src/MQTTFormat.c **** 				data->will.message.lenstring.len, data->will.message.lenstring.data);
+  51:Core/Src/MQTTFormat.c **** 	if (data->username.lenstring.data && data->username.lenstring.len > 0)
+ 121              		.loc 1 51 2 is_stmt 1 view .LVU15
+ 122              		.loc 1 51 30 is_stmt 0 view .LVU16
+ 123 0028 A26C     		ldr	r2, [r4, #72]
+ 124              		.loc 1 51 5 view .LVU17
+ 125 002a 12B1     		cbz	r2, .L6
+ 126              		.loc 1 51 63 discriminator 1 view .LVU18
+ 127 002c 636C     		ldr	r3, [r4, #68]
+ 128              		.loc 1 51 36 discriminator 1 view .LVU19
+ 129 002e 002B     		cmp	r3, #0
+ 130 0030 1BDC     		bgt	.L10
+ 131              	.L6:
+  52:Core/Src/MQTTFormat.c **** 		strindex += snprintf(&strbuf[strindex], strbuflen - strindex,
+  53:Core/Src/MQTTFormat.c **** 				", user name %.*s", data->username.lenstring.len, data->username.lenstring.data);
+  54:Core/Src/MQTTFormat.c **** 	if (data->password.lenstring.data && data->password.lenstring.len > 0)
+ 132              		.loc 1 54 2 is_stmt 1 view .LVU20
+ 133              		.loc 1 54 30 is_stmt 0 view .LVU21
+ 134 0032 626D     		ldr	r2, [r4, #84]
+ 135              		.loc 1 54 5 view .LVU22
+ 136 0034 12B1     		cbz	r2, .L4
+ 137              		.loc 1 54 63 discriminator 1 view .LVU23
+ 138 0036 236D     		ldr	r3, [r4, #80]
+ 139              		.loc 1 54 36 discriminator 1 view .LVU24
+ 140 0038 002B     		cmp	r3, #0
+ 141 003a 1EDC     		bgt	.L11
+ 142              	.L4:
+  55:Core/Src/MQTTFormat.c **** 		strindex += snprintf(&strbuf[strindex], strbuflen - strindex,
+  56:Core/Src/MQTTFormat.c **** 				", password %.*s", data->password.lenstring.len, data->password.lenstring.data);
+  57:Core/Src/MQTTFormat.c **** 	return strindex;
+  58:Core/Src/MQTTFormat.c **** }
+ 143              		.loc 1 58 1 view .LVU25
+ 144 003c 2846     		mov	r0, r5
+ 145 003e 07B0     		add	sp, sp, #28
+ 146              	.LCFI2:
+ 147              		.cfi_remember_state
+ 148              		.cfi_def_cfa_offset 20
+ 149              		@ sp needed
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccaYGb5c.s 			page 5
+
+
+ 150 0040 F0BD     		pop	{r4, r5, r6, r7, pc}
+ 151              	.LVL8:
+ 152              	.L9:
+ 153              	.LCFI3:
+ 154              		.cfi_restore_state
+  46:Core/Src/MQTTFormat.c **** 				", will QoS %d, will retain %d, will topic %.*s, will message %.*s",
+ 155              		.loc 1 46 3 is_stmt 1 view .LVU26
+  48:Core/Src/MQTTFormat.c **** 				data->will.topicName.lenstring.len, data->will.topicName.lenstring.data,
+ 156              		.loc 1 48 31 is_stmt 0 view .LVU27
+ 157 0042 94F83C30 		ldrb	r3, [r4, #60]	@ zero_extendqisi2
+  46:Core/Src/MQTTFormat.c **** 				", will QoS %d, will retain %d, will topic %.*s, will message %.*s",
+ 158              		.loc 1 46 15 view .LVU28
+ 159 0046 A26B     		ldr	r2, [r4, #56]
+ 160 0048 0492     		str	r2, [sp, #16]
+ 161 004a 626B     		ldr	r2, [r4, #52]
+ 162 004c 0392     		str	r2, [sp, #12]
+ 163 004e E26A     		ldr	r2, [r4, #44]
+ 164 0050 0292     		str	r2, [sp, #8]
+ 165 0052 A26A     		ldr	r2, [r4, #40]
+ 166 0054 0192     		str	r2, [sp, #4]
+ 167 0056 0093     		str	r3, [sp]
+ 168 0058 94F83D30 		ldrb	r3, [r4, #61]	@ zero_extendqisi2
+ 169 005c 0C4A     		ldr	r2, .L12+4
+ 170 005e 391A     		subs	r1, r7, r0
+ 171 0060 3018     		adds	r0, r6, r0
+ 172              	.LVL9:
+  46:Core/Src/MQTTFormat.c **** 				", will QoS %d, will retain %d, will topic %.*s, will message %.*s",
+ 173              		.loc 1 46 15 view .LVU29
+ 174 0062 FFF7FEFF 		bl	snprintf
+ 175              	.LVL10:
+  46:Core/Src/MQTTFormat.c **** 				", will QoS %d, will retain %d, will topic %.*s, will message %.*s",
+ 176              		.loc 1 46 12 view .LVU30
+ 177 0066 0544     		add	r5, r5, r0
+ 178              	.LVL11:
+  46:Core/Src/MQTTFormat.c **** 				", will QoS %d, will retain %d, will topic %.*s, will message %.*s",
+ 179              		.loc 1 46 12 view .LVU31
+ 180 0068 DEE7     		b	.L5
+ 181              	.L10:
+  52:Core/Src/MQTTFormat.c **** 				", user name %.*s", data->username.lenstring.len, data->username.lenstring.data);
+ 182              		.loc 1 52 3 is_stmt 1 view .LVU32
+  52:Core/Src/MQTTFormat.c **** 				", user name %.*s", data->username.lenstring.len, data->username.lenstring.data);
+ 183              		.loc 1 52 15 is_stmt 0 view .LVU33
+ 184 006a 0092     		str	r2, [sp]
+ 185 006c 094A     		ldr	r2, .L12+8
+ 186 006e 791B     		subs	r1, r7, r5
+ 187 0070 7019     		adds	r0, r6, r5
+ 188 0072 FFF7FEFF 		bl	snprintf
+ 189              	.LVL12:
+  52:Core/Src/MQTTFormat.c **** 				", user name %.*s", data->username.lenstring.len, data->username.lenstring.data);
+ 190              		.loc 1 52 12 view .LVU34
+ 191 0076 0544     		add	r5, r5, r0
+ 192              	.LVL13:
+  52:Core/Src/MQTTFormat.c **** 				", user name %.*s", data->username.lenstring.len, data->username.lenstring.data);
+ 193              		.loc 1 52 12 view .LVU35
+ 194 0078 DBE7     		b	.L6
+ 195              	.L11:
+  55:Core/Src/MQTTFormat.c **** 				", password %.*s", data->password.lenstring.len, data->password.lenstring.data);
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccaYGb5c.s 			page 6
+
+
+ 196              		.loc 1 55 3 is_stmt 1 view .LVU36
+  55:Core/Src/MQTTFormat.c **** 				", password %.*s", data->password.lenstring.len, data->password.lenstring.data);
+ 197              		.loc 1 55 15 is_stmt 0 view .LVU37
+ 198 007a 0092     		str	r2, [sp]
+ 199 007c 064A     		ldr	r2, .L12+12
+ 200 007e 791B     		subs	r1, r7, r5
+ 201 0080 7019     		adds	r0, r6, r5
+ 202 0082 FFF7FEFF 		bl	snprintf
+ 203              	.LVL14:
+  55:Core/Src/MQTTFormat.c **** 				", password %.*s", data->password.lenstring.len, data->password.lenstring.data);
+ 204              		.loc 1 55 12 view .LVU38
+ 205 0086 0544     		add	r5, r5, r0
+ 206              	.LVL15:
+  57:Core/Src/MQTTFormat.c **** }
+ 207              		.loc 1 57 2 is_stmt 1 view .LVU39
+  57:Core/Src/MQTTFormat.c **** }
+ 208              		.loc 1 57 9 is_stmt 0 view .LVU40
+ 209 0088 D8E7     		b	.L4
+ 210              	.L13:
+ 211 008a 00BF     		.align	2
+ 212              	.L12:
+ 213 008c 00000000 		.word	.LC0
+ 214 0090 4C000000 		.word	.LC1
+ 215 0094 90000000 		.word	.LC2
+ 216 0098 A4000000 		.word	.LC3
+ 217              		.cfi_endproc
+ 218              	.LFE4:
+ 220              		.section	.rodata.MQTTStringFormat_connack.str1.4,"aMS",%progbits,1
+ 221              		.align	2
+ 222              	.LC4:
+ 223 0000 434F4E4E 		.ascii	"CONNACK session present %d, rc %d\000"
+ 223      41434B20 
+ 223      73657373 
+ 223      696F6E20 
+ 223      70726573 
+ 224              		.section	.text.MQTTStringFormat_connack,"ax",%progbits
+ 225              		.align	1
+ 226              		.global	MQTTStringFormat_connack
+ 227              		.syntax unified
+ 228              		.thumb
+ 229              		.thumb_func
+ 230              		.fpu softvfp
+ 232              	MQTTStringFormat_connack:
+ 233              	.LVL16:
+ 234              	.LFB5:
+  59:Core/Src/MQTTFormat.c **** 
+  60:Core/Src/MQTTFormat.c **** 
+  61:Core/Src/MQTTFormat.c **** int MQTTStringFormat_connack(char* strbuf, int strbuflen, unsigned char connack_rc, unsigned char s
+  62:Core/Src/MQTTFormat.c **** {
+ 235              		.loc 1 62 1 is_stmt 1 view -0
+ 236              		.cfi_startproc
+ 237              		@ args = 0, pretend = 0, frame = 0
+ 238              		@ frame_needed = 0, uses_anonymous_args = 0
+ 239              		.loc 1 62 1 is_stmt 0 view .LVU42
+ 240 0000 00B5     		push	{lr}
+ 241              	.LCFI4:
+ 242              		.cfi_def_cfa_offset 4
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccaYGb5c.s 			page 7
+
+
+ 243              		.cfi_offset 14, -4
+ 244 0002 83B0     		sub	sp, sp, #12
+ 245              	.LCFI5:
+ 246              		.cfi_def_cfa_offset 16
+  63:Core/Src/MQTTFormat.c **** 	int strindex = snprintf(strbuf, strbuflen, "CONNACK session present %d, rc %d", sessionPresent, co
+ 247              		.loc 1 63 2 is_stmt 1 view .LVU43
+ 248              		.loc 1 63 17 is_stmt 0 view .LVU44
+ 249 0004 0092     		str	r2, [sp]
+ 250 0006 034A     		ldr	r2, .L16
+ 251              	.LVL17:
+ 252              		.loc 1 63 17 view .LVU45
+ 253 0008 FFF7FEFF 		bl	snprintf
+ 254              	.LVL18:
+  64:Core/Src/MQTTFormat.c **** 	return strindex;
+ 255              		.loc 1 64 2 is_stmt 1 view .LVU46
+  65:Core/Src/MQTTFormat.c **** }
+ 256              		.loc 1 65 1 is_stmt 0 view .LVU47
+ 257 000c 03B0     		add	sp, sp, #12
+ 258              	.LCFI6:
+ 259              		.cfi_def_cfa_offset 4
+ 260              		@ sp needed
+ 261 000e 5DF804FB 		ldr	pc, [sp], #4
+ 262              	.L17:
+ 263 0012 00BF     		.align	2
+ 264              	.L16:
+ 265 0014 00000000 		.word	.LC4
+ 266              		.cfi_endproc
+ 267              	.LFE5:
+ 269              		.section	.rodata.MQTTStringFormat_publish.str1.4,"aMS",%progbits,1
+ 270              		.align	2
+ 271              	.LC5:
+ 272 0000 5055424C 		.ascii	"PUBLISH dup %d, QoS %d, retained %d, packet id %d, "
+ 272      49534820 
+ 272      64757020 
+ 272      25642C20 
+ 272      516F5320 
+ 273 0033 746F7069 		.ascii	"topic %.*s, payload length %d, payload %.*s\000"
+ 273      6320252E 
+ 273      2A732C20 
+ 273      7061796C 
+ 273      6F616420 
+ 274              		.section	.text.MQTTStringFormat_publish,"ax",%progbits
+ 275              		.align	1
+ 276              		.global	MQTTStringFormat_publish
+ 277              		.syntax unified
+ 278              		.thumb
+ 279              		.thumb_func
+ 280              		.fpu softvfp
+ 282              	MQTTStringFormat_publish:
+ 283              	.LVL19:
+ 284              	.LFB6:
+  66:Core/Src/MQTTFormat.c **** 
+  67:Core/Src/MQTTFormat.c **** 
+  68:Core/Src/MQTTFormat.c **** int MQTTStringFormat_publish(char* strbuf, int strbuflen, unsigned char dup, int qos, unsigned char
+  69:Core/Src/MQTTFormat.c **** 		unsigned short packetid, MQTTString topicName, unsigned char* payload, int payloadlen)
+  70:Core/Src/MQTTFormat.c **** {
+ 285              		.loc 1 70 1 is_stmt 1 view -0
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccaYGb5c.s 			page 8
+
+
+ 286              		.cfi_startproc
+ 287              		@ args = 28, pretend = 0, frame = 0
+ 288              		@ frame_needed = 0, uses_anonymous_args = 0
+ 289              		.loc 1 70 1 is_stmt 0 view .LVU49
+ 290 0000 30B5     		push	{r4, r5, lr}
+ 291              	.LCFI7:
+ 292              		.cfi_def_cfa_offset 12
+ 293              		.cfi_offset 4, -12
+ 294              		.cfi_offset 5, -8
+ 295              		.cfi_offset 14, -4
+ 296 0002 89B0     		sub	sp, sp, #36
+ 297              	.LCFI8:
+ 298              		.cfi_def_cfa_offset 48
+ 299 0004 129C     		ldr	r4, [sp, #72]
+  71:Core/Src/MQTTFormat.c **** 	int strindex = snprintf(strbuf, strbuflen,
+ 300              		.loc 1 71 2 is_stmt 1 view .LVU50
+ 301              		.loc 1 71 17 is_stmt 0 view .LVU51
+ 302 0006 119D     		ldr	r5, [sp, #68]
+ 303 0008 0795     		str	r5, [sp, #28]
+ 304 000a 2546     		mov	r5, r4
+ 305 000c 142C     		cmp	r4, #20
+ 306 000e A8BF     		it	ge
+ 307 0010 1425     		movge	r5, #20
+ 308 0012 0695     		str	r5, [sp, #24]
+ 309 0014 0594     		str	r4, [sp, #20]
+ 310 0016 109C     		ldr	r4, [sp, #64]
+ 311 0018 0494     		str	r4, [sp, #16]
+ 312 001a 0F9C     		ldr	r4, [sp, #60]
+ 313 001c 142C     		cmp	r4, #20
+ 314 001e A8BF     		it	ge
+ 315 0020 1424     		movge	r4, #20
+ 316 0022 0394     		str	r4, [sp, #12]
+ 317 0024 BDF83440 		ldrh	r4, [sp, #52]
+ 318 0028 0294     		str	r4, [sp, #8]
+ 319 002a 9DF83040 		ldrb	r4, [sp, #48]	@ zero_extendqisi2
+ 320 002e 0194     		str	r4, [sp, #4]
+ 321 0030 0093     		str	r3, [sp]
+ 322 0032 1346     		mov	r3, r2
+ 323              	.LVL20:
+ 324              		.loc 1 71 17 view .LVU52
+ 325 0034 024A     		ldr	r2, .L20
+ 326              	.LVL21:
+ 327              		.loc 1 71 17 view .LVU53
+ 328 0036 FFF7FEFF 		bl	snprintf
+ 329              	.LVL22:
+  72:Core/Src/MQTTFormat.c **** 				"PUBLISH dup %d, QoS %d, retained %d, packet id %d, topic %.*s, payload length %d, payload %.*s
+  73:Core/Src/MQTTFormat.c **** 				dup, qos, retained, packetid,
+  74:Core/Src/MQTTFormat.c **** 				(topicName.lenstring.len < 20) ? topicName.lenstring.len : 20, topicName.lenstring.data,
+  75:Core/Src/MQTTFormat.c **** 				payloadlen, (payloadlen < 20) ? payloadlen : 20, payload);
+  76:Core/Src/MQTTFormat.c **** 	return strindex;
+ 330              		.loc 1 76 2 is_stmt 1 view .LVU54
+  77:Core/Src/MQTTFormat.c **** }
+ 331              		.loc 1 77 1 is_stmt 0 view .LVU55
+ 332 003a 09B0     		add	sp, sp, #36
+ 333              	.LCFI9:
+ 334              		.cfi_def_cfa_offset 12
+ 335              		@ sp needed
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccaYGb5c.s 			page 9
+
+
+ 336 003c 30BD     		pop	{r4, r5, pc}
+ 337              	.LVL23:
+ 338              	.L21:
+ 339              		.loc 1 77 1 view .LVU56
+ 340 003e 00BF     		.align	2
+ 341              	.L20:
+ 342 0040 00000000 		.word	.LC5
+ 343              		.cfi_endproc
+ 344              	.LFE6:
+ 346              		.section	.rodata.MQTTStringFormat_ack.str1.4,"aMS",%progbits,1
+ 347              		.align	2
+ 348              	.LC6:
+ 349 0000 25732C20 		.ascii	"%s, packet id %d\000"
+ 349      7061636B 
+ 349      65742069 
+ 349      64202564 
+ 349      00
+ 350 0011 000000   		.align	2
+ 351              	.LC7:
+ 352 0014 2C206475 		.ascii	", dup %d\000"
+ 352      70202564 
+ 352      00
+ 353              		.section	.text.MQTTStringFormat_ack,"ax",%progbits
+ 354              		.align	1
+ 355              		.global	MQTTStringFormat_ack
+ 356              		.syntax unified
+ 357              		.thumb
+ 358              		.thumb_func
+ 359              		.fpu softvfp
+ 361              	MQTTStringFormat_ack:
+ 362              	.LVL24:
+ 363              	.LFB7:
+  78:Core/Src/MQTTFormat.c **** 
+  79:Core/Src/MQTTFormat.c **** 
+  80:Core/Src/MQTTFormat.c **** int MQTTStringFormat_ack(char* strbuf, int strbuflen, unsigned char packettype, unsigned char dup, 
+  81:Core/Src/MQTTFormat.c **** {
+ 364              		.loc 1 81 1 is_stmt 1 view -0
+ 365              		.cfi_startproc
+ 366              		@ args = 4, pretend = 0, frame = 0
+ 367              		@ frame_needed = 0, uses_anonymous_args = 0
+ 368              		.loc 1 81 1 is_stmt 0 view .LVU58
+ 369 0000 F0B5     		push	{r4, r5, r6, r7, lr}
+ 370              	.LCFI10:
+ 371              		.cfi_def_cfa_offset 20
+ 372              		.cfi_offset 4, -20
+ 373              		.cfi_offset 5, -16
+ 374              		.cfi_offset 6, -12
+ 375              		.cfi_offset 7, -8
+ 376              		.cfi_offset 14, -4
+ 377 0002 83B0     		sub	sp, sp, #12
+ 378              	.LCFI11:
+ 379              		.cfi_def_cfa_offset 32
+ 380 0004 0646     		mov	r6, r0
+ 381 0006 0F46     		mov	r7, r1
+ 382 0008 1D46     		mov	r5, r3
+  82:Core/Src/MQTTFormat.c **** 	int strindex = snprintf(strbuf, strbuflen, "%s, packet id %d", MQTTPacket_names[packettype], packe
+ 383              		.loc 1 82 2 is_stmt 1 view .LVU59
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccaYGb5c.s 			page 10
+
+
+ 384              		.loc 1 82 17 is_stmt 0 view .LVU60
+ 385 000a BDF82030 		ldrh	r3, [sp, #32]
+ 386              	.LVL25:
+ 387              		.loc 1 82 17 view .LVU61
+ 388 000e 0093     		str	r3, [sp]
+ 389 0010 094B     		ldr	r3, .L26
+ 390 0012 53F82230 		ldr	r3, [r3, r2, lsl #2]
+ 391 0016 094A     		ldr	r2, .L26+4
+ 392              	.LVL26:
+ 393              		.loc 1 82 17 view .LVU62
+ 394 0018 FFF7FEFF 		bl	snprintf
+ 395              	.LVL27:
+ 396              		.loc 1 82 17 view .LVU63
+ 397 001c 0446     		mov	r4, r0
+ 398              	.LVL28:
+  83:Core/Src/MQTTFormat.c **** 	if (dup)
+ 399              		.loc 1 83 2 is_stmt 1 view .LVU64
+ 400              		.loc 1 83 5 is_stmt 0 view .LVU65
+ 401 001e 15B9     		cbnz	r5, .L25
+ 402              	.LVL29:
+ 403              	.L22:
+  84:Core/Src/MQTTFormat.c **** 		strindex += snprintf(strbuf + strindex, strbuflen - strindex, ", dup %d", dup);
+  85:Core/Src/MQTTFormat.c **** 	return strindex;
+  86:Core/Src/MQTTFormat.c **** }
+ 404              		.loc 1 86 1 view .LVU66
+ 405 0020 2046     		mov	r0, r4
+ 406 0022 03B0     		add	sp, sp, #12
+ 407              	.LCFI12:
+ 408              		.cfi_remember_state
+ 409              		.cfi_def_cfa_offset 20
+ 410              		@ sp needed
+ 411 0024 F0BD     		pop	{r4, r5, r6, r7, pc}
+ 412              	.LVL30:
+ 413              	.L25:
+ 414              	.LCFI13:
+ 415              		.cfi_restore_state
+  84:Core/Src/MQTTFormat.c **** 		strindex += snprintf(strbuf + strindex, strbuflen - strindex, ", dup %d", dup);
+ 416              		.loc 1 84 3 is_stmt 1 view .LVU67
+  84:Core/Src/MQTTFormat.c **** 		strindex += snprintf(strbuf + strindex, strbuflen - strindex, ", dup %d", dup);
+ 417              		.loc 1 84 15 is_stmt 0 view .LVU68
+ 418 0026 2B46     		mov	r3, r5
+ 419 0028 054A     		ldr	r2, .L26+8
+ 420 002a 391A     		subs	r1, r7, r0
+ 421 002c 3018     		adds	r0, r6, r0
+ 422              	.LVL31:
+  84:Core/Src/MQTTFormat.c **** 		strindex += snprintf(strbuf + strindex, strbuflen - strindex, ", dup %d", dup);
+ 423              		.loc 1 84 15 view .LVU69
+ 424 002e FFF7FEFF 		bl	snprintf
+ 425              	.LVL32:
+  84:Core/Src/MQTTFormat.c **** 		strindex += snprintf(strbuf + strindex, strbuflen - strindex, ", dup %d", dup);
+ 426              		.loc 1 84 12 view .LVU70
+ 427 0032 0444     		add	r4, r4, r0
+ 428              	.LVL33:
+  85:Core/Src/MQTTFormat.c **** }
+ 429              		.loc 1 85 2 is_stmt 1 view .LVU71
+  85:Core/Src/MQTTFormat.c **** }
+ 430              		.loc 1 85 9 is_stmt 0 view .LVU72
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccaYGb5c.s 			page 11
+
+
+ 431 0034 F4E7     		b	.L22
+ 432              	.L27:
+ 433 0036 00BF     		.align	2
+ 434              	.L26:
+ 435 0038 00000000 		.word	.LANCHOR0
+ 436 003c 00000000 		.word	.LC6
+ 437 0040 14000000 		.word	.LC7
+ 438              		.cfi_endproc
+ 439              	.LFE7:
+ 441              		.section	.rodata.MQTTStringFormat_subscribe.str1.4,"aMS",%progbits,1
+ 442              		.align	2
+ 443              	.LC8:
+ 444 0000 53554253 		.ascii	"SUBSCRIBE dup %d, packet id %d count %d topic %.*s "
+ 444      43524942 
+ 444      45206475 
+ 444      70202564 
+ 444      2C207061 
+ 445 0033 716F7320 		.ascii	"qos %d\000"
+ 445      256400
+ 446              		.section	.text.MQTTStringFormat_subscribe,"ax",%progbits
+ 447              		.align	1
+ 448              		.global	MQTTStringFormat_subscribe
+ 449              		.syntax unified
+ 450              		.thumb
+ 451              		.thumb_func
+ 452              		.fpu softvfp
+ 454              	MQTTStringFormat_subscribe:
+ 455              	.LVL34:
+ 456              	.LFB8:
+  87:Core/Src/MQTTFormat.c **** 
+  88:Core/Src/MQTTFormat.c **** 
+  89:Core/Src/MQTTFormat.c **** int MQTTStringFormat_subscribe(char* strbuf, int strbuflen, unsigned char dup, unsigned short packe
+  90:Core/Src/MQTTFormat.c **** 		MQTTString topicFilters[], int requestedQoSs[])
+  91:Core/Src/MQTTFormat.c **** {
+ 457              		.loc 1 91 1 is_stmt 1 view -0
+ 458              		.cfi_startproc
+ 459              		@ args = 12, pretend = 0, frame = 0
+ 460              		@ frame_needed = 0, uses_anonymous_args = 0
+ 461              		.loc 1 91 1 is_stmt 0 view .LVU74
+ 462 0000 30B5     		push	{r4, r5, lr}
+ 463              	.LCFI14:
+ 464              		.cfi_def_cfa_offset 12
+ 465              		.cfi_offset 4, -12
+ 466              		.cfi_offset 5, -8
+ 467              		.cfi_offset 14, -4
+ 468 0002 87B0     		sub	sp, sp, #28
+ 469              	.LCFI15:
+ 470              		.cfi_def_cfa_offset 40
+ 471 0004 0B9C     		ldr	r4, [sp, #44]
+  92:Core/Src/MQTTFormat.c **** 	return snprintf(strbuf, strbuflen,
+ 472              		.loc 1 92 2 is_stmt 1 view .LVU75
+ 473              		.loc 1 92 9 is_stmt 0 view .LVU76
+ 474 0006 0C9D     		ldr	r5, [sp, #48]
+ 475 0008 2D68     		ldr	r5, [r5]
+ 476 000a 0495     		str	r5, [sp, #16]
+ 477 000c A568     		ldr	r5, [r4, #8]
+ 478 000e 0395     		str	r5, [sp, #12]
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccaYGb5c.s 			page 12
+
+
+ 479 0010 6468     		ldr	r4, [r4, #4]
+ 480 0012 0294     		str	r4, [sp, #8]
+ 481 0014 0A9C     		ldr	r4, [sp, #40]
+ 482 0016 0194     		str	r4, [sp, #4]
+ 483 0018 0093     		str	r3, [sp]
+ 484 001a 1346     		mov	r3, r2
+ 485              	.LVL35:
+ 486              		.loc 1 92 9 view .LVU77
+ 487 001c 024A     		ldr	r2, .L30
+ 488              	.LVL36:
+ 489              		.loc 1 92 9 view .LVU78
+ 490 001e FFF7FEFF 		bl	snprintf
+ 491              	.LVL37:
+  93:Core/Src/MQTTFormat.c **** 		"SUBSCRIBE dup %d, packet id %d count %d topic %.*s qos %d",
+  94:Core/Src/MQTTFormat.c **** 		dup, packetid, count,
+  95:Core/Src/MQTTFormat.c **** 		topicFilters[0].lenstring.len, topicFilters[0].lenstring.data,
+  96:Core/Src/MQTTFormat.c **** 		requestedQoSs[0]);
+  97:Core/Src/MQTTFormat.c **** }
+ 492              		.loc 1 97 1 view .LVU79
+ 493 0022 07B0     		add	sp, sp, #28
+ 494              	.LCFI16:
+ 495              		.cfi_def_cfa_offset 12
+ 496              		@ sp needed
+ 497 0024 30BD     		pop	{r4, r5, pc}
+ 498              	.LVL38:
+ 499              	.L31:
+ 500              		.loc 1 97 1 view .LVU80
+ 501 0026 00BF     		.align	2
+ 502              	.L30:
+ 503 0028 00000000 		.word	.LC8
+ 504              		.cfi_endproc
+ 505              	.LFE8:
+ 507              		.section	.rodata.MQTTStringFormat_suback.str1.4,"aMS",%progbits,1
+ 508              		.align	2
+ 509              	.LC9:
+ 510 0000 53554241 		.ascii	"SUBACK packet id %d count %d granted qos %d\000"
+ 510      434B2070 
+ 510      61636B65 
+ 510      74206964 
+ 510      20256420 
+ 511              		.section	.text.MQTTStringFormat_suback,"ax",%progbits
+ 512              		.align	1
+ 513              		.global	MQTTStringFormat_suback
+ 514              		.syntax unified
+ 515              		.thumb
+ 516              		.thumb_func
+ 517              		.fpu softvfp
+ 519              	MQTTStringFormat_suback:
+ 520              	.LVL39:
+ 521              	.LFB9:
+  98:Core/Src/MQTTFormat.c **** 
+  99:Core/Src/MQTTFormat.c **** 
+ 100:Core/Src/MQTTFormat.c **** int MQTTStringFormat_suback(char* strbuf, int strbuflen, unsigned short packetid, int count, int* g
+ 101:Core/Src/MQTTFormat.c **** {
+ 522              		.loc 1 101 1 is_stmt 1 view -0
+ 523              		.cfi_startproc
+ 524              		@ args = 4, pretend = 0, frame = 0
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccaYGb5c.s 			page 13
+
+
+ 525              		@ frame_needed = 0, uses_anonymous_args = 0
+ 526              		.loc 1 101 1 is_stmt 0 view .LVU82
+ 527 0000 10B5     		push	{r4, lr}
+ 528              	.LCFI17:
+ 529              		.cfi_def_cfa_offset 8
+ 530              		.cfi_offset 4, -8
+ 531              		.cfi_offset 14, -4
+ 532 0002 82B0     		sub	sp, sp, #8
+ 533              	.LCFI18:
+ 534              		.cfi_def_cfa_offset 16
+ 102:Core/Src/MQTTFormat.c **** 	return snprintf(strbuf, strbuflen,
+ 535              		.loc 1 102 2 is_stmt 1 view .LVU83
+ 536              		.loc 1 102 9 is_stmt 0 view .LVU84
+ 537 0004 049C     		ldr	r4, [sp, #16]
+ 538 0006 2468     		ldr	r4, [r4]
+ 539 0008 0194     		str	r4, [sp, #4]
+ 540 000a 0093     		str	r3, [sp]
+ 541 000c 1346     		mov	r3, r2
+ 542              	.LVL40:
+ 543              		.loc 1 102 9 view .LVU85
+ 544 000e 024A     		ldr	r2, .L34
+ 545              	.LVL41:
+ 546              		.loc 1 102 9 view .LVU86
+ 547 0010 FFF7FEFF 		bl	snprintf
+ 548              	.LVL42:
+ 103:Core/Src/MQTTFormat.c **** 		"SUBACK packet id %d count %d granted qos %d", packetid, count, grantedQoSs[0]);
+ 104:Core/Src/MQTTFormat.c **** }
+ 549              		.loc 1 104 1 view .LVU87
+ 550 0014 02B0     		add	sp, sp, #8
+ 551              	.LCFI19:
+ 552              		.cfi_def_cfa_offset 8
+ 553              		@ sp needed
+ 554 0016 10BD     		pop	{r4, pc}
+ 555              	.LVL43:
+ 556              	.L35:
+ 557              		.loc 1 104 1 view .LVU88
+ 558              		.align	2
+ 559              	.L34:
+ 560 0018 00000000 		.word	.LC9
+ 561              		.cfi_endproc
+ 562              	.LFE9:
+ 564              		.section	.rodata.MQTTStringFormat_unsubscribe.str1.4,"aMS",%progbits,1
+ 565              		.align	2
+ 566              	.LC10:
+ 567 0000 554E5355 		.ascii	"UNSUBSCRIBE dup %d, packet id %d count %d topic %.*"
+ 567      42534352 
+ 567      49424520 
+ 567      64757020 
+ 567      25642C20 
+ 568 0033 7300     		.ascii	"s\000"
+ 569              		.section	.text.MQTTStringFormat_unsubscribe,"ax",%progbits
+ 570              		.align	1
+ 571              		.global	MQTTStringFormat_unsubscribe
+ 572              		.syntax unified
+ 573              		.thumb
+ 574              		.thumb_func
+ 575              		.fpu softvfp
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccaYGb5c.s 			page 14
+
+
+ 577              	MQTTStringFormat_unsubscribe:
+ 578              	.LVL44:
+ 579              	.LFB10:
+ 105:Core/Src/MQTTFormat.c **** 
+ 106:Core/Src/MQTTFormat.c **** 
+ 107:Core/Src/MQTTFormat.c **** int MQTTStringFormat_unsubscribe(char* strbuf, int strbuflen, unsigned char dup, unsigned short pac
+ 108:Core/Src/MQTTFormat.c **** 		int count, MQTTString topicFilters[])
+ 109:Core/Src/MQTTFormat.c **** {
+ 580              		.loc 1 109 1 is_stmt 1 view -0
+ 581              		.cfi_startproc
+ 582              		@ args = 8, pretend = 0, frame = 0
+ 583              		@ frame_needed = 0, uses_anonymous_args = 0
+ 584              		.loc 1 109 1 is_stmt 0 view .LVU90
+ 585 0000 10B5     		push	{r4, lr}
+ 586              	.LCFI20:
+ 587              		.cfi_def_cfa_offset 8
+ 588              		.cfi_offset 4, -8
+ 589              		.cfi_offset 14, -4
+ 590 0002 84B0     		sub	sp, sp, #16
+ 591              	.LCFI21:
+ 592              		.cfi_def_cfa_offset 24
+ 593 0004 079C     		ldr	r4, [sp, #28]
+ 110:Core/Src/MQTTFormat.c **** 	return snprintf(strbuf, strbuflen,
+ 594              		.loc 1 110 2 is_stmt 1 view .LVU91
+ 595              		.loc 1 110 9 is_stmt 0 view .LVU92
+ 596 0006 D4F808C0 		ldr	ip, [r4, #8]
+ 597 000a CDF80CC0 		str	ip, [sp, #12]
+ 598 000e 6468     		ldr	r4, [r4, #4]
+ 599 0010 0294     		str	r4, [sp, #8]
+ 600 0012 069C     		ldr	r4, [sp, #24]
+ 601 0014 0194     		str	r4, [sp, #4]
+ 602 0016 0093     		str	r3, [sp]
+ 603 0018 1346     		mov	r3, r2
+ 604              	.LVL45:
+ 605              		.loc 1 110 9 view .LVU93
+ 606 001a 024A     		ldr	r2, .L38
+ 607              	.LVL46:
+ 608              		.loc 1 110 9 view .LVU94
+ 609 001c FFF7FEFF 		bl	snprintf
+ 610              	.LVL47:
+ 111:Core/Src/MQTTFormat.c **** 					"UNSUBSCRIBE dup %d, packet id %d count %d topic %.*s",
+ 112:Core/Src/MQTTFormat.c **** 					dup, packetid, count,
+ 113:Core/Src/MQTTFormat.c **** 					topicFilters[0].lenstring.len, topicFilters[0].lenstring.data);
+ 114:Core/Src/MQTTFormat.c **** }
+ 611              		.loc 1 114 1 view .LVU95
+ 612 0020 04B0     		add	sp, sp, #16
+ 613              	.LCFI22:
+ 614              		.cfi_def_cfa_offset 8
+ 615              		@ sp needed
+ 616 0022 10BD     		pop	{r4, pc}
+ 617              	.LVL48:
+ 618              	.L39:
+ 619              		.loc 1 114 1 view .LVU96
+ 620              		.align	2
+ 621              	.L38:
+ 622 0024 00000000 		.word	.LC10
+ 623              		.cfi_endproc
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccaYGb5c.s 			page 15
+
+
+ 624              	.LFE10:
+ 626              		.global	MQTTPacket_names
+ 627              		.section	.rodata.str1.4,"aMS",%progbits,1
+ 628              		.align	2
+ 629              	.LC11:
+ 630 0000 52455345 		.ascii	"RESERVED\000"
+ 630      52564544 
+ 630      00
+ 631 0009 000000   		.align	2
+ 632              	.LC12:
+ 633 000c 434F4E4E 		.ascii	"CONNECT\000"
+ 633      45435400 
+ 634              		.align	2
+ 635              	.LC13:
+ 636 0014 434F4E4E 		.ascii	"CONNACK\000"
+ 636      41434B00 
+ 637              		.align	2
+ 638              	.LC14:
+ 639 001c 5055424C 		.ascii	"PUBLISH\000"
+ 639      49534800 
+ 640              		.align	2
+ 641              	.LC15:
+ 642 0024 50554241 		.ascii	"PUBACK\000"
+ 642      434B00
+ 643 002b 00       		.align	2
+ 644              	.LC16:
+ 645 002c 50554252 		.ascii	"PUBREC\000"
+ 645      454300
+ 646 0033 00       		.align	2
+ 647              	.LC17:
+ 648 0034 50554252 		.ascii	"PUBREL\000"
+ 648      454C00
+ 649 003b 00       		.align	2
+ 650              	.LC18:
+ 651 003c 50554243 		.ascii	"PUBCOMP\000"
+ 651      4F4D5000 
+ 652              		.align	2
+ 653              	.LC19:
+ 654 0044 53554253 		.ascii	"SUBSCRIBE\000"
+ 654      43524942 
+ 654      4500
+ 655 004e 0000     		.align	2
+ 656              	.LC20:
+ 657 0050 53554241 		.ascii	"SUBACK\000"
+ 657      434B00
+ 658 0057 00       		.align	2
+ 659              	.LC21:
+ 660 0058 554E5355 		.ascii	"UNSUBSCRIBE\000"
+ 660      42534352 
+ 660      49424500 
+ 661              		.align	2
+ 662              	.LC22:
+ 663 0064 554E5355 		.ascii	"UNSUBACK\000"
+ 663      4241434B 
+ 663      00
+ 664 006d 000000   		.align	2
+ 665              	.LC23:
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccaYGb5c.s 			page 16
+
+
+ 666 0070 50494E47 		.ascii	"PINGREQ\000"
+ 666      52455100 
+ 667              		.align	2
+ 668              	.LC24:
+ 669 0078 50494E47 		.ascii	"PINGRESP\000"
+ 669      52455350 
+ 669      00
+ 670 0081 000000   		.align	2
+ 671              	.LC25:
+ 672 0084 44495343 		.ascii	"DISCONNECT\000"
+ 672      4F4E4E45 
+ 672      435400
+ 673              		.section	.data.MQTTPacket_names,"aw"
+ 674              		.align	2
+ 675              		.set	.LANCHOR0,. + 0
+ 678              	MQTTPacket_names:
+ 679 0000 00000000 		.word	.LC11
+ 680 0004 0C000000 		.word	.LC12
+ 681 0008 14000000 		.word	.LC13
+ 682 000c 1C000000 		.word	.LC14
+ 683 0010 24000000 		.word	.LC15
+ 684 0014 2C000000 		.word	.LC16
+ 685 0018 34000000 		.word	.LC17
+ 686 001c 3C000000 		.word	.LC18
+ 687 0020 44000000 		.word	.LC19
+ 688 0024 50000000 		.word	.LC20
+ 689 0028 58000000 		.word	.LC21
+ 690 002c 64000000 		.word	.LC22
+ 691 0030 70000000 		.word	.LC23
+ 692 0034 78000000 		.word	.LC24
+ 693 0038 84000000 		.word	.LC25
+ 694              		.text
+ 695              	.Letext0:
+ 696              		.file 2 "Core/Inc/MQTTPacket.h"
+ 697              		.file 3 "Core/Inc/MQTTConnect.h"
+ 698              		.file 4 "d:\\tools\\gcc-arm-none-eabi-10.3-2021.07\\arm-none-eabi\\include\\stdio.h"
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccaYGb5c.s 			page 17
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 MQTTFormat.c
+C:\Users\Vento\AppData\Local\Temp\ccaYGb5c.s:16     .text.MQTTPacket_getName:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\ccaYGb5c.s:24     .text.MQTTPacket_getName:00000000 MQTTPacket_getName
+C:\Users\Vento\AppData\Local\Temp\ccaYGb5c.s:43     .text.MQTTPacket_getName:00000008 $d
+C:\Users\Vento\AppData\Local\Temp\ccaYGb5c.s:48     .rodata.MQTTStringFormat_connect.str1.4:00000000 $d
+C:\Users\Vento\AppData\Local\Temp\ccaYGb5c.s:63     .text.MQTTStringFormat_connect:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\ccaYGb5c.s:70     .text.MQTTStringFormat_connect:00000000 MQTTStringFormat_connect
+C:\Users\Vento\AppData\Local\Temp\ccaYGb5c.s:213    .text.MQTTStringFormat_connect:0000008c $d
+C:\Users\Vento\AppData\Local\Temp\ccaYGb5c.s:221    .rodata.MQTTStringFormat_connack.str1.4:00000000 $d
+C:\Users\Vento\AppData\Local\Temp\ccaYGb5c.s:225    .text.MQTTStringFormat_connack:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\ccaYGb5c.s:232    .text.MQTTStringFormat_connack:00000000 MQTTStringFormat_connack
+C:\Users\Vento\AppData\Local\Temp\ccaYGb5c.s:265    .text.MQTTStringFormat_connack:00000014 $d
+C:\Users\Vento\AppData\Local\Temp\ccaYGb5c.s:270    .rodata.MQTTStringFormat_publish.str1.4:00000000 $d
+C:\Users\Vento\AppData\Local\Temp\ccaYGb5c.s:275    .text.MQTTStringFormat_publish:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\ccaYGb5c.s:282    .text.MQTTStringFormat_publish:00000000 MQTTStringFormat_publish
+C:\Users\Vento\AppData\Local\Temp\ccaYGb5c.s:342    .text.MQTTStringFormat_publish:00000040 $d
+C:\Users\Vento\AppData\Local\Temp\ccaYGb5c.s:347    .rodata.MQTTStringFormat_ack.str1.4:00000000 $d
+C:\Users\Vento\AppData\Local\Temp\ccaYGb5c.s:354    .text.MQTTStringFormat_ack:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\ccaYGb5c.s:361    .text.MQTTStringFormat_ack:00000000 MQTTStringFormat_ack
+C:\Users\Vento\AppData\Local\Temp\ccaYGb5c.s:435    .text.MQTTStringFormat_ack:00000038 $d
+C:\Users\Vento\AppData\Local\Temp\ccaYGb5c.s:442    .rodata.MQTTStringFormat_subscribe.str1.4:00000000 $d
+C:\Users\Vento\AppData\Local\Temp\ccaYGb5c.s:447    .text.MQTTStringFormat_subscribe:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\ccaYGb5c.s:454    .text.MQTTStringFormat_subscribe:00000000 MQTTStringFormat_subscribe
+C:\Users\Vento\AppData\Local\Temp\ccaYGb5c.s:503    .text.MQTTStringFormat_subscribe:00000028 $d
+C:\Users\Vento\AppData\Local\Temp\ccaYGb5c.s:508    .rodata.MQTTStringFormat_suback.str1.4:00000000 $d
+C:\Users\Vento\AppData\Local\Temp\ccaYGb5c.s:512    .text.MQTTStringFormat_suback:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\ccaYGb5c.s:519    .text.MQTTStringFormat_suback:00000000 MQTTStringFormat_suback
+C:\Users\Vento\AppData\Local\Temp\ccaYGb5c.s:560    .text.MQTTStringFormat_suback:00000018 $d
+C:\Users\Vento\AppData\Local\Temp\ccaYGb5c.s:565    .rodata.MQTTStringFormat_unsubscribe.str1.4:00000000 $d
+C:\Users\Vento\AppData\Local\Temp\ccaYGb5c.s:570    .text.MQTTStringFormat_unsubscribe:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\ccaYGb5c.s:577    .text.MQTTStringFormat_unsubscribe:00000000 MQTTStringFormat_unsubscribe
+C:\Users\Vento\AppData\Local\Temp\ccaYGb5c.s:622    .text.MQTTStringFormat_unsubscribe:00000024 $d
+C:\Users\Vento\AppData\Local\Temp\ccaYGb5c.s:678    .data.MQTTPacket_names:00000000 MQTTPacket_names
+C:\Users\Vento\AppData\Local\Temp\ccaYGb5c.s:628    .rodata.str1.4:00000000 $d
+C:\Users\Vento\AppData\Local\Temp\ccaYGb5c.s:674    .data.MQTTPacket_names:00000000 $d
+
+UNDEFINED SYMBOLS
+snprintf

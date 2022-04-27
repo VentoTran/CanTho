@@ -1,0 +1,476 @@
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\cc9ui2DN.s 			page 1
+
+
+   1              		.cpu cortex-m3
+   2              		.eabi_attribute 20, 1
+   3              		.eabi_attribute 21, 1
+   4              		.eabi_attribute 23, 3
+   5              		.eabi_attribute 24, 1
+   6              		.eabi_attribute 25, 1
+   7              		.eabi_attribute 26, 1
+   8              		.eabi_attribute 30, 1
+   9              		.eabi_attribute 34, 1
+  10              		.eabi_attribute 18, 4
+  11              		.file	"MQTTUnsubscribeClient.c"
+  12              		.text
+  13              	.Ltext0:
+  14              		.cfi_sections	.debug_frame
+  15              		.section	.text.MQTTSerialize_unsubscribeLength,"ax",%progbits
+  16              		.align	1
+  17              		.global	MQTTSerialize_unsubscribeLength
+  18              		.arch armv7-m
+  19              		.syntax unified
+  20              		.thumb
+  21              		.thumb_func
+  22              		.fpu softvfp
+  24              	MQTTSerialize_unsubscribeLength:
+  25              	.LVL0:
+  26              	.LFB3:
+  27              		.file 1 "Core/Src/MQTTUnsubscribeClient.c"
+   1:Core/Src/MQTTUnsubscribeClient.c **** /*******************************************************************************
+   2:Core/Src/MQTTUnsubscribeClient.c ****  * Copyright (c) 2014 IBM Corp.
+   3:Core/Src/MQTTUnsubscribeClient.c ****  *
+   4:Core/Src/MQTTUnsubscribeClient.c ****  * All rights reserved. This program and the accompanying materials
+   5:Core/Src/MQTTUnsubscribeClient.c ****  * are made available under the terms of the Eclipse Public License v1.0
+   6:Core/Src/MQTTUnsubscribeClient.c ****  * and Eclipse Distribution License v1.0 which accompany this distribution.
+   7:Core/Src/MQTTUnsubscribeClient.c ****  *
+   8:Core/Src/MQTTUnsubscribeClient.c ****  * The Eclipse Public License is available at
+   9:Core/Src/MQTTUnsubscribeClient.c ****  *    http://www.eclipse.org/legal/epl-v10.html
+  10:Core/Src/MQTTUnsubscribeClient.c ****  * and the Eclipse Distribution License is available at
+  11:Core/Src/MQTTUnsubscribeClient.c ****  *   http://www.eclipse.org/org/documents/edl-v10.php.
+  12:Core/Src/MQTTUnsubscribeClient.c ****  *
+  13:Core/Src/MQTTUnsubscribeClient.c ****  * Contributors:
+  14:Core/Src/MQTTUnsubscribeClient.c ****  *    Ian Craggs - initial API and implementation and/or initial documentation
+  15:Core/Src/MQTTUnsubscribeClient.c ****  *******************************************************************************/
+  16:Core/Src/MQTTUnsubscribeClient.c **** 
+  17:Core/Src/MQTTUnsubscribeClient.c **** #include "MQTTPacket.h"
+  18:Core/Src/MQTTUnsubscribeClient.c **** #include "StackTrace.h"
+  19:Core/Src/MQTTUnsubscribeClient.c **** 
+  20:Core/Src/MQTTUnsubscribeClient.c **** #include <string.h>
+  21:Core/Src/MQTTUnsubscribeClient.c **** 
+  22:Core/Src/MQTTUnsubscribeClient.c **** /**
+  23:Core/Src/MQTTUnsubscribeClient.c ****   * Determines the length of the MQTT unsubscribe packet that would be produced using the supplied 
+  24:Core/Src/MQTTUnsubscribeClient.c ****   * @param count the number of topic filter strings in topicFilters
+  25:Core/Src/MQTTUnsubscribeClient.c ****   * @param topicFilters the array of topic filter strings to be used in the publish
+  26:Core/Src/MQTTUnsubscribeClient.c ****   * @return the length of buffer needed to contain the serialized version of the packet
+  27:Core/Src/MQTTUnsubscribeClient.c ****   */
+  28:Core/Src/MQTTUnsubscribeClient.c **** int MQTTSerialize_unsubscribeLength(int count, MQTTString topicFilters[])
+  29:Core/Src/MQTTUnsubscribeClient.c **** {
+  28              		.loc 1 29 1 view -0
+  29              		.cfi_startproc
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\cc9ui2DN.s 			page 2
+
+
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              		.loc 1 29 1 is_stmt 0 view .LVU1
+  33 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+  34              	.LCFI0:
+  35              		.cfi_def_cfa_offset 24
+  36              		.cfi_offset 3, -24
+  37              		.cfi_offset 4, -20
+  38              		.cfi_offset 5, -16
+  39              		.cfi_offset 6, -12
+  40              		.cfi_offset 7, -8
+  41              		.cfi_offset 14, -4
+  42 0002 0646     		mov	r6, r0
+  43 0004 0F46     		mov	r7, r1
+  30:Core/Src/MQTTUnsubscribeClient.c **** 	int i;
+  44              		.loc 1 30 2 is_stmt 1 view .LVU2
+  31:Core/Src/MQTTUnsubscribeClient.c **** 	int len = 2; /* packetid */
+  45              		.loc 1 31 2 view .LVU3
+  46              	.LVL1:
+  32:Core/Src/MQTTUnsubscribeClient.c **** 
+  33:Core/Src/MQTTUnsubscribeClient.c **** 	for (i = 0; i < count; ++i)
+  47              		.loc 1 33 2 view .LVU4
+  31:Core/Src/MQTTUnsubscribeClient.c **** 	int len = 2; /* packetid */
+  48              		.loc 1 31 6 is_stmt 0 view .LVU5
+  49 0006 0225     		movs	r5, #2
+  50              		.loc 1 33 9 view .LVU6
+  51 0008 0024     		movs	r4, #0
+  52              		.loc 1 33 2 view .LVU7
+  53 000a 0AE0     		b	.L2
+  54              	.LVL2:
+  55              	.L3:
+  34:Core/Src/MQTTUnsubscribeClient.c **** 		len += 2 + MQTTstrlen(topicFilters[i]); /* length + topic*/
+  56              		.loc 1 34 3 is_stmt 1 discriminator 3 view .LVU8
+  57              		.loc 1 34 37 is_stmt 0 discriminator 3 view .LVU9
+  58 000c 04EB4403 		add	r3, r4, r4, lsl #1
+  59 0010 07EB8303 		add	r3, r7, r3, lsl #2
+  60              		.loc 1 34 14 discriminator 3 view .LVU10
+  61 0014 93E80700 		ldm	r3, {r0, r1, r2}
+  62 0018 FFF7FEFF 		bl	MQTTstrlen
+  63              	.LVL3:
+  64              		.loc 1 34 12 discriminator 3 view .LVU11
+  65 001c 0230     		adds	r0, r0, #2
+  66              		.loc 1 34 7 discriminator 3 view .LVU12
+  67 001e 0544     		add	r5, r5, r0
+  68              	.LVL4:
+  33:Core/Src/MQTTUnsubscribeClient.c **** 		len += 2 + MQTTstrlen(topicFilters[i]); /* length + topic*/
+  69              		.loc 1 33 25 is_stmt 1 discriminator 3 view .LVU13
+  70 0020 0134     		adds	r4, r4, #1
+  71              	.LVL5:
+  72              	.L2:
+  33:Core/Src/MQTTUnsubscribeClient.c **** 		len += 2 + MQTTstrlen(topicFilters[i]); /* length + topic*/
+  73              		.loc 1 33 14 discriminator 1 view .LVU14
+  33:Core/Src/MQTTUnsubscribeClient.c **** 		len += 2 + MQTTstrlen(topicFilters[i]); /* length + topic*/
+  74              		.loc 1 33 2 is_stmt 0 discriminator 1 view .LVU15
+  75 0022 B442     		cmp	r4, r6
+  76 0024 F2DB     		blt	.L3
+  35:Core/Src/MQTTUnsubscribeClient.c **** 	return len;
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\cc9ui2DN.s 			page 3
+
+
+  77              		.loc 1 35 2 is_stmt 1 view .LVU16
+  36:Core/Src/MQTTUnsubscribeClient.c **** }
+  78              		.loc 1 36 1 is_stmt 0 view .LVU17
+  79 0026 2846     		mov	r0, r5
+  80 0028 F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+  81              		.loc 1 36 1 view .LVU18
+  82              		.cfi_endproc
+  83              	.LFE3:
+  85              		.section	.text.MQTTSerialize_unsubscribe,"ax",%progbits
+  86              		.align	1
+  87              		.global	MQTTSerialize_unsubscribe
+  88              		.syntax unified
+  89              		.thumb
+  90              		.thumb_func
+  91              		.fpu softvfp
+  93              	MQTTSerialize_unsubscribe:
+  94              	.LVL6:
+  95              	.LFB4:
+  37:Core/Src/MQTTUnsubscribeClient.c **** 
+  38:Core/Src/MQTTUnsubscribeClient.c **** 
+  39:Core/Src/MQTTUnsubscribeClient.c **** /**
+  40:Core/Src/MQTTUnsubscribeClient.c ****   * Serializes the supplied unsubscribe data into the supplied buffer, ready for sending
+  41:Core/Src/MQTTUnsubscribeClient.c ****   * @param buf the raw buffer data, of the correct length determined by the remaining length field
+  42:Core/Src/MQTTUnsubscribeClient.c ****   * @param buflen the length in bytes of the data in the supplied buffer
+  43:Core/Src/MQTTUnsubscribeClient.c ****   * @param dup integer - the MQTT dup flag
+  44:Core/Src/MQTTUnsubscribeClient.c ****   * @param packetid integer - the MQTT packet identifier
+  45:Core/Src/MQTTUnsubscribeClient.c ****   * @param count - number of members in the topicFilters array
+  46:Core/Src/MQTTUnsubscribeClient.c ****   * @param topicFilters - array of topic filter names
+  47:Core/Src/MQTTUnsubscribeClient.c ****   * @return the length of the serialized data.  <= 0 indicates error
+  48:Core/Src/MQTTUnsubscribeClient.c ****   */
+  49:Core/Src/MQTTUnsubscribeClient.c **** int MQTTSerialize_unsubscribe(unsigned char* buf, int buflen, unsigned char dup, unsigned short pac
+  50:Core/Src/MQTTUnsubscribeClient.c **** 		int count, MQTTString topicFilters[])
+  51:Core/Src/MQTTUnsubscribeClient.c **** {
+  96              		.loc 1 51 1 is_stmt 1 view -0
+  97              		.cfi_startproc
+  98              		@ args = 8, pretend = 0, frame = 8
+  99              		@ frame_needed = 0, uses_anonymous_args = 0
+ 100              		.loc 1 51 1 is_stmt 0 view .LVU20
+ 101 0000 2DE9F04F 		push	{r4, r5, r6, r7, r8, r9, r10, fp, lr}
+ 102              	.LCFI1:
+ 103              		.cfi_def_cfa_offset 36
+ 104              		.cfi_offset 4, -36
+ 105              		.cfi_offset 5, -32
+ 106              		.cfi_offset 6, -28
+ 107              		.cfi_offset 7, -24
+ 108              		.cfi_offset 8, -20
+ 109              		.cfi_offset 9, -16
+ 110              		.cfi_offset 10, -12
+ 111              		.cfi_offset 11, -8
+ 112              		.cfi_offset 14, -4
+ 113 0004 83B0     		sub	sp, sp, #12
+ 114              	.LCFI2:
+ 115              		.cfi_def_cfa_offset 48
+ 116 0006 0746     		mov	r7, r0
+ 117 0008 8846     		mov	r8, r1
+ 118 000a 9346     		mov	fp, r2
+ 119 000c 9946     		mov	r9, r3
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\cc9ui2DN.s 			page 4
+
+
+ 120 000e 0C9D     		ldr	r5, [sp, #48]
+ 121 0010 0D9E     		ldr	r6, [sp, #52]
+  52:Core/Src/MQTTUnsubscribeClient.c **** 	unsigned char *ptr = buf;
+ 122              		.loc 1 52 2 is_stmt 1 view .LVU21
+ 123              		.loc 1 52 17 is_stmt 0 view .LVU22
+ 124 0012 0190     		str	r0, [sp, #4]
+  53:Core/Src/MQTTUnsubscribeClient.c **** 	MQTTHeader header = {0};
+ 125              		.loc 1 53 2 is_stmt 1 view .LVU23
+  54:Core/Src/MQTTUnsubscribeClient.c **** 	int rem_len = 0;
+ 126              		.loc 1 54 2 view .LVU24
+ 127              	.LVL7:
+  55:Core/Src/MQTTUnsubscribeClient.c **** 	int rc = -1;
+ 128              		.loc 1 55 2 view .LVU25
+  56:Core/Src/MQTTUnsubscribeClient.c **** 	int i = 0;
+ 129              		.loc 1 56 2 view .LVU26
+  57:Core/Src/MQTTUnsubscribeClient.c **** 
+  58:Core/Src/MQTTUnsubscribeClient.c **** 	FUNC_ENTRY;
+ 130              		.loc 1 58 12 view .LVU27
+  59:Core/Src/MQTTUnsubscribeClient.c **** 	if (MQTTPacket_len(rem_len = MQTTSerialize_unsubscribeLength(count, topicFilters)) > buflen)
+ 131              		.loc 1 59 2 view .LVU28
+ 132              		.loc 1 59 31 is_stmt 0 view .LVU29
+ 133 0014 3146     		mov	r1, r6
+ 134              	.LVL8:
+ 135              		.loc 1 59 31 view .LVU30
+ 136 0016 2846     		mov	r0, r5
+ 137              	.LVL9:
+ 138              		.loc 1 59 31 view .LVU31
+ 139 0018 FFF7FEFF 		bl	MQTTSerialize_unsubscribeLength
+ 140              	.LVL10:
+ 141              		.loc 1 59 31 view .LVU32
+ 142 001c 8246     		mov	r10, r0
+ 143              	.LVL11:
+ 144              		.loc 1 59 6 view .LVU33
+ 145 001e FFF7FEFF 		bl	MQTTPacket_len
+ 146              	.LVL12:
+ 147              		.loc 1 59 5 view .LVU34
+ 148 0022 4045     		cmp	r0, r8
+ 149 0024 29DC     		bgt	.L9
+ 150 0026 0024     		movs	r4, #0
+ 151              	.LVL13:
+  60:Core/Src/MQTTUnsubscribeClient.c **** 	{
+  61:Core/Src/MQTTUnsubscribeClient.c **** 		rc = MQTTPACKET_BUFFER_TOO_SHORT;
+  62:Core/Src/MQTTUnsubscribeClient.c **** 		goto exit;
+  63:Core/Src/MQTTUnsubscribeClient.c **** 	}
+  64:Core/Src/MQTTUnsubscribeClient.c **** 
+  65:Core/Src/MQTTUnsubscribeClient.c **** 	header.byte = 0;
+ 152              		.loc 1 65 2 is_stmt 1 view .LVU35
+  66:Core/Src/MQTTUnsubscribeClient.c **** 	header.bits.type = UNSUBSCRIBE;
+ 153              		.loc 1 66 2 view .LVU36
+ 154              		.loc 1 66 19 is_stmt 0 view .LVU37
+ 155 0028 0A23     		movs	r3, #10
+ 156 002a 63F30714 		bfi	r4, r3, #4, #4
+ 157              	.LVL14:
+  67:Core/Src/MQTTUnsubscribeClient.c **** 	header.bits.dup = dup;
+ 158              		.loc 1 67 2 is_stmt 1 view .LVU38
+ 159              		.loc 1 67 18 is_stmt 0 view .LVU39
+ 160 002e 6BF3C304 		bfi	r4, fp, #3, #1
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\cc9ui2DN.s 			page 5
+
+
+  68:Core/Src/MQTTUnsubscribeClient.c **** 	header.bits.qos = 1;
+ 161              		.loc 1 68 2 is_stmt 1 view .LVU40
+ 162              		.loc 1 68 18 is_stmt 0 view .LVU41
+ 163 0032 0123     		movs	r3, #1
+ 164 0034 63F34204 		bfi	r4, r3, #1, #2
+  69:Core/Src/MQTTUnsubscribeClient.c **** 	writeChar(&ptr, header.byte); /* write header */
+ 165              		.loc 1 69 2 is_stmt 1 view .LVU42
+ 166 0038 E1B2     		uxtb	r1, r4
+ 167 003a 01A8     		add	r0, sp, #4
+ 168 003c FFF7FEFF 		bl	writeChar
+ 169              	.LVL15:
+  70:Core/Src/MQTTUnsubscribeClient.c **** 
+  71:Core/Src/MQTTUnsubscribeClient.c **** 	ptr += MQTTPacket_encode(ptr, rem_len); /* write remaining length */;
+ 170              		.loc 1 71 2 view .LVU43
+ 171              		.loc 1 71 9 is_stmt 0 view .LVU44
+ 172 0040 5146     		mov	r1, r10
+ 173 0042 0198     		ldr	r0, [sp, #4]
+ 174 0044 FFF7FEFF 		bl	MQTTPacket_encode
+ 175              	.LVL16:
+ 176              		.loc 1 71 6 view .LVU45
+ 177 0048 019B     		ldr	r3, [sp, #4]
+ 178 004a 0344     		add	r3, r3, r0
+ 179 004c 0193     		str	r3, [sp, #4]
+ 180              		.loc 1 71 70 is_stmt 1 view .LVU46
+  72:Core/Src/MQTTUnsubscribeClient.c **** 
+  73:Core/Src/MQTTUnsubscribeClient.c **** 	writeInt(&ptr, packetid);
+ 181              		.loc 1 73 2 view .LVU47
+ 182 004e 4946     		mov	r1, r9
+ 183 0050 01A8     		add	r0, sp, #4
+ 184 0052 FFF7FEFF 		bl	writeInt
+ 185              	.LVL17:
+  74:Core/Src/MQTTUnsubscribeClient.c **** 
+  75:Core/Src/MQTTUnsubscribeClient.c **** 	for (i = 0; i < count; ++i)
+ 186              		.loc 1 75 2 view .LVU48
+ 187              		.loc 1 75 9 is_stmt 0 view .LVU49
+ 188 0056 0024     		movs	r4, #0
+ 189              	.LVL18:
+ 190              		.loc 1 75 2 view .LVU50
+ 191 0058 08E0     		b	.L7
+ 192              	.LVL19:
+ 193              	.L8:
+  76:Core/Src/MQTTUnsubscribeClient.c **** 		writeMQTTString(&ptr, topicFilters[i]);
+ 194              		.loc 1 76 3 is_stmt 1 discriminator 3 view .LVU51
+ 195              		.loc 1 76 37 is_stmt 0 discriminator 3 view .LVU52
+ 196 005a 04EB4403 		add	r3, r4, r4, lsl #1
+ 197 005e 06EB8303 		add	r3, r6, r3, lsl #2
+ 198              		.loc 1 76 3 discriminator 3 view .LVU53
+ 199 0062 0ECB     		ldm	r3, {r1, r2, r3}
+ 200 0064 01A8     		add	r0, sp, #4
+ 201 0066 FFF7FEFF 		bl	writeMQTTString
+ 202              	.LVL20:
+  75:Core/Src/MQTTUnsubscribeClient.c **** 		writeMQTTString(&ptr, topicFilters[i]);
+ 203              		.loc 1 75 25 is_stmt 1 discriminator 3 view .LVU54
+ 204 006a 0134     		adds	r4, r4, #1
+ 205              	.LVL21:
+ 206              	.L7:
+  75:Core/Src/MQTTUnsubscribeClient.c **** 		writeMQTTString(&ptr, topicFilters[i]);
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\cc9ui2DN.s 			page 6
+
+
+ 207              		.loc 1 75 14 discriminator 1 view .LVU55
+  75:Core/Src/MQTTUnsubscribeClient.c **** 		writeMQTTString(&ptr, topicFilters[i]);
+ 208              		.loc 1 75 2 is_stmt 0 discriminator 1 view .LVU56
+ 209 006c AC42     		cmp	r4, r5
+ 210 006e F4DB     		blt	.L8
+  77:Core/Src/MQTTUnsubscribeClient.c **** 
+  78:Core/Src/MQTTUnsubscribeClient.c **** 	rc = ptr - buf;
+ 211              		.loc 1 78 2 is_stmt 1 view .LVU57
+ 212              		.loc 1 78 11 is_stmt 0 view .LVU58
+ 213 0070 0198     		ldr	r0, [sp, #4]
+ 214              		.loc 1 78 5 view .LVU59
+ 215 0072 C01B     		subs	r0, r0, r7
+ 216              	.LVL22:
+ 217              	.L5:
+  79:Core/Src/MQTTUnsubscribeClient.c **** exit:
+  80:Core/Src/MQTTUnsubscribeClient.c **** 	FUNC_EXIT_RC(rc);
+  81:Core/Src/MQTTUnsubscribeClient.c **** 	return rc;
+  82:Core/Src/MQTTUnsubscribeClient.c **** }
+ 218              		.loc 1 82 1 view .LVU60
+ 219 0074 03B0     		add	sp, sp, #12
+ 220              	.LCFI3:
+ 221              		.cfi_remember_state
+ 222              		.cfi_def_cfa_offset 36
+ 223              		@ sp needed
+ 224 0076 BDE8F08F 		pop	{r4, r5, r6, r7, r8, r9, r10, fp, pc}
+ 225              	.LVL23:
+ 226              	.L9:
+ 227              	.LCFI4:
+ 228              		.cfi_restore_state
+  61:Core/Src/MQTTUnsubscribeClient.c **** 		goto exit;
+ 229              		.loc 1 61 6 view .LVU61
+ 230 007a 6FF00100 		mvn	r0, #1
+ 231              	.L6:
+ 232              	.LVL24:
+  80:Core/Src/MQTTUnsubscribeClient.c **** 	return rc;
+ 233              		.loc 1 80 18 is_stmt 1 view .LVU62
+  81:Core/Src/MQTTUnsubscribeClient.c **** }
+ 234              		.loc 1 81 2 view .LVU63
+  81:Core/Src/MQTTUnsubscribeClient.c **** }
+ 235              		.loc 1 81 9 is_stmt 0 view .LVU64
+ 236 007e F9E7     		b	.L5
+ 237              		.cfi_endproc
+ 238              	.LFE4:
+ 240              		.section	.text.MQTTDeserialize_unsuback,"ax",%progbits
+ 241              		.align	1
+ 242              		.global	MQTTDeserialize_unsuback
+ 243              		.syntax unified
+ 244              		.thumb
+ 245              		.thumb_func
+ 246              		.fpu softvfp
+ 248              	MQTTDeserialize_unsuback:
+ 249              	.LVL25:
+ 250              	.LFB5:
+  83:Core/Src/MQTTUnsubscribeClient.c **** 
+  84:Core/Src/MQTTUnsubscribeClient.c **** 
+  85:Core/Src/MQTTUnsubscribeClient.c **** /**
+  86:Core/Src/MQTTUnsubscribeClient.c ****   * Deserializes the supplied (wire) buffer into unsuback data
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\cc9ui2DN.s 			page 7
+
+
+  87:Core/Src/MQTTUnsubscribeClient.c ****   * @param packetid returned integer - the MQTT packet identifier
+  88:Core/Src/MQTTUnsubscribeClient.c ****   * @param buf the raw buffer data, of the correct length determined by the remaining length field
+  89:Core/Src/MQTTUnsubscribeClient.c ****   * @param buflen the length in bytes of the data in the supplied buffer
+  90:Core/Src/MQTTUnsubscribeClient.c ****   * @return error code.  1 is success, 0 is failure
+  91:Core/Src/MQTTUnsubscribeClient.c ****   */
+  92:Core/Src/MQTTUnsubscribeClient.c **** int MQTTDeserialize_unsuback(unsigned short* packetid, unsigned char* buf, int buflen)
+  93:Core/Src/MQTTUnsubscribeClient.c **** {
+ 251              		.loc 1 93 1 is_stmt 1 view -0
+ 252              		.cfi_startproc
+ 253              		@ args = 0, pretend = 0, frame = 8
+ 254              		@ frame_needed = 0, uses_anonymous_args = 0
+ 255              		.loc 1 93 1 is_stmt 0 view .LVU66
+ 256 0000 00B5     		push	{lr}
+ 257              	.LCFI5:
+ 258              		.cfi_def_cfa_offset 4
+ 259              		.cfi_offset 14, -4
+ 260 0002 85B0     		sub	sp, sp, #20
+ 261              	.LCFI6:
+ 262              		.cfi_def_cfa_offset 24
+ 263 0004 0B46     		mov	r3, r1
+  94:Core/Src/MQTTUnsubscribeClient.c **** 	unsigned char type = 0;
+ 264              		.loc 1 94 2 is_stmt 1 view .LVU67
+ 265              		.loc 1 94 16 is_stmt 0 view .LVU68
+ 266 0006 4FF0000C 		mov	ip, #0
+ 267 000a 8DF80FC0 		strb	ip, [sp, #15]
+  95:Core/Src/MQTTUnsubscribeClient.c **** 	unsigned char dup = 0;
+ 268              		.loc 1 95 2 is_stmt 1 view .LVU69
+ 269              		.loc 1 95 16 is_stmt 0 view .LVU70
+ 270 000e 8DF80EC0 		strb	ip, [sp, #14]
+  96:Core/Src/MQTTUnsubscribeClient.c **** 	int rc = 0;
+ 271              		.loc 1 96 2 is_stmt 1 view .LVU71
+ 272              	.LVL26:
+  97:Core/Src/MQTTUnsubscribeClient.c **** 
+  98:Core/Src/MQTTUnsubscribeClient.c **** 	FUNC_ENTRY;
+ 273              		.loc 1 98 12 view .LVU72
+  99:Core/Src/MQTTUnsubscribeClient.c **** 	rc = MQTTDeserialize_ack(&type, &dup, packetid, buf, buflen);
+ 274              		.loc 1 99 2 view .LVU73
+ 275              		.loc 1 99 7 is_stmt 0 view .LVU74
+ 276 0012 0092     		str	r2, [sp]
+ 277 0014 0246     		mov	r2, r0
+ 278              	.LVL27:
+ 279              		.loc 1 99 7 view .LVU75
+ 280 0016 0DF10E01 		add	r1, sp, #14
+ 281              	.LVL28:
+ 282              		.loc 1 99 7 view .LVU76
+ 283 001a 0DF10F00 		add	r0, sp, #15
+ 284              	.LVL29:
+ 285              		.loc 1 99 7 view .LVU77
+ 286 001e FFF7FEFF 		bl	MQTTDeserialize_ack
+ 287              	.LVL30:
+ 100:Core/Src/MQTTUnsubscribeClient.c **** 	if (type == UNSUBACK)
+ 288              		.loc 1 100 2 is_stmt 1 view .LVU78
+ 289              		.loc 1 100 11 is_stmt 0 view .LVU79
+ 290 0022 9DF80F30 		ldrb	r3, [sp, #15]	@ zero_extendqisi2
+ 291              		.loc 1 100 5 view .LVU80
+ 292 0026 0B2B     		cmp	r3, #11
+ 293 0028 02D0     		beq	.L15
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\cc9ui2DN.s 			page 8
+
+
+ 294              	.LVL31:
+ 295              	.L11:
+ 101:Core/Src/MQTTUnsubscribeClient.c **** 		rc = 1;
+ 102:Core/Src/MQTTUnsubscribeClient.c **** 	FUNC_EXIT_RC(rc);
+ 103:Core/Src/MQTTUnsubscribeClient.c **** 	return rc;
+ 104:Core/Src/MQTTUnsubscribeClient.c **** }
+ 296              		.loc 1 104 1 view .LVU81
+ 297 002a 05B0     		add	sp, sp, #20
+ 298              	.LCFI7:
+ 299              		.cfi_remember_state
+ 300              		.cfi_def_cfa_offset 4
+ 301              		@ sp needed
+ 302 002c 5DF804FB 		ldr	pc, [sp], #4
+ 303              	.LVL32:
+ 304              	.L15:
+ 305              	.LCFI8:
+ 306              		.cfi_restore_state
+ 101:Core/Src/MQTTUnsubscribeClient.c **** 		rc = 1;
+ 307              		.loc 1 101 6 view .LVU82
+ 308 0030 0120     		movs	r0, #1
+ 309              	.LVL33:
+ 102:Core/Src/MQTTUnsubscribeClient.c **** 	return rc;
+ 310              		.loc 1 102 18 is_stmt 1 view .LVU83
+ 103:Core/Src/MQTTUnsubscribeClient.c **** }
+ 311              		.loc 1 103 2 view .LVU84
+ 103:Core/Src/MQTTUnsubscribeClient.c **** }
+ 312              		.loc 1 103 9 is_stmt 0 view .LVU85
+ 313 0032 FAE7     		b	.L11
+ 314              		.cfi_endproc
+ 315              	.LFE5:
+ 317              		.text
+ 318              	.Letext0:
+ 319              		.file 2 "Core/Inc/MQTTPacket.h"
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\cc9ui2DN.s 			page 9
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 MQTTUnsubscribeClient.c
+C:\Users\Vento\AppData\Local\Temp\cc9ui2DN.s:16     .text.MQTTSerialize_unsubscribeLength:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\cc9ui2DN.s:24     .text.MQTTSerialize_unsubscribeLength:00000000 MQTTSerialize_unsubscribeLength
+C:\Users\Vento\AppData\Local\Temp\cc9ui2DN.s:86     .text.MQTTSerialize_unsubscribe:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\cc9ui2DN.s:93     .text.MQTTSerialize_unsubscribe:00000000 MQTTSerialize_unsubscribe
+C:\Users\Vento\AppData\Local\Temp\cc9ui2DN.s:241    .text.MQTTDeserialize_unsuback:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\cc9ui2DN.s:248    .text.MQTTDeserialize_unsuback:00000000 MQTTDeserialize_unsuback
+
+UNDEFINED SYMBOLS
+MQTTstrlen
+MQTTPacket_len
+writeChar
+MQTTPacket_encode
+writeInt
+writeMQTTString
+MQTTDeserialize_ack

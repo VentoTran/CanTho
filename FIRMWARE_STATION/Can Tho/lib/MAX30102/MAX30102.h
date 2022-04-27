@@ -28,11 +28,11 @@ class MAXClass: public MAX30105
 
     int32_t SpO2 = 0;
     int32_t Heart_Rate = 0;
-    double Body_Temp = 0.0;
+    // double Body_Temp = 0.0;
 
     byte array_count1 = 0;
     byte array_count2 = 0;
-    byte array_count3 = 0;
+    // byte array_count3 = 0;
 
     long last_beat = 0;
 
@@ -41,7 +41,7 @@ class MAXClass: public MAX30105
 
     int32_t beat_cache[BUFF_LENGTH];
     int32_t SpO2_cache[BUFF_LENGTH];
-    double Temp_cache[BUFF_LENGTH];
+    // double Temp_cache[BUFF_LENGTH];
 
     uint16_t irBuffer[DATA_LENGTH];   //infrared LED sensor data
     uint16_t redBuffer[DATA_LENGTH];  //red LED sensor data

@@ -1,0 +1,620 @@
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\cctfn9sr.s 			page 1
+
+
+   1              		.cpu cortex-m3
+   2              		.eabi_attribute 20, 1
+   3              		.eabi_attribute 21, 1
+   4              		.eabi_attribute 23, 3
+   5              		.eabi_attribute 24, 1
+   6              		.eabi_attribute 25, 1
+   7              		.eabi_attribute 26, 1
+   8              		.eabi_attribute 30, 1
+   9              		.eabi_attribute 34, 1
+  10              		.eabi_attribute 18, 4
+  11              		.file	"MQTTSubscribeClient.c"
+  12              		.text
+  13              	.Ltext0:
+  14              		.cfi_sections	.debug_frame
+  15              		.section	.text.MQTTSerialize_subscribeLength,"ax",%progbits
+  16              		.align	1
+  17              		.global	MQTTSerialize_subscribeLength
+  18              		.arch armv7-m
+  19              		.syntax unified
+  20              		.thumb
+  21              		.thumb_func
+  22              		.fpu softvfp
+  24              	MQTTSerialize_subscribeLength:
+  25              	.LVL0:
+  26              	.LFB3:
+  27              		.file 1 "Core/Src/MQTTSubscribeClient.c"
+   1:Core/Src/MQTTSubscribeClient.c **** /*******************************************************************************
+   2:Core/Src/MQTTSubscribeClient.c ****  * Copyright (c) 2014 IBM Corp.
+   3:Core/Src/MQTTSubscribeClient.c ****  *
+   4:Core/Src/MQTTSubscribeClient.c ****  * All rights reserved. This program and the accompanying materials
+   5:Core/Src/MQTTSubscribeClient.c ****  * are made available under the terms of the Eclipse Public License v1.0
+   6:Core/Src/MQTTSubscribeClient.c ****  * and Eclipse Distribution License v1.0 which accompany this distribution.
+   7:Core/Src/MQTTSubscribeClient.c ****  *
+   8:Core/Src/MQTTSubscribeClient.c ****  * The Eclipse Public License is available at
+   9:Core/Src/MQTTSubscribeClient.c ****  *    http://www.eclipse.org/legal/epl-v10.html
+  10:Core/Src/MQTTSubscribeClient.c ****  * and the Eclipse Distribution License is available at
+  11:Core/Src/MQTTSubscribeClient.c ****  *   http://www.eclipse.org/org/documents/edl-v10.php.
+  12:Core/Src/MQTTSubscribeClient.c ****  *
+  13:Core/Src/MQTTSubscribeClient.c ****  * Contributors:
+  14:Core/Src/MQTTSubscribeClient.c ****  *    Ian Craggs - initial API and implementation and/or initial documentation
+  15:Core/Src/MQTTSubscribeClient.c ****  *******************************************************************************/
+  16:Core/Src/MQTTSubscribeClient.c **** 
+  17:Core/Src/MQTTSubscribeClient.c **** #include "MQTTPacket.h"
+  18:Core/Src/MQTTSubscribeClient.c **** #include "StackTrace.h"
+  19:Core/Src/MQTTSubscribeClient.c **** 
+  20:Core/Src/MQTTSubscribeClient.c **** #include <string.h>
+  21:Core/Src/MQTTSubscribeClient.c **** 
+  22:Core/Src/MQTTSubscribeClient.c **** /**
+  23:Core/Src/MQTTSubscribeClient.c ****   * Determines the length of the MQTT subscribe packet that would be produced using the supplied pa
+  24:Core/Src/MQTTSubscribeClient.c ****   * @param count the number of topic filter strings in topicFilters
+  25:Core/Src/MQTTSubscribeClient.c ****   * @param topicFilters the array of topic filter strings to be used in the publish
+  26:Core/Src/MQTTSubscribeClient.c ****   * @return the length of buffer needed to contain the serialized version of the packet
+  27:Core/Src/MQTTSubscribeClient.c ****   */
+  28:Core/Src/MQTTSubscribeClient.c **** int MQTTSerialize_subscribeLength(int count, MQTTString topicFilters[])
+  29:Core/Src/MQTTSubscribeClient.c **** {
+  28              		.loc 1 29 1 view -0
+  29              		.cfi_startproc
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\cctfn9sr.s 			page 2
+
+
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              		.loc 1 29 1 is_stmt 0 view .LVU1
+  33 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+  34              	.LCFI0:
+  35              		.cfi_def_cfa_offset 24
+  36              		.cfi_offset 3, -24
+  37              		.cfi_offset 4, -20
+  38              		.cfi_offset 5, -16
+  39              		.cfi_offset 6, -12
+  40              		.cfi_offset 7, -8
+  41              		.cfi_offset 14, -4
+  42 0002 0646     		mov	r6, r0
+  43 0004 0F46     		mov	r7, r1
+  30:Core/Src/MQTTSubscribeClient.c **** 	int i;
+  44              		.loc 1 30 2 is_stmt 1 view .LVU2
+  31:Core/Src/MQTTSubscribeClient.c **** 	int len = 2; /* packetid */
+  45              		.loc 1 31 2 view .LVU3
+  46              	.LVL1:
+  32:Core/Src/MQTTSubscribeClient.c **** 
+  33:Core/Src/MQTTSubscribeClient.c **** 	for (i = 0; i < count; ++i)
+  47              		.loc 1 33 2 view .LVU4
+  31:Core/Src/MQTTSubscribeClient.c **** 	int len = 2; /* packetid */
+  48              		.loc 1 31 6 is_stmt 0 view .LVU5
+  49 0006 0225     		movs	r5, #2
+  50              		.loc 1 33 9 view .LVU6
+  51 0008 0024     		movs	r4, #0
+  52              		.loc 1 33 2 view .LVU7
+  53 000a 0AE0     		b	.L2
+  54              	.LVL2:
+  55              	.L3:
+  34:Core/Src/MQTTSubscribeClient.c **** 		len += 2 + MQTTstrlen(topicFilters[i]) + 1; /* length + topic + req_qos */
+  56              		.loc 1 34 3 is_stmt 1 discriminator 3 view .LVU8
+  57              		.loc 1 34 37 is_stmt 0 discriminator 3 view .LVU9
+  58 000c 04EB4403 		add	r3, r4, r4, lsl #1
+  59 0010 07EB8303 		add	r3, r7, r3, lsl #2
+  60              		.loc 1 34 14 discriminator 3 view .LVU10
+  61 0014 93E80700 		ldm	r3, {r0, r1, r2}
+  62 0018 FFF7FEFF 		bl	MQTTstrlen
+  63              	.LVL3:
+  64              		.loc 1 34 42 discriminator 3 view .LVU11
+  65 001c 0330     		adds	r0, r0, #3
+  66              		.loc 1 34 7 discriminator 3 view .LVU12
+  67 001e 0544     		add	r5, r5, r0
+  68              	.LVL4:
+  33:Core/Src/MQTTSubscribeClient.c **** 		len += 2 + MQTTstrlen(topicFilters[i]) + 1; /* length + topic + req_qos */
+  69              		.loc 1 33 25 is_stmt 1 discriminator 3 view .LVU13
+  70 0020 0134     		adds	r4, r4, #1
+  71              	.LVL5:
+  72              	.L2:
+  33:Core/Src/MQTTSubscribeClient.c **** 		len += 2 + MQTTstrlen(topicFilters[i]) + 1; /* length + topic + req_qos */
+  73              		.loc 1 33 14 discriminator 1 view .LVU14
+  33:Core/Src/MQTTSubscribeClient.c **** 		len += 2 + MQTTstrlen(topicFilters[i]) + 1; /* length + topic + req_qos */
+  74              		.loc 1 33 2 is_stmt 0 discriminator 1 view .LVU15
+  75 0022 B442     		cmp	r4, r6
+  76 0024 F2DB     		blt	.L3
+  35:Core/Src/MQTTSubscribeClient.c **** 	return len;
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\cctfn9sr.s 			page 3
+
+
+  77              		.loc 1 35 2 is_stmt 1 view .LVU16
+  36:Core/Src/MQTTSubscribeClient.c **** }
+  78              		.loc 1 36 1 is_stmt 0 view .LVU17
+  79 0026 2846     		mov	r0, r5
+  80 0028 F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+  81              		.loc 1 36 1 view .LVU18
+  82              		.cfi_endproc
+  83              	.LFE3:
+  85              		.section	.text.MQTTSerialize_subscribe,"ax",%progbits
+  86              		.align	1
+  87              		.global	MQTTSerialize_subscribe
+  88              		.syntax unified
+  89              		.thumb
+  90              		.thumb_func
+  91              		.fpu softvfp
+  93              	MQTTSerialize_subscribe:
+  94              	.LVL6:
+  95              	.LFB4:
+  37:Core/Src/MQTTSubscribeClient.c **** 
+  38:Core/Src/MQTTSubscribeClient.c **** 
+  39:Core/Src/MQTTSubscribeClient.c **** /**
+  40:Core/Src/MQTTSubscribeClient.c ****   * Serializes the supplied subscribe data into the supplied buffer, ready for sending
+  41:Core/Src/MQTTSubscribeClient.c ****   * @param buf the buffer into which the packet will be serialized
+  42:Core/Src/MQTTSubscribeClient.c ****   * @param buflen the length in bytes of the supplied bufferr
+  43:Core/Src/MQTTSubscribeClient.c ****   * @param dup integer - the MQTT dup flag
+  44:Core/Src/MQTTSubscribeClient.c ****   * @param packetid integer - the MQTT packet identifier
+  45:Core/Src/MQTTSubscribeClient.c ****   * @param count - number of members in the topicFilters and reqQos arrays
+  46:Core/Src/MQTTSubscribeClient.c ****   * @param topicFilters - array of topic filter names
+  47:Core/Src/MQTTSubscribeClient.c ****   * @param requestedQoSs - array of requested QoS
+  48:Core/Src/MQTTSubscribeClient.c ****   * @return the length of the serialized data.  <= 0 indicates error
+  49:Core/Src/MQTTSubscribeClient.c ****   */
+  50:Core/Src/MQTTSubscribeClient.c **** int MQTTSerialize_subscribe(unsigned char* buf, int buflen, unsigned char dup, unsigned short packe
+  51:Core/Src/MQTTSubscribeClient.c **** 		MQTTString topicFilters[], int requestedQoSs[])
+  52:Core/Src/MQTTSubscribeClient.c **** {
+  96              		.loc 1 52 1 is_stmt 1 view -0
+  97              		.cfi_startproc
+  98              		@ args = 12, pretend = 0, frame = 16
+  99              		@ frame_needed = 0, uses_anonymous_args = 0
+ 100              		.loc 1 52 1 is_stmt 0 view .LVU20
+ 101 0000 2DE9F04F 		push	{r4, r5, r6, r7, r8, r9, r10, fp, lr}
+ 102              	.LCFI1:
+ 103              		.cfi_def_cfa_offset 36
+ 104              		.cfi_offset 4, -36
+ 105              		.cfi_offset 5, -32
+ 106              		.cfi_offset 6, -28
+ 107              		.cfi_offset 7, -24
+ 108              		.cfi_offset 8, -20
+ 109              		.cfi_offset 9, -16
+ 110              		.cfi_offset 10, -12
+ 111              		.cfi_offset 11, -8
+ 112              		.cfi_offset 14, -4
+ 113 0004 85B0     		sub	sp, sp, #20
+ 114              	.LCFI2:
+ 115              		.cfi_def_cfa_offset 56
+ 116 0006 0746     		mov	r7, r0
+ 117 0008 8946     		mov	r9, r1
+ 118 000a 9246     		mov	r10, r2
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\cctfn9sr.s 			page 4
+
+
+ 119 000c 0193     		str	r3, [sp, #4]
+ 120 000e 0E9C     		ldr	r4, [sp, #56]
+ 121 0010 0F9D     		ldr	r5, [sp, #60]
+ 122 0012 109E     		ldr	r6, [sp, #64]
+  53:Core/Src/MQTTSubscribeClient.c **** 	unsigned char *ptr = buf;
+ 123              		.loc 1 53 2 is_stmt 1 view .LVU21
+ 124              		.loc 1 53 17 is_stmt 0 view .LVU22
+ 125 0014 0390     		str	r0, [sp, #12]
+  54:Core/Src/MQTTSubscribeClient.c **** 	MQTTHeader header = {0};
+ 126              		.loc 1 54 2 is_stmt 1 view .LVU23
+  55:Core/Src/MQTTSubscribeClient.c **** 	int rem_len = 0;
+ 127              		.loc 1 55 2 view .LVU24
+ 128              	.LVL7:
+  56:Core/Src/MQTTSubscribeClient.c **** 	int rc = 0;
+ 129              		.loc 1 56 2 view .LVU25
+  57:Core/Src/MQTTSubscribeClient.c **** 	int i = 0;
+ 130              		.loc 1 57 2 view .LVU26
+  58:Core/Src/MQTTSubscribeClient.c **** 
+  59:Core/Src/MQTTSubscribeClient.c **** 	FUNC_ENTRY;
+ 131              		.loc 1 59 12 view .LVU27
+  60:Core/Src/MQTTSubscribeClient.c **** 	if (MQTTPacket_len(rem_len = MQTTSerialize_subscribeLength(count, topicFilters)) > buflen)
+ 132              		.loc 1 60 2 view .LVU28
+ 133              		.loc 1 60 31 is_stmt 0 view .LVU29
+ 134 0016 2946     		mov	r1, r5
+ 135              	.LVL8:
+ 136              		.loc 1 60 31 view .LVU30
+ 137 0018 2046     		mov	r0, r4
+ 138              	.LVL9:
+ 139              		.loc 1 60 31 view .LVU31
+ 140 001a FFF7FEFF 		bl	MQTTSerialize_subscribeLength
+ 141              	.LVL10:
+ 142              		.loc 1 60 31 view .LVU32
+ 143 001e 8346     		mov	fp, r0
+ 144              	.LVL11:
+ 145              		.loc 1 60 6 view .LVU33
+ 146 0020 FFF7FEFF 		bl	MQTTPacket_len
+ 147              	.LVL12:
+ 148              		.loc 1 60 5 view .LVU34
+ 149 0024 4845     		cmp	r0, r9
+ 150 0026 32DC     		bgt	.L9
+ 151 0028 4FF00008 		mov	r8, #0
+ 152              	.LVL13:
+  61:Core/Src/MQTTSubscribeClient.c **** 	{
+  62:Core/Src/MQTTSubscribeClient.c **** 		rc = MQTTPACKET_BUFFER_TOO_SHORT;
+  63:Core/Src/MQTTSubscribeClient.c **** 		goto exit;
+  64:Core/Src/MQTTSubscribeClient.c **** 	}
+  65:Core/Src/MQTTSubscribeClient.c **** 
+  66:Core/Src/MQTTSubscribeClient.c **** 	header.byte = 0;
+ 153              		.loc 1 66 2 is_stmt 1 view .LVU35
+  67:Core/Src/MQTTSubscribeClient.c **** 	header.bits.type = SUBSCRIBE;
+ 154              		.loc 1 67 2 view .LVU36
+ 155              		.loc 1 67 19 is_stmt 0 view .LVU37
+ 156 002c 0823     		movs	r3, #8
+ 157 002e 63F30718 		bfi	r8, r3, #4, #4
+ 158              	.LVL14:
+  68:Core/Src/MQTTSubscribeClient.c **** 	header.bits.dup = dup;
+ 159              		.loc 1 68 2 is_stmt 1 view .LVU38
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\cctfn9sr.s 			page 5
+
+
+ 160              		.loc 1 68 18 is_stmt 0 view .LVU39
+ 161 0032 6AF3C308 		bfi	r8, r10, #3, #1
+  69:Core/Src/MQTTSubscribeClient.c **** 	header.bits.qos = 1;
+ 162              		.loc 1 69 2 is_stmt 1 view .LVU40
+ 163              		.loc 1 69 18 is_stmt 0 view .LVU41
+ 164 0036 0123     		movs	r3, #1
+ 165 0038 63F34208 		bfi	r8, r3, #1, #2
+  70:Core/Src/MQTTSubscribeClient.c **** 	writeChar(&ptr, header.byte); /* write header */
+ 166              		.loc 1 70 2 is_stmt 1 view .LVU42
+ 167 003c 5FFA88F1 		uxtb	r1, r8
+ 168 0040 03A8     		add	r0, sp, #12
+ 169 0042 FFF7FEFF 		bl	writeChar
+ 170              	.LVL15:
+  71:Core/Src/MQTTSubscribeClient.c **** 
+  72:Core/Src/MQTTSubscribeClient.c **** 	ptr += MQTTPacket_encode(ptr, rem_len); /* write remaining length */;
+ 171              		.loc 1 72 2 view .LVU43
+ 172              		.loc 1 72 9 is_stmt 0 view .LVU44
+ 173 0046 5946     		mov	r1, fp
+ 174 0048 0398     		ldr	r0, [sp, #12]
+ 175 004a FFF7FEFF 		bl	MQTTPacket_encode
+ 176              	.LVL16:
+ 177              		.loc 1 72 6 view .LVU45
+ 178 004e 039B     		ldr	r3, [sp, #12]
+ 179 0050 0344     		add	r3, r3, r0
+ 180 0052 0393     		str	r3, [sp, #12]
+ 181              		.loc 1 72 70 is_stmt 1 view .LVU46
+  73:Core/Src/MQTTSubscribeClient.c **** 
+  74:Core/Src/MQTTSubscribeClient.c **** 	writeInt(&ptr, packetid);
+ 182              		.loc 1 74 2 view .LVU47
+ 183 0054 0199     		ldr	r1, [sp, #4]
+ 184 0056 03A8     		add	r0, sp, #12
+ 185 0058 FFF7FEFF 		bl	writeInt
+ 186              	.LVL17:
+  75:Core/Src/MQTTSubscribeClient.c **** 
+  76:Core/Src/MQTTSubscribeClient.c **** 	for (i = 0; i < count; ++i)
+ 187              		.loc 1 76 2 view .LVU48
+ 188              		.loc 1 76 9 is_stmt 0 view .LVU49
+ 189 005c 4FF00008 		mov	r8, #0
+ 190              	.LVL18:
+ 191              		.loc 1 76 2 view .LVU50
+ 192 0060 0EE0     		b	.L7
+ 193              	.LVL19:
+ 194              	.L8:
+  77:Core/Src/MQTTSubscribeClient.c **** 	{
+  78:Core/Src/MQTTSubscribeClient.c **** 		writeMQTTString(&ptr, topicFilters[i]);
+ 195              		.loc 1 78 3 is_stmt 1 discriminator 3 view .LVU51
+ 196              		.loc 1 78 37 is_stmt 0 discriminator 3 view .LVU52
+ 197 0062 08EB4803 		add	r3, r8, r8, lsl #1
+ 198 0066 05EB8303 		add	r3, r5, r3, lsl #2
+ 199              		.loc 1 78 3 discriminator 3 view .LVU53
+ 200 006a 0ECB     		ldm	r3, {r1, r2, r3}
+ 201 006c 03A8     		add	r0, sp, #12
+ 202 006e FFF7FEFF 		bl	writeMQTTString
+ 203              	.LVL20:
+  79:Core/Src/MQTTSubscribeClient.c **** 		writeChar(&ptr, requestedQoSs[i]);
+ 204              		.loc 1 79 3 is_stmt 1 discriminator 3 view .LVU54
+ 205 0072 16F82810 		ldrb	r1, [r6, r8, lsl #2]	@ zero_extendqisi2
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\cctfn9sr.s 			page 6
+
+
+ 206 0076 03A8     		add	r0, sp, #12
+ 207 0078 FFF7FEFF 		bl	writeChar
+ 208              	.LVL21:
+  76:Core/Src/MQTTSubscribeClient.c **** 	{
+ 209              		.loc 1 76 25 discriminator 3 view .LVU55
+ 210 007c 08F10108 		add	r8, r8, #1
+ 211              	.LVL22:
+ 212              	.L7:
+  76:Core/Src/MQTTSubscribeClient.c **** 	{
+ 213              		.loc 1 76 14 discriminator 1 view .LVU56
+  76:Core/Src/MQTTSubscribeClient.c **** 	{
+ 214              		.loc 1 76 2 is_stmt 0 discriminator 1 view .LVU57
+ 215 0080 A045     		cmp	r8, r4
+ 216 0082 EEDB     		blt	.L8
+  80:Core/Src/MQTTSubscribeClient.c **** 	}
+  81:Core/Src/MQTTSubscribeClient.c **** 
+  82:Core/Src/MQTTSubscribeClient.c **** 	rc = ptr - buf;
+ 217              		.loc 1 82 2 is_stmt 1 view .LVU58
+ 218              		.loc 1 82 11 is_stmt 0 view .LVU59
+ 219 0084 0398     		ldr	r0, [sp, #12]
+ 220              		.loc 1 82 5 view .LVU60
+ 221 0086 C01B     		subs	r0, r0, r7
+ 222              	.LVL23:
+ 223              	.L5:
+  83:Core/Src/MQTTSubscribeClient.c **** exit:
+  84:Core/Src/MQTTSubscribeClient.c **** 	FUNC_EXIT_RC(rc);
+  85:Core/Src/MQTTSubscribeClient.c **** 	return rc;
+  86:Core/Src/MQTTSubscribeClient.c **** }
+ 224              		.loc 1 86 1 view .LVU61
+ 225 0088 05B0     		add	sp, sp, #20
+ 226              	.LCFI3:
+ 227              		.cfi_remember_state
+ 228              		.cfi_def_cfa_offset 36
+ 229              		@ sp needed
+ 230 008a BDE8F08F 		pop	{r4, r5, r6, r7, r8, r9, r10, fp, pc}
+ 231              	.LVL24:
+ 232              	.L9:
+ 233              	.LCFI4:
+ 234              		.cfi_restore_state
+  62:Core/Src/MQTTSubscribeClient.c **** 		goto exit;
+ 235              		.loc 1 62 6 view .LVU62
+ 236 008e 6FF00100 		mvn	r0, #1
+ 237              	.L6:
+ 238              	.LVL25:
+  84:Core/Src/MQTTSubscribeClient.c **** 	return rc;
+ 239              		.loc 1 84 18 is_stmt 1 view .LVU63
+  85:Core/Src/MQTTSubscribeClient.c **** }
+ 240              		.loc 1 85 2 view .LVU64
+  85:Core/Src/MQTTSubscribeClient.c **** }
+ 241              		.loc 1 85 9 is_stmt 0 view .LVU65
+ 242 0092 F9E7     		b	.L5
+ 243              		.cfi_endproc
+ 244              	.LFE4:
+ 246              		.section	.text.MQTTDeserialize_suback,"ax",%progbits
+ 247              		.align	1
+ 248              		.global	MQTTDeserialize_suback
+ 249              		.syntax unified
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\cctfn9sr.s 			page 7
+
+
+ 250              		.thumb
+ 251              		.thumb_func
+ 252              		.fpu softvfp
+ 254              	MQTTDeserialize_suback:
+ 255              	.LVL26:
+ 256              	.LFB5:
+  87:Core/Src/MQTTSubscribeClient.c **** 
+  88:Core/Src/MQTTSubscribeClient.c **** 
+  89:Core/Src/MQTTSubscribeClient.c **** 
+  90:Core/Src/MQTTSubscribeClient.c **** /**
+  91:Core/Src/MQTTSubscribeClient.c ****   * Deserializes the supplied (wire) buffer into suback data
+  92:Core/Src/MQTTSubscribeClient.c ****   * @param packetid returned integer - the MQTT packet identifier
+  93:Core/Src/MQTTSubscribeClient.c ****   * @param maxcount - the maximum number of members allowed in the grantedQoSs array
+  94:Core/Src/MQTTSubscribeClient.c ****   * @param count returned integer - number of members in the grantedQoSs array
+  95:Core/Src/MQTTSubscribeClient.c ****   * @param grantedQoSs returned array of integers - the granted qualities of service
+  96:Core/Src/MQTTSubscribeClient.c ****   * @param buf the raw buffer data, of the correct length determined by the remaining length field
+  97:Core/Src/MQTTSubscribeClient.c ****   * @param buflen the length in bytes of the data in the supplied buffer
+  98:Core/Src/MQTTSubscribeClient.c ****   * @return error code.  1 is success, 0 is failure
+  99:Core/Src/MQTTSubscribeClient.c ****   */
+ 100:Core/Src/MQTTSubscribeClient.c **** int MQTTDeserialize_suback(unsigned short* packetid, int maxcount, int* count, int grantedQoSs[], u
+ 101:Core/Src/MQTTSubscribeClient.c **** {
+ 257              		.loc 1 101 1 is_stmt 1 view -0
+ 258              		.cfi_startproc
+ 259              		@ args = 8, pretend = 0, frame = 8
+ 260              		@ frame_needed = 0, uses_anonymous_args = 0
+ 261              		.loc 1 101 1 is_stmt 0 view .LVU67
+ 262 0000 2DE9F041 		push	{r4, r5, r6, r7, r8, lr}
+ 263              	.LCFI5:
+ 264              		.cfi_def_cfa_offset 24
+ 265              		.cfi_offset 4, -24
+ 266              		.cfi_offset 5, -20
+ 267              		.cfi_offset 6, -16
+ 268              		.cfi_offset 7, -12
+ 269              		.cfi_offset 8, -8
+ 270              		.cfi_offset 14, -4
+ 271 0004 82B0     		sub	sp, sp, #8
+ 272              	.LCFI6:
+ 273              		.cfi_def_cfa_offset 32
+ 274 0006 8046     		mov	r8, r0
+ 275 0008 0D46     		mov	r5, r1
+ 276 000a 1446     		mov	r4, r2
+ 277 000c 1E46     		mov	r6, r3
+ 102:Core/Src/MQTTSubscribeClient.c **** 	MQTTHeader header = {0};
+ 278              		.loc 1 102 2 is_stmt 1 view .LVU68
+ 103:Core/Src/MQTTSubscribeClient.c **** 	unsigned char* curdata = buf;
+ 279              		.loc 1 103 2 view .LVU69
+ 280              		.loc 1 103 17 is_stmt 0 view .LVU70
+ 281 000e 089B     		ldr	r3, [sp, #32]
+ 282              	.LVL27:
+ 283              		.loc 1 103 17 view .LVU71
+ 284 0010 0193     		str	r3, [sp, #4]
+ 104:Core/Src/MQTTSubscribeClient.c **** 	unsigned char* enddata = NULL;
+ 285              		.loc 1 104 2 is_stmt 1 view .LVU72
+ 286              	.LVL28:
+ 105:Core/Src/MQTTSubscribeClient.c **** 	int rc = 0;
+ 287              		.loc 1 105 2 view .LVU73
+ 106:Core/Src/MQTTSubscribeClient.c **** 	int mylen;
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\cctfn9sr.s 			page 8
+
+
+ 288              		.loc 1 106 2 view .LVU74
+ 107:Core/Src/MQTTSubscribeClient.c **** 
+ 108:Core/Src/MQTTSubscribeClient.c **** 	FUNC_ENTRY;
+ 289              		.loc 1 108 12 view .LVU75
+ 109:Core/Src/MQTTSubscribeClient.c **** 	header.byte = readChar(&curdata);
+ 290              		.loc 1 109 2 view .LVU76
+ 291              		.loc 1 109 16 is_stmt 0 view .LVU77
+ 292 0012 01A8     		add	r0, sp, #4
+ 293              	.LVL29:
+ 294              		.loc 1 109 16 view .LVU78
+ 295 0014 FFF7FEFF 		bl	readChar
+ 296              	.LVL30:
+ 110:Core/Src/MQTTSubscribeClient.c **** 	if (header.bits.type != SUBACK)
+ 297              		.loc 1 110 2 is_stmt 1 view .LVU79
+ 298              		.loc 1 110 23 is_stmt 0 view .LVU80
+ 299 0018 00F0F003 		and	r3, r0, #240
+ 300              		.loc 1 110 5 view .LVU81
+ 301 001c 902B     		cmp	r3, #144
+ 302 001e 03D0     		beq	.L18
+ 105:Core/Src/MQTTSubscribeClient.c **** 	int mylen;
+ 303              		.loc 1 105 6 view .LVU82
+ 304 0020 0020     		movs	r0, #0
+ 305              	.LVL31:
+ 306              	.L11:
+ 111:Core/Src/MQTTSubscribeClient.c **** 		goto exit;
+ 112:Core/Src/MQTTSubscribeClient.c **** 
+ 113:Core/Src/MQTTSubscribeClient.c **** 	curdata += (rc = MQTTPacket_decodeBuf(curdata, &mylen)); /* read remaining length */
+ 114:Core/Src/MQTTSubscribeClient.c **** 	enddata = curdata + mylen;
+ 115:Core/Src/MQTTSubscribeClient.c **** 	if (enddata - curdata < 2)
+ 116:Core/Src/MQTTSubscribeClient.c **** 		goto exit;
+ 117:Core/Src/MQTTSubscribeClient.c **** 
+ 118:Core/Src/MQTTSubscribeClient.c **** 	*packetid = readInt(&curdata);
+ 119:Core/Src/MQTTSubscribeClient.c **** 
+ 120:Core/Src/MQTTSubscribeClient.c **** 	*count = 0;
+ 121:Core/Src/MQTTSubscribeClient.c **** 	while (curdata < enddata)
+ 122:Core/Src/MQTTSubscribeClient.c **** 	{
+ 123:Core/Src/MQTTSubscribeClient.c **** 		if (*count > maxcount)
+ 124:Core/Src/MQTTSubscribeClient.c **** 		{
+ 125:Core/Src/MQTTSubscribeClient.c **** 			rc = -1;
+ 126:Core/Src/MQTTSubscribeClient.c **** 			goto exit;
+ 127:Core/Src/MQTTSubscribeClient.c **** 		}
+ 128:Core/Src/MQTTSubscribeClient.c **** 		grantedQoSs[(*count)++] = readChar(&curdata);
+ 129:Core/Src/MQTTSubscribeClient.c **** 	}
+ 130:Core/Src/MQTTSubscribeClient.c **** 
+ 131:Core/Src/MQTTSubscribeClient.c **** 	rc = 1;
+ 132:Core/Src/MQTTSubscribeClient.c **** exit:
+ 133:Core/Src/MQTTSubscribeClient.c **** 	FUNC_EXIT_RC(rc);
+ 134:Core/Src/MQTTSubscribeClient.c **** 	return rc;
+ 135:Core/Src/MQTTSubscribeClient.c **** }
+ 307              		.loc 1 135 1 view .LVU83
+ 308 0022 02B0     		add	sp, sp, #8
+ 309              	.LCFI7:
+ 310              		.cfi_remember_state
+ 311              		.cfi_def_cfa_offset 24
+ 312              		@ sp needed
+ 313 0024 BDE8F081 		pop	{r4, r5, r6, r7, r8, pc}
+ 314              	.LVL32:
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\cctfn9sr.s 			page 9
+
+
+ 315              	.L18:
+ 316              	.LCFI8:
+ 317              		.cfi_restore_state
+ 113:Core/Src/MQTTSubscribeClient.c **** 	enddata = curdata + mylen;
+ 318              		.loc 1 113 2 is_stmt 1 view .LVU84
+ 113:Core/Src/MQTTSubscribeClient.c **** 	enddata = curdata + mylen;
+ 319              		.loc 1 113 19 is_stmt 0 view .LVU85
+ 320 0028 6946     		mov	r1, sp
+ 321 002a 0198     		ldr	r0, [sp, #4]
+ 322 002c FFF7FEFF 		bl	MQTTPacket_decodeBuf
+ 323              	.LVL33:
+ 113:Core/Src/MQTTSubscribeClient.c **** 	enddata = curdata + mylen;
+ 324              		.loc 1 113 10 view .LVU86
+ 325 0030 019F     		ldr	r7, [sp, #4]
+ 326 0032 0744     		add	r7, r7, r0
+ 327 0034 0197     		str	r7, [sp, #4]
+ 114:Core/Src/MQTTSubscribeClient.c **** 	if (enddata - curdata < 2)
+ 328              		.loc 1 114 2 is_stmt 1 view .LVU87
+ 114:Core/Src/MQTTSubscribeClient.c **** 	if (enddata - curdata < 2)
+ 329              		.loc 1 114 20 is_stmt 0 view .LVU88
+ 330 0036 009B     		ldr	r3, [sp]
+ 114:Core/Src/MQTTSubscribeClient.c **** 	if (enddata - curdata < 2)
+ 331              		.loc 1 114 10 view .LVU89
+ 332 0038 1F44     		add	r7, r7, r3
+ 333              	.LVL34:
+ 115:Core/Src/MQTTSubscribeClient.c **** 		goto exit;
+ 334              		.loc 1 115 2 is_stmt 1 view .LVU90
+ 115:Core/Src/MQTTSubscribeClient.c **** 		goto exit;
+ 335              		.loc 1 115 5 is_stmt 0 view .LVU91
+ 336 003a 012B     		cmp	r3, #1
+ 337 003c F1DD     		ble	.L11
+ 118:Core/Src/MQTTSubscribeClient.c **** 
+ 338              		.loc 1 118 2 is_stmt 1 view .LVU92
+ 118:Core/Src/MQTTSubscribeClient.c **** 
+ 339              		.loc 1 118 14 is_stmt 0 view .LVU93
+ 340 003e 01A8     		add	r0, sp, #4
+ 341              	.LVL35:
+ 118:Core/Src/MQTTSubscribeClient.c **** 
+ 342              		.loc 1 118 14 view .LVU94
+ 343 0040 FFF7FEFF 		bl	readInt
+ 344              	.LVL36:
+ 118:Core/Src/MQTTSubscribeClient.c **** 
+ 345              		.loc 1 118 12 view .LVU95
+ 346 0044 A8F80000 		strh	r0, [r8]	@ movhi
+ 120:Core/Src/MQTTSubscribeClient.c **** 	while (curdata < enddata)
+ 347              		.loc 1 120 2 is_stmt 1 view .LVU96
+ 120:Core/Src/MQTTSubscribeClient.c **** 	while (curdata < enddata)
+ 348              		.loc 1 120 9 is_stmt 0 view .LVU97
+ 349 0048 0023     		movs	r3, #0
+ 350 004a 2360     		str	r3, [r4]
+ 121:Core/Src/MQTTSubscribeClient.c **** 	{
+ 351              		.loc 1 121 2 is_stmt 1 view .LVU98
+ 352              	.L13:
+ 121:Core/Src/MQTTSubscribeClient.c **** 	{
+ 353              		.loc 1 121 8 view .LVU99
+ 121:Core/Src/MQTTSubscribeClient.c **** 	{
+ 354              		.loc 1 121 17 is_stmt 0 view .LVU100
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\cctfn9sr.s 			page 10
+
+
+ 355 004c 019B     		ldr	r3, [sp, #4]
+ 121:Core/Src/MQTTSubscribeClient.c **** 	{
+ 356              		.loc 1 121 8 view .LVU101
+ 357 004e BB42     		cmp	r3, r7
+ 358 0050 0BD2     		bcs	.L19
+ 123:Core/Src/MQTTSubscribeClient.c **** 		{
+ 359              		.loc 1 123 3 is_stmt 1 view .LVU102
+ 123:Core/Src/MQTTSubscribeClient.c **** 		{
+ 360              		.loc 1 123 7 is_stmt 0 view .LVU103
+ 361 0052 2368     		ldr	r3, [r4]
+ 123:Core/Src/MQTTSubscribeClient.c **** 		{
+ 362              		.loc 1 123 6 view .LVU104
+ 363 0054 AB42     		cmp	r3, r5
+ 364 0056 0ADC     		bgt	.L16
+ 128:Core/Src/MQTTSubscribeClient.c **** 	}
+ 365              		.loc 1 128 3 is_stmt 1 view .LVU105
+ 128:Core/Src/MQTTSubscribeClient.c **** 	}
+ 366              		.loc 1 128 29 is_stmt 0 view .LVU106
+ 367 0058 01A8     		add	r0, sp, #4
+ 368 005a FFF7FEFF 		bl	readChar
+ 369              	.LVL37:
+ 128:Core/Src/MQTTSubscribeClient.c **** 	}
+ 370              		.loc 1 128 16 view .LVU107
+ 371 005e 2268     		ldr	r2, [r4]
+ 128:Core/Src/MQTTSubscribeClient.c **** 	}
+ 372              		.loc 1 128 23 view .LVU108
+ 373 0060 531C     		adds	r3, r2, #1
+ 374 0062 2360     		str	r3, [r4]
+ 128:Core/Src/MQTTSubscribeClient.c **** 	}
+ 375              		.loc 1 128 27 view .LVU109
+ 376 0064 46F82200 		str	r0, [r6, r2, lsl #2]
+ 377 0068 F0E7     		b	.L13
+ 378              	.L19:
+ 131:Core/Src/MQTTSubscribeClient.c **** exit:
+ 379              		.loc 1 131 5 view .LVU110
+ 380 006a 0120     		movs	r0, #1
+ 381 006c D9E7     		b	.L11
+ 382              	.L16:
+ 125:Core/Src/MQTTSubscribeClient.c **** 			goto exit;
+ 383              		.loc 1 125 7 view .LVU111
+ 384 006e 4FF0FF30 		mov	r0, #-1
+ 385              	.L12:
+ 386              	.LVL38:
+ 133:Core/Src/MQTTSubscribeClient.c **** 	return rc;
+ 387              		.loc 1 133 18 is_stmt 1 view .LVU112
+ 134:Core/Src/MQTTSubscribeClient.c **** }
+ 388              		.loc 1 134 2 view .LVU113
+ 134:Core/Src/MQTTSubscribeClient.c **** }
+ 389              		.loc 1 134 9 is_stmt 0 view .LVU114
+ 390 0072 D6E7     		b	.L11
+ 391              		.cfi_endproc
+ 392              	.LFE5:
+ 394              		.text
+ 395              	.Letext0:
+ 396              		.file 2 "Core/Inc/MQTTPacket.h"
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\cctfn9sr.s 			page 11
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 MQTTSubscribeClient.c
+C:\Users\Vento\AppData\Local\Temp\cctfn9sr.s:16     .text.MQTTSerialize_subscribeLength:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\cctfn9sr.s:24     .text.MQTTSerialize_subscribeLength:00000000 MQTTSerialize_subscribeLength
+C:\Users\Vento\AppData\Local\Temp\cctfn9sr.s:86     .text.MQTTSerialize_subscribe:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\cctfn9sr.s:93     .text.MQTTSerialize_subscribe:00000000 MQTTSerialize_subscribe
+C:\Users\Vento\AppData\Local\Temp\cctfn9sr.s:247    .text.MQTTDeserialize_suback:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\cctfn9sr.s:254    .text.MQTTDeserialize_suback:00000000 MQTTDeserialize_suback
+
+UNDEFINED SYMBOLS
+MQTTstrlen
+MQTTPacket_len
+writeChar
+MQTTPacket_encode
+writeInt
+writeMQTTString
+readChar
+MQTTPacket_decodeBuf
+readInt

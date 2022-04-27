@@ -14,7 +14,7 @@
             "device": "STM32F103C8T6",
             "configFiles": [
                 "interface/stlink-v2.cfg",
-                "target/stm32f1x_real.cfg"
+                "target/stm32f1x.cfg"
             ],
             "svdFile": "D:/TOOLS/STM32F1_svd_V1.2/STM32F103.svd"
         }

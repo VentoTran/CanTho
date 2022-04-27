@@ -50,8 +50,11 @@ typedef struct
     uint8_t MQTT;
 } SIM800_St;
 
+
 extern SIM800_t SIM800;
 SIM800_St SIM800_Status = {0, 0, 0};
+SIM800_Batt_t SIM800_Batt = {0, 0};
+extern uint8_t is_SMS_done;
 
 uint8_t rx_data = 0;
 uint8_t rx_buffer[200] = {0};
@@ -60,6 +63,8 @@ uint16_t rx_index = 0;
 uint8_t mqtt_receive = 0;
 char mqtt_buffer[200] = {0};
 uint16_t mqtt_index = 0;
+
+extern GPS_Sta_t myGPS;
 
 //-------------------------------------------------------------------------
 
@@ -125,8 +130,107 @@ void ftoa(float n, char* res, int afterpoint)
     }
 }
 
+float str2float(char* str, int afterpoint)
+{
+    float f = 0.0;
+    int f_part = 0;
+    uint8_t count = 0;
 
-//--------------------------------------------------------------------------
+    while (str[count] != '.')
+    {
+        f = f * 10 + (int)(str[count++] - 48);
+    }
+
+    count++;
+
+    for (uint8_t i = 0; i < afterpoint; i++)
+    {
+        // f = f + (float)(str[count++] - 48)/(pow(10, i+1));
+        f_part = f_part * 10 + (int)(str[count++] - 48);
+    }
+
+    f += f_part / pow(10, afterpoint);
+
+    return f;
+}
+
+void getGPS(void)
+{
+    // SIM800_SendCommand("AT+CGNSINF\r\n", "", 1000);
+    char cmd[15] = "AT+CGNSINF\r\n";
+    clearRxBuffer();
+    HAL_UART_Transmit_IT(UART_SIM800, (unsigned char *)cmd, (uint16_t)strlen(cmd));
+
+    osDelay(1000);
+
+    sscanf(mqtt_buffer, "+CGNSINF: %[^,],%[^,],%[^,],%[^,],%[^,],%*[^,],%*[^,],%*[^,],%d,,%*[^,],%*[^,],%*[^,],,%d,%d,%d,,%*[^,],%*[^,],%*[^,]", \
+        &myGPS.GPS_Status, &myGPS.Fix_Status, myGPS.UTC_Time, myGPS.cLat, myGPS.cLon, \
+        &myGPS.FixMode, &myGPS.NumSatView, &myGPS.NumSatUsed, &myGPS.NumGLONASS);
+
+    if (myGPS.Fix_Status == 1)
+    {
+        myGPS.Latitude = str2float(myGPS.cLat, 6);
+        myGPS.Longitude = str2float(myGPS.cLon, 6);
+    }
+    
+    GPS_Time_Parse(myGPS.UTC_Time);
+
+    clearMqttBuffer();
+    // clearRxBuffer();
+
+}
+
+void GPS_Time_Parse(char * cTime)
+{
+    char str[4] = {0};
+
+    memcpy(str, cTime, 4);
+    myGPS.Time.Year = (uint16_t)strtol(str, NULL, 10);
+    memset(str, '\0', 4);
+
+    memcpy(str, cTime + 4, 2);
+    myGPS.Time.Month = (uint8_t)strtol(str, NULL, 10);
+    memset(str, '\0', 4);
+
+    memcpy(str, cTime + 6, 2);
+    myGPS.Time.Day = (uint8_t)strtol(str, NULL, 10);
+    memset(str, '\0', 4);
+
+    memcpy(str, cTime + 8, 2);
+    myGPS.Time.Hour = (uint8_t)strtol(str, NULL, 10);
+    if ((myGPS.Time.Hour + 7) >= 24)
+    {
+        for (uint8_t i = 0; i < 7; i++)
+        {
+            myGPS.Time.Hour++;
+            if (myGPS.Time.Hour == 24)  myGPS.Time.Hour = 0;
+        }
+    }
+    else    myGPS.Time.Hour += 7;
+    memset(str, '\0', 4);
+
+    memcpy(str, cTime + 10, 2);
+    myGPS.Time.Minute = (uint8_t)strtol(str, NULL, 10);
+    memset(str, '\0', 4);
+
+    memcpy(str, cTime + 12, 2);
+    myGPS.Time.Second = (uint8_t)strtol(str, NULL, 10);
+    memset(str, '\0', 4);
+
+}
+
+void getBattery(void)
+{
+    char cmd[15] = "AT+CBC\r\n";
+    clearRxBuffer();
+    HAL_UART_Transmit_IT(UART_SIM800, (unsigned char *)cmd, (uint16_t)strlen(cmd));
+
+    osDelay(1500);
+
+    sscanf(mqtt_buffer, "+CBC: %*[^,],%i,%i", &SIM800_Batt.BattPerc, &SIM800_Batt.BattVol);
+}
+
+//--------------------------------------------------------------------------------------------------------
 
 /**
  * Call back function for release read SIM800 UART buffer.
@@ -137,63 +241,72 @@ void Sim800_RxCallBack(void)
 {
     rx_buffer[rx_index++] = rx_data;
 
-    if (SIM800.mqttServer.connect == 0)
+
+    if (strstr((char *)rx_buffer, "\r\n") != NULL && rx_index == 2)
     {
-        if (strstr((char *)rx_buffer, "\r\n") != NULL && rx_index == 2)
+        rx_index = 0;
+    }
+    else if ((strstr((char *)rx_buffer, "OK\r\n") != NULL) || (strstr((char *)rx_buffer, "ERROR\r\n") != NULL))
+    {
+        memcpy(mqtt_buffer, rx_buffer, sizeof(rx_buffer));
+        clearRxBuffer();
+        if (strstr(mqtt_buffer, "ERROR") && (SIM800.mqttServer.connect == 1))
         {
-            rx_index = 0;
+            SIM800.mqttServer.connect = 0;
         }
-        else if (strstr((char *)rx_buffer, "\r\n") != NULL)
+        else if (strstr(mqtt_buffer, "CONNECT"))
         {
-            memcpy(mqtt_buffer, rx_buffer, sizeof(rx_buffer));
-            clearRxBuffer();
-            if (strstr(mqtt_buffer, "DY CONNECT\r\n"))
-            {
-                SIM800.mqttServer.connect = 0;
-            }
-            else if (strstr(mqtt_buffer, "CONNECT\r\n"))
-            {
-                SIM800.mqttServer.connect = 1;
-            }
+            SIM800.mqttServer.connect = 1;
         }
     }
-    if (strstr((char *)rx_buffer, "CLOSED\r\n") || strstr((char *)rx_buffer, "ERROR\r\n") || strstr((char *)rx_buffer, "DEACT\r\n"))
+
+    if (strstr((char *)rx_buffer, "CLOSED\r\n") || strstr((char *)rx_buffer, "DEACT\r\n"))
     {
         SIM800.mqttServer.connect = 0;
     }
-    if (strstr((char*)rx_buffer, "SEND OK\r\n"))  
-    {
-        SIM800.mqttServer.connect = 1;
-        clearRxBuffer();
-    } 
-    if (SIM800.mqttServer.connect == 1 && rx_data == 48)
-    {
-        mqtt_receive = 1;
-    }
-    if (mqtt_receive == 1)
-    {
-        mqtt_buffer[mqtt_index++] = rx_data;
-        if (mqtt_index > 1 && mqtt_index - 1 > mqtt_buffer[1])
-        {
-            //MQTT_Receive((unsigned char *)mqtt_buffer);
-            clearRxBuffer();
-            clearMqttBuffer();
-        }
-        if (mqtt_index >= sizeof(mqtt_buffer))
-        {
-            clearMqttBuffer();
-        }
-    }
+    // if (strstr((char*)rx_buffer, "SEND OK\r\n"))  
+    // {
+    //     SIM800.mqttServer.connect = 1;
+    //     clearRxBuffer();
+    // } 
+    // if (SIM800.mqttServer.connect == 1 && rx_data == 48)
+    // {
+    //     mqtt_receive = 1;
+    // }
+    // if (mqtt_receive == 1)
+    // {
+    //     mqtt_buffer[mqtt_index++] = rx_data;
+    //     if (mqtt_index > 1 && mqtt_index - 1 > mqtt_buffer[1])
+    //     {
+    //         //MQTT_Receive((unsigned char *)mqtt_buffer);
+    //         clearRxBuffer();
+    //         clearMqttBuffer();
+    //     }
+    //     if (mqtt_index >= sizeof(mqtt_buffer))
+    //     {
+    //         clearMqttBuffer();
+    //     }
+    // }
     if (rx_index >= sizeof(mqtt_buffer))
     {
         clearRxBuffer();
         clearMqttBuffer();
     }
-    if (rx_data == '>')
+    if ((strstr((char *)rx_buffer, ">") != NULL) && (rx_index < 5))
     {
         memcpy(mqtt_buffer, rx_buffer, sizeof(rx_buffer));
+        clearRxBuffer();
+    }
+    if (strstr((char *)rx_buffer, "+CMGS:") != NULL)
+    {
+        is_SMS_done = 1;
+        clearRxBuffer();
     }
 
+    if(rx_data == '^')
+    {
+        MQTT_Receive(rx_buffer);
+    }
 
     HAL_UART_Receive_IT(UART_SIM800, &rx_data, 1);
 }
@@ -296,6 +409,7 @@ int MQTT_Init(void)
         SIM800_Status.GPRS = 0;
         SIM800_Status.MQTT = 0;
     }
+    SIM800_SendCommand("AT+CMGF=1\r\n", "OK\r\n", 1000);
     error += SIM800_SendCommand("AT+CIPSHUT\r\n", "OK\r\n", CMD_DELAY);
     error += SIM800_SendCommand("AT+CGATT=1\r\n", "OK\r\n", CMD_DELAY);
     error += SIM800_SendCommand("AT+CIPMODE=0\r\n", "OK\r\n", CMD_DELAY);
@@ -340,13 +454,14 @@ void MQTT_Connect(void)
     else    {SIM800_Status.MQTT = 0;}
 
 #if FREERTOS == 1
-    osDelay(2000);
+    osDelay(200);
 #else
     HAL_Delay(5000);
 #endif
 
     if (SIM800_Status.MQTT == 1)
     {
+        char temp[1]= {26};
         MQTTPacket_connectData datas = MQTTPacket_connectData_initializer;
         datas.username.cstring = SIM800.mqttClient.username;
         datas.password.cstring = SIM800.mqttClient.pass;
@@ -355,20 +470,13 @@ void MQTT_Connect(void)
         datas.cleansession = 1;
         int mqtt_len = MQTTSerialize_connect(buf, sizeof(buf), &datas);
         SIM800_SendCommand("AT+CIPSEND\r\n", ">", CMD_DELAY);
-        if(!SIM800_SendMQTT((char*)buf, mqtt_len, "OK\r\n", CMD_DELAY))
-        {
-            osDelay(100);
-            huart1.Instance->DR = 0b00011010;       //0x1A - OK
-        }
-        else
-        {   
-            osDelay(100);
-            huart1.Instance->DR = 0b00011011;       //0x1B - CANCEL
-        }
-        
+        osDelay(200);
+        SIM800_SendMQTT((char*)buf, mqtt_len, "", CMD_DELAY);
+        osDelay(200);
+        HAL_UART_Transmit_IT(UART_SIM800, (unsigned char *)temp, 1);
 
 #if FREERTOS == 1
-        osDelay(2000);
+        osDelay(3000);
 #else
         HAL_Delay(3000);
 #endif
@@ -384,20 +492,23 @@ void MQTT_Connect(void)
 void MQTT_Pub(char *topic, char *payload)
 {
     unsigned char buf[256] = {0};
+    char temp[1]= {26};
 
     MQTTString topicString = MQTTString_initializer;
     topicString.cstring = topic;
 
     int mqtt_len = MQTTSerialize_publish(buf, sizeof(buf), 0, 0, 1, 0,
                                          topicString, (unsigned char *)payload, (int)strlen(payload));
-    SIM800_SendCommand("AT+CIPSEND\r\n", ">", CMD_DELAY);
-    SIM800_SendMQTT((char*)buf, mqtt_len, "OK\r\n", CMD_DELAY);
-    osDelay(100);
-    huart1.Instance->DR = 0b00011010;       //0x1A - OK
+    SIM800_SendCommand("AT+CIPSEND\r\n", ">", 1000);
+    osDelay(500);
+    SIM800_SendMQTT((char*)buf, mqtt_len, "", 1000);
+    osDelay(200);
+    HAL_UART_Transmit_IT(UART_SIM800, (unsigned char *)temp, 1);
+    // huart1.Instance->DR = 0b00011010;       //0x1A - OK
 
 
 #if FREERTOS == 1
-    osDelay(100);
+    osDelay(5000);
 #else
     HAL_Delay(100);
 #endif
@@ -479,16 +590,10 @@ void MQTT_PingReq(void)
 
     int mqtt_len = MQTTSerialize_pingreq(buf, sizeof(buf));
     SIM800_SendCommand("AT+CIPSEND\r\n", ">", CMD_DELAY);
-    if(!SIM800_SendMQTT((char*)buf, mqtt_len, "OK\r\n", CMD_DELAY))
-    {
-        osDelay(100);
-        huart1.Instance->DR = 0b00011010;       //0x1A - OK
-    }
-    else
-    {   
-        osDelay(100);
-        huart1.Instance->DR = 0b00011011;       //0x1B - CANCEL
-    }
+    SIM800_SendMQTT((char*)buf, mqtt_len, "OK\r\n", CMD_DELAY);
+    osDelay(100);
+    huart1.Instance->DR = 0b00011010;       //0x1A - OK
+
 
 #if FREERTOS == 1
     osDelay(100);
@@ -497,56 +602,51 @@ void MQTT_PingReq(void)
 #endif
 }
 
-// /**
-//  * Subscribe on the MQTT broker of the message in a topic
-//  * @param topic to be used to the set topic
-//  * @return NONE
-//  */
-// void MQTT_Sub(char *topic)
-// {
-//     unsigned char buf[256] = {0};
+/**
+ * Subscribe on the MQTT broker of the message in a topic
+ * @param topic to be used to the set topic
+ * @return NONE
+ */
+void MQTT_Sub(char *topic)
+{
+    unsigned char buf[256] = {0};
 
-//     MQTTString topicString = MQTTString_initializer;
-//     topicString.cstring = topic;
+    MQTTString topicString = MQTTString_initializer;
+    topicString.cstring = topic;
 
-//     int mqtt_len = MQTTSerialize_subscribe(buf, sizeof(buf), 0, 1, 1,
-//                                             &topicString, 0);
-//     SIM800_SendCommand("AT+CIPSEND\r\n", ">", CMD_DELAY);
-//     if(!SIM800_SendMQTT(buf, mqtt_len, "OK\r\n", CMD_DELAY))
-//     {
-//         osDelay(100);
-//         huart1.Instance->DR = 0b00011010;       //0x1A - OK
-//     }
-//     else
-//     {   
-//         osDelay(100);
-//         huart1.Instance->DR = 0b00011011;       //0x1B - CANCEL
-//     }
+    int mqtt_len = MQTTSerialize_subscribe(buf, sizeof(buf), 0, 1, 1,
+                                            &topicString, 0);
+    SIM800_SendCommand("AT+CIPSEND\r\n", ">", CMD_DELAY);
+    SIM800_SendMQTT(buf, mqtt_len, "OK\r\n", CMD_DELAY);
+    osDelay(100);
+    huart1.Instance->DR = 0b00011010;       //0x1A - OK
 
-// #if FREERTOS == 1
-//     osDelay(100);
-// #else
-//     HAL_Delay(100);
-// #endif
-// }
+#if FREERTOS == 1
+    osDelay(100);
+#else
+    HAL_Delay(100);
+#endif
+}
 
-// /**
-//  * Receive message from MQTT broker
-//  * @param receive mqtt bufer
-//  * @return NONE
-//  */
-// void MQTT_Receive(unsigned char *buf)
-// {
-//     memset(SIM800.mqttReceive.topic, 0, sizeof(SIM800.mqttReceive.topic));
-//     memset(SIM800.mqttReceive.payload, 0, sizeof(SIM800.mqttReceive.payload));
-//     MQTTString receivedTopic;
-//     unsigned char *payload;
-//     MQTTDeserialize_publish(&SIM800.mqttReceive.dup, &SIM800.mqttReceive.qos, &SIM800.mqttReceive.retained,
-//                             &SIM800.mqttReceive.msgId,
-//                             &receivedTopic, &payload, &SIM800.mqttReceive.payloadLen, buf,
-//                             sizeof(buf));
-//     memcpy(SIM800.mqttReceive.topic, receivedTopic.lenstring.data, receivedTopic.lenstring.len);
-//     SIM800.mqttReceive.topicLen = receivedTopic.lenstring.len;
-//     memcpy(SIM800.mqttReceive.payload, payload, SIM800.mqttReceive.payloadLen);
-//     SIM800.mqttReceive.newEvent = 1;
-// }
+/**
+ * Receive message from MQTT broker
+ * @param receive mqtt bufer
+ * @return NONE
+ */
+void MQTT_Receive(unsigned char *buf)
+{
+    memset(SIM800.mqttReceive.topic, 0, sizeof(SIM800.mqttReceive.topic));
+    memset(SIM800.mqttReceive.payload, 0, sizeof(SIM800.mqttReceive.payload));
+    MQTTString receivedTopic;
+    unsigned char *payload;
+    MQTTDeserialize_publish(&SIM800.mqttReceive.dup, &SIM800.mqttReceive.qos, &SIM800.mqttReceive.retained,
+                            &SIM800.mqttReceive.msgId,
+                            &receivedTopic, &payload, &SIM800.mqttReceive.payloadLen, buf,
+                            sizeof(buf));
+    memcpy(SIM800.mqttReceive.topic, receivedTopic.lenstring.data, receivedTopic.lenstring.len);
+    SIM800.mqttReceive.topicLen = receivedTopic.lenstring.len;
+    memcpy(SIM800.mqttReceive.payload, payload, SIM800.mqttReceive.payloadLen);
+    SIM800.mqttReceive.newEvent = 1;
+}
+
+

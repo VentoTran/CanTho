@@ -60,6 +60,7 @@
 #include "Arduino.h"
 #include "spo2_algorithm.h"
 
+// int32_t calculateMean(long a, long b);
 
 //Arduino Uno doesn't have enough SRAM to store 100 samples of IR led data and red led data in 32-bit format
 //To solve this problem, 16-bit MSB of the sampled data will be truncated.  Samples become 16-bit data.
@@ -124,16 +125,16 @@ void maxim_heart_rate_and_oxygen_saturation(uint16_t *pun_ir_buffer, int32_t n_i
   for (k = 0; k < 15; k++) an_ir_valley_locs[k]=0;
 
   // since we flipped signal, we use peak detector as valley detector
-  maxim_find_peaks(an_ir_valley_locs, &n_npks, an_x, BUFFER_SIZE, n_th1, 10, 15);  //peak_height, peak_distance, max_num_peaks 
+  maxim_find_peaks(an_ir_valley_locs, &n_npks, an_x, BUFFER_SIZE, n_th1, 10, 20);  //peak_height, peak_distance, max_num_peaks 
   n_peak_interval_sum = 0;
   if (n_npks >= 2)
   {
-    for (k = 1; k < n_npks; k++) n_peak_interval_sum += (an_ir_valley_locs[k] -an_ir_valley_locs[k -1] ) ;
+    for (k = 1; k < n_npks; k++) n_peak_interval_sum += (an_ir_valley_locs[k] - an_ir_valley_locs[k -1] ) ;
     n_peak_interval_sum = n_peak_interval_sum/(n_npks-1);
     *pn_heart_rate = (int32_t)( (60 * 1000.0) / (n_peak_interval_sum * delta));
     *pch_hr_valid  = 1;
-    //Serial.println(n_npks);
-    //Serial.println(n_peak_interval_sum);
+    Serial.println(n_npks);
+    Serial.println(n_peak_interval_sum);
   }
   else
   { 
@@ -156,10 +157,12 @@ void maxim_heart_rate_and_oxygen_saturation(uint16_t *pun_ir_buffer, int32_t n_i
   //finding AC/DC maximum of raw
 
   n_ratio_average = 0; 
+  long n_ratia_de = 60;
   n_i_ratio_count = 0; 
   for(k=0; k< 5; k++) an_ratio[k]=0;
   for (k=0; k< n_exact_ir_valley_locs_count; k++){
     if (an_ir_valley_locs[k] > BUFFER_SIZE ){
+      Serial.print("\n??\n");
       *pn_spo2 =  -999 ; // do not use SPO2 since valley loc is out of range
       *pch_spo2_valid  = 0; 
       return;
@@ -194,25 +197,30 @@ void maxim_heart_rate_and_oxygen_saturation(uint16_t *pun_ir_buffer, int32_t n_i
   }
   // choose median value since PPG signal may varies from beat to beat
   maxim_sort_ascend(an_ratio, n_i_ratio_count);
-  n_middle_idx= n_i_ratio_count/2;
+  n_middle_idx = n_i_ratio_count/2;
 
   if (n_middle_idx >1)
     n_ratio_average =( an_ratio[n_middle_idx-1] +an_ratio[n_middle_idx])/2; // use median
   else
-    n_ratio_average = an_ratio[n_middle_idx ];
+    n_ratio_average = an_ratio[n_middle_idx];
   
   //Serial.println(n_ratio_average);
 
-  if( n_ratio_average > 2 && n_ratio_average < 184){
-    n_spo2_calc= uch_spo2_table[n_ratio_average] ;
+  // n_ratio_average = calculateMean(0, n_ratia_de);
+
+  if(n_ratio_average < 184) {
+    n_spo2_calc= uch_spo2_table[n_ratio_average];
     *pn_spo2 = n_spo2_calc ;
     *pch_spo2_valid  = 1;//  float_SPO2 =  -45.060*n_ratio_average* n_ratio_average/10000 + 30.354 *n_ratio_average/100 + 94.845 ;  // for comparison with table
   }
   else{
+    Serial.print("??\n");
+    Serial.println(n_ratio_average);
     *pn_spo2 =  -999 ; // do not use SPO2 since signal an_ratio is out of range
     *pch_spo2_valid  = 0; 
   }
 }
+
 
 
 void maxim_find_peaks( int32_t *pn_locs, int32_t *n_npks,  int32_t  *pn_x, int32_t n_size, int32_t n_min_height, int32_t n_min_distance, int32_t n_max_num )

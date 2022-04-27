@@ -3,6 +3,7 @@
 #include "WiFi.h"
 #include "PubSubClient.h"
 #include "MAX30102.h"
+#include "Adafruit_MLX90614.h"
 #include "topic.h"
 #include "Adafruit_GFX.h"
 #include "Adafruit_PCD8544.h"
@@ -22,6 +23,7 @@
 #define RST     (17)
 
 #define deltaT  (25)
+#define OFFSET_TEMPERATURE  (2.2)
 
 typedef enum
 {
@@ -40,9 +42,14 @@ bool measure = false;
 bool peak = false;
 byte num_peak = 0;
 
+bool is_BT_press = false;
 bool is_measure = false;
 bool is_MAX_done = false;
 bool is_BP_done = false;
+bool is_Temp_done = false;
+bool is_stop = false;
+
+unsigned long TimeOutMeasure = 0;
 
 const char* PASS = "12345678";
 const char* ID;
@@ -51,6 +58,7 @@ const char* mqtt_server = "hotrodotquy.vn";
 WiFiClient espClient;
 PubSubClient mqtt(espClient);
 MAXClass MAX;
+Adafruit_MLX90614 MLX;
 Adafruit_PCD8544 display = Adafruit_PCD8544(SCK, DIN, DC, CE, RST);
 
 TaskHandle_t xBPTaskHandle;
@@ -99,31 +107,41 @@ void setup()
 
   Wire.begin(21, 22, 100000);
 
+  pinMode(Valve, OUTPUT);
+  pinMode(Motor, OUTPUT);
+  pinMode(Buzz, OUTPUT);
+  // pinMode(RST, OUTPUT);
+  // pinMode(CE, OUTPUT);
+  // pinMode(DC, OUTPUT);
+  // pinMode(DIN, OUTPUT);
+  pinMode(ADC1, INPUT);
+  pinMode(BT, INPUT);
+
   while (!MAX.begin()) {Serial.println("Cannot begin MAX");}
   Serial.println("MAX Start!");
-  MAX.setup(0x1F, 4, 3, 400, 411, 4096);
+  // MAX.setup(0x1F, 4, 3, 400, 411, 4096);
+  MAX.shutDown();
+  MAX.setPulseAmplitudeRed(0x00);
+
+  while (!MLX.begin()) {Serial.println("Cannot begin MLX");}
+  Serial.println("MLX Start!");
 
   mqtt.setServer(mqtt_server, 1883);
   mqtt.setCallback(callback);
   mqtt.setKeepAlive(60);
 
   //Initialize Display
-	display.begin();
+  while (!display.begin()) {Serial.println("Cannot begin LCD");}
+  Serial.println("LCD Start!");
+	
 	// you can change the contrast around to adapt the display for the best viewing!
-	display.setContrast(10);
+	display.setContrast(50);
 	// Clear the buffer.
 	display.clearDisplay();
-
-  pinMode(Valve, OUTPUT);
-  pinMode(Motor, OUTPUT);
-  pinMode(Buzz, OUTPUT);
 
   digitalWrite(Valve, LOW);
   digitalWrite(Motor, LOW);
   digitalWrite(Buzz, LOW);
-
-  pinMode(ADC1, INPUT);
-  pinMode(BT, INPUT);
 
   Buzzer(1, 100);
 
@@ -131,7 +149,7 @@ void setup()
 
   Serial.println("");
   delay(1000);
-  Buzzer(2, 200);
+  Buzzer(1, 1000);
 
   xTaskCreatePinnedToCore(
                 BP_Task,
@@ -174,15 +192,49 @@ void loop()
 
   // Serial.println("Loop");
 
-  if (is_measure == true)
+  if (is_BT_press == true)
   {
     vTaskResume(xBPTaskHandle);
     vTaskResume(xMAXTaskHandle);
     Buzzer(1, 100);
-    is_measure = false;
+    is_BT_press = false;
+    is_measure = true;
   }
 
-  if ((is_BP_done == true) && (is_MAX_done == true))
+  if (is_measure == false)  {TimeOutMeasure = millis();}
+
+  if (((millis() - TimeOutMeasure) >= 75000) && (is_measure == true))
+  {
+    Serial.printf("TIMEOUT = %lu!\n", (millis() - TimeOutMeasure));
+    Buzzer(1, 2000);
+    MAX.setPulseAmplitudeRed(0x00);
+    MAX.shutDown();
+    vTaskDelete(xBPTaskHandle);
+    vTaskDelete(xMAXTaskHandle);
+    xTaskCreatePinnedToCore(
+                BP_Task,
+                "Blood Pressure Task",
+                1024 * 3,
+                NULL,
+                1,
+                &xBPTaskHandle,
+                1);
+    xTaskCreatePinnedToCore(
+                MAX_Task,
+                "MAX module Task",
+                1024 * 3,
+                NULL,
+                1,
+                &xMAXTaskHandle,
+                1);
+    is_BP_done = false;
+    is_MAX_done = false;
+    is_Temp_done = false;
+    is_measure = false;
+    // vTaskResume(xBTTaskHandle);
+  }
+
+  if ((is_measure == true) && (is_BP_done == true) && (is_MAX_done == true) && (is_Temp_done == true))
   {
     if ((HeartRate1 == 0) || (HeartRate2 == 0)) {gHeartRate = 0;}
     else {gHeartRate = (uint8_t)((HeartRate1 + HeartRate2) / 2);}
@@ -199,7 +251,9 @@ void loop()
     Buzzer(1, 500);
     is_BP_done = false;
     is_MAX_done = false;
-    vTaskResume(xBTTaskHandle);
+    is_Temp_done = false;
+    is_measure = false;
+    // vTaskResume(xBTTaskHandle);
   }
 
   if (WiFi.status() != WL_CONNECTED)
@@ -207,7 +261,42 @@ void loop()
     WiFiConnect();
   }
   
-  display.clearDisplay();
+  if ((is_stop == true) && (is_measure == true))
+  {
+    Serial.println("STOP!!!!!");
+    Buzzer(1, 2000);
+    MAX.setPulseAmplitudeRed(0x00);
+    MAX.shutDown();
+    vTaskDelete(xBPTaskHandle);
+    vTaskDelete(xMAXTaskHandle);
+    xTaskCreatePinnedToCore(
+                BP_Task,
+                "Blood Pressure Task",
+                1024 * 3,
+                NULL,
+                1,
+                &xBPTaskHandle,
+                1);
+    xTaskCreatePinnedToCore(
+                MAX_Task,
+                "MAX module Task",
+                1024 * 3,
+                NULL,
+                1,
+                &xMAXTaskHandle,
+                1);
+    is_BP_done = false;
+    is_MAX_done = false;
+    is_Temp_done = false;
+    is_measure = false;
+    is_stop = false;
+  }
+  
+  //Initialize Display
+	// display.begin();
+	// you can change the contrast around to adapt the display for the best viewing!
+	// display.setContrast(10);
+  // display.clearDisplay();
   print_para();
 	print_symbol();
 	display.display();
@@ -216,12 +305,18 @@ void loop()
 
 void MQTT_Task(void* parameter)
 {
+  // uint32_t time_MQTT = millis();
   while(1)
   {
-    if (!mqtt.connected())
+    if (!mqtt.connected() && (WiFi.status() == WL_CONNECTED))
     {
       MQTTConnect();
     }
+    // if ((time_MQTT - millis()) >= 30000)
+    // {
+    //   mqtt.publish("","");
+    //   time_MQTT = millis();
+    // }
     delay(1000);
   }
 }
@@ -231,11 +326,13 @@ void BP_Task(void* parameter)
   while(1)
   {
     vTaskSuspend(xBPTaskHandle);
+    Serial.println("Close Valve, Pump ON!");
     digitalWrite(Motor, HIGH);
     digitalWrite(Valve, HIGH);
 
     bool BP_measuring = false;
-    while (BP_measuring == false)
+    uint32_t time_Pump = millis();
+    while ((BP_measuring == false) && ((millis() - time_Pump) <= 15000))
     {
       ADC1_val = (float)analogRead(ADC1)*(3.3/4095);
       // Serial.print("ADC1 = ");
@@ -245,76 +342,90 @@ void BP_Task(void* parameter)
         digitalWrite(Motor, LOW);
         delay(200);
         BP_measuring = true;
+        Serial.println("Pressure Reached!");
       }
     }
 
-    for(count = 0; count < DATA_LENGTH; count++)
+    if (BP_measuring == false)  
     {
-      ADC1_RAW[count] = (uint16_t) analogRead(ADC1);
-      delay(deltaT);
+      digitalWrite(Motor, LOW);
+      Serial.println("Pump Fail!");
     }
 
-    // for(count = 0; count < DATA_LENGTH; count++)
-    // {
-    //   Serial.print(count);
-    //   Serial.print("\t");
-    //   Serial.println(ADC1_RAW[count]);
-    // }
-
-    maxim_find_peaks(peak_loc, &num_peak, ADC1_RAW, DATA_LENGTH, 3000, 20, 10);
-
-    // for(count = 0; count < num_peak; count++)
-    // {
-    //   Serial.println(peak_loc[count]);
-    // }
-
-    uint16_t Calib_ADC1[DATA_LENGTH];
-
-    for(int i = 0; i < DATA_LENGTH; i++)
+    if (BP_measuring == true)
     {
-      Calib_ADC1[i] = (uint16_t)ADC1_RAW[i] + (uint16_t)(5.75 * i);
-    }
+      for(count = 0; count < DATA_LENGTH; count++)
+      {
+        ADC1_RAW[count] = (uint16_t) analogRead(ADC1);
+        delay(deltaT);
+      }
 
-    Calib_ADC1[0] = ADC1_RAW[0];
+      // for(count = 0; count < DATA_LENGTH; count++)
+      // {
+      //   Serial.print(count);
+      //   Serial.print("\t");
+      //   Serial.println(ADC1_RAW[count]);
+      // }
 
-    // for(int i = 1; i < DATA_LENGTH; i++)
-    // {
-    //   Serial.println(Calib_ADC1[i]);
-    // }
+      maxim_find_peaks(peak_loc, &num_peak, ADC1_RAW, DATA_LENGTH, 3000, 15, 10);
 
-    int avrStepLoc = 0;
+      // for(count = 0; count < num_peak; count++)
+      // {
+      //   Serial.println(peak_loc[count]);
+      // }
 
-    for(byte i = 1; i < num_peak; i++)
-    {
-      avrStepLoc += peak_loc[i];
-    }
-    for(byte i = 0; i < num_peak - 1; i++)
-    {
-      avrStepLoc -= peak_loc[i];
-    }
-    avrStepLoc /= (num_peak-1);
+      uint16_t Calib_ADC1[DATA_LENGTH];
 
-    HeartRate1 = (uint8_t)(60000 / (avrStepLoc * deltaT));
+      for(int i = 0; i < DATA_LENGTH; i++)
+      {
+        Calib_ADC1[i] = (uint16_t)ADC1_RAW[i] + (uint16_t)(5.75 * i);
+      }
 
-    Serial.println(HeartRate1);
+      Calib_ADC1[0] = ADC1_RAW[0];
 
-    gSystolic = 0;
-    gSystolic = (ADC1_RAW[peak_loc[0]] + 300) * 3.31 * 300 / (4095 * 90.28 * 0.08);
-    Serial.println(gSystolic);
+      // for(int i = 1; i < DATA_LENGTH; i++)
+      // {
+      //   Serial.println(Calib_ADC1[i]);
+      // }
 
-    gDiastole = 0;
-    gDiastole = (ADC1_RAW[peak_loc[1] - 3] - 500) * 3.31 * 300 / (4095 * 90.28 * 0.08);
-    Serial.println(gDiastole);
+      int avrStepLoc = 0;
 
-    if (HeartRate1 <= 40)
-    {
+      for(byte i = 1; i < num_peak; i++)
+      {
+        avrStepLoc += peak_loc[i];
+      }
+      for(byte i = 0; i < num_peak - 1; i++)
+      {
+        avrStepLoc -= peak_loc[i];
+      }
+      avrStepLoc /= (num_peak-1);
+
+      HeartRate1 = (uint8_t)(60000 / (avrStepLoc * deltaT));
+
+      Serial.println(HeartRate1);
+
       gSystolic = 0;
-      gDiastole = 0;
-      HeartRate1 = 0;
-    }
+      gSystolic = (ADC1_RAW[peak_loc[0]] + 300) * 3.31 * 300 / (4095 * 90.28 * 0.08);
+      Serial.println(gSystolic);
 
-    is_BP_done = true;
+      gDiastole = 0;
+      gDiastole = (ADC1_RAW[peak_loc[1] - 3] - 500) * 3.31 * 300 / (4095 * 90.28 * 0.08);
+      Serial.println(gDiastole);
+
+      if (HeartRate1 <= 40)
+      {
+        Serial.println("Invalid");
+        gSystolic = 0;
+        gDiastole = 0;
+        HeartRate1 = 0;
+      }
+
+      is_BP_done = true;
+    }
+    
     digitalWrite(Valve, LOW);
+
+    Serial.println("Open Valve");
   }
 }
 
@@ -324,24 +435,55 @@ void MAX_Task(void* parameter)
   {
     vTaskSuspend(xMAXTaskHandle);
 
+    delay(500);
+
     while (!MAX.begin()) {Serial.println("Cannot begin MAX");}
     Serial.println("MAX Start!");
-    MAX.setup(0x1F, 4, 3, 400, 411, 4096);
+    MAX.setup(0x3F, 4, 3, 400, 411, 4096);
     
     if(MAX.measureParameter() == true)
     {
-      gBodyTemp = MAX.Body_Temp;
+      Serial.printf("MAX DONE!\nHR = %d\tSpO2 = %d\n", MAX.Heart_Rate, MAX.SpO2);
       gSpO2 = MAX.SpO2;
       HeartRate2 = MAX.Heart_Rate;
       is_MAX_done = true;
     }
     else
     {
-      gBodyTemp = 0;
+      Serial.println("MAX NOT OK!");
       gSpO2 = 0;
       HeartRate2 = 0;
       is_MAX_done = false;
     }
+
+    double T_cache[30] = {0};
+
+    while (!MLX.begin()) {Serial.println("Cannot begin MLX");}
+    Serial.println("MLX Start!");
+
+    for (byte i = 0; i < 30; i++)
+    {
+      T_cache[i] = MLX.readObjectTempC() + OFFSET_TEMPERATURE;
+    }
+
+    double tBodyTemp = 0;
+    for (byte i = 0; i < 30; i++)
+    {
+      tBodyTemp += T_cache[i];
+    }
+
+    tBodyTemp /= 30;
+
+    Serial.printf("MLX check Temperature = %f\n", tBodyTemp);
+    if (tBodyTemp >= 34.0 && tBodyTemp <= 42.0)
+    {
+      gBodyTemp = tBodyTemp;
+      Serial.printf("MLX Temperature = %f\n", gBodyTemp);
+      is_Temp_done = true;
+    }
+    else  {is_Temp_done = false;}
+
+    // is_measure = false;
   }
 }
 
@@ -355,8 +497,18 @@ void BT_Task(void* parameter)
       if (digitalRead(BT) == HIGH) 
       {
         Serial.println("Button Pressed!");
-        is_measure = true;
-        vTaskSuspend(xBTTaskHandle);
+        is_BT_press = true;
+        // vTaskSuspend(xBTTaskHandle);
+      }
+    }
+    else if ((digitalRead(BT) == HIGH) && (is_measure == true)) 
+    {
+      delay(2000);
+      if (digitalRead(BT) == HIGH) 
+      {
+        Serial.println("Button Hold!");
+        is_stop = true;
+        // vTaskSuspend(xBTTaskHandle);
       }
     }
   }
@@ -460,7 +612,7 @@ void print_symbol()
 	}
 	display.drawBitmap(0, 0,  HEART, 30, 25, BLACK);
 	delay(10);
-	// display.drawBitmap(36, 0,  BAT, 27, 16, BLACK);
+	display.drawBitmap(25, 0,  BAT, 27, 16, WHITE);
 	delay(50);
 
 }

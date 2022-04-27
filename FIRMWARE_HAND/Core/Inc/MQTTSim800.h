@@ -79,6 +79,42 @@ typedef struct {
     mqttReceive_t mqttReceive;
 } SIM800_t;
 
+typedef struct 
+{
+    uint16_t Year;
+    uint8_t Month;
+    uint8_t Day;
+    uint8_t Hour;
+    uint8_t Minute;
+    uint8_t Second;
+} GPS_Time_t;
+
+typedef struct {
+    uint8_t GPS_Status;
+    uint8_t Fix_Status;
+    char UTC_Time[20];
+    GPS_Time_t Time;
+    char cLat[9];
+    float Latitude;
+    char cLon[10];
+    float Longitude;
+    
+    uint8_t FixMode;
+
+    uint8_t NumSatView;
+    uint8_t NumSatUsed;
+    uint8_t NumGLONASS;
+
+} GPS_Sta_t;
+
+typedef struct
+{
+    uint8_t BattPerc;
+    uint16_t BattVol;
+} SIM800_Batt_t;
+
+void GPS_Time_Parse(char * cTime);
+
 void Sim800_RxCallBack(void);
 
 void clearRxBuffer(void);
@@ -116,3 +152,8 @@ void reverse(char* str, int len);
 int intToStr(int x, char str[], int d);
 
 void ftoa(float n, char* res, int afterpoint);
+
+void getGPS(void);
+
+void getBattery(void);
+

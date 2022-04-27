@@ -1,0 +1,479 @@
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccumuvpU.s 			page 1
+
+
+   1              		.cpu cortex-m3
+   2              		.eabi_attribute 20, 1
+   3              		.eabi_attribute 21, 1
+   4              		.eabi_attribute 23, 3
+   5              		.eabi_attribute 24, 1
+   6              		.eabi_attribute 25, 1
+   7              		.eabi_attribute 26, 1
+   8              		.eabi_attribute 30, 1
+   9              		.eabi_attribute 34, 1
+  10              		.eabi_attribute 18, 4
+  11              		.file	"MQTTDeserializePublish.c"
+  12              		.text
+  13              	.Ltext0:
+  14              		.cfi_sections	.debug_frame
+  15              		.section	.text.MQTTDeserialize_publish,"ax",%progbits
+  16              		.align	1
+  17              		.global	MQTTDeserialize_publish
+  18              		.arch armv7-m
+  19              		.syntax unified
+  20              		.thumb
+  21              		.thumb_func
+  22              		.fpu softvfp
+  24              	MQTTDeserialize_publish:
+  25              	.LVL0:
+  26              	.LFB3:
+  27              		.file 1 "Core/Src/MQTTDeserializePublish.c"
+   1:Core/Src/MQTTDeserializePublish.c **** /*******************************************************************************
+   2:Core/Src/MQTTDeserializePublish.c ****  * Copyright (c) 2014 IBM Corp.
+   3:Core/Src/MQTTDeserializePublish.c ****  *
+   4:Core/Src/MQTTDeserializePublish.c ****  * All rights reserved. This program and the accompanying materials
+   5:Core/Src/MQTTDeserializePublish.c ****  * are made available under the terms of the Eclipse Public License v1.0
+   6:Core/Src/MQTTDeserializePublish.c ****  * and Eclipse Distribution License v1.0 which accompany this distribution.
+   7:Core/Src/MQTTDeserializePublish.c ****  *
+   8:Core/Src/MQTTDeserializePublish.c ****  * The Eclipse Public License is available at
+   9:Core/Src/MQTTDeserializePublish.c ****  *    http://www.eclipse.org/legal/epl-v10.html
+  10:Core/Src/MQTTDeserializePublish.c ****  * and the Eclipse Distribution License is available at
+  11:Core/Src/MQTTDeserializePublish.c ****  *   http://www.eclipse.org/org/documents/edl-v10.php.
+  12:Core/Src/MQTTDeserializePublish.c ****  *
+  13:Core/Src/MQTTDeserializePublish.c ****  * Contributors:
+  14:Core/Src/MQTTDeserializePublish.c ****  *    Ian Craggs - initial API and implementation and/or initial documentation
+  15:Core/Src/MQTTDeserializePublish.c ****  *******************************************************************************/
+  16:Core/Src/MQTTDeserializePublish.c **** 
+  17:Core/Src/MQTTDeserializePublish.c **** #include "StackTrace.h"
+  18:Core/Src/MQTTDeserializePublish.c **** #include "MQTTPacket.h"
+  19:Core/Src/MQTTDeserializePublish.c **** #include <string.h>
+  20:Core/Src/MQTTDeserializePublish.c **** 
+  21:Core/Src/MQTTDeserializePublish.c **** #define min(a, b) ((a < b) ? 1 : 0)
+  22:Core/Src/MQTTDeserializePublish.c **** 
+  23:Core/Src/MQTTDeserializePublish.c **** /**
+  24:Core/Src/MQTTDeserializePublish.c ****   * Deserializes the supplied (wire) buffer into publish data
+  25:Core/Src/MQTTDeserializePublish.c ****   * @param dup returned integer - the MQTT dup flag
+  26:Core/Src/MQTTDeserializePublish.c ****   * @param qos returned integer - the MQTT QoS value
+  27:Core/Src/MQTTDeserializePublish.c ****   * @param retained returned integer - the MQTT retained flag
+  28:Core/Src/MQTTDeserializePublish.c ****   * @param packetid returned integer - the MQTT packet identifier
+  29:Core/Src/MQTTDeserializePublish.c ****   * @param topicName returned MQTTString - the MQTT topic in the publish
+  30:Core/Src/MQTTDeserializePublish.c ****   * @param payload returned byte buffer - the MQTT publish payload
+  31:Core/Src/MQTTDeserializePublish.c ****   * @param payloadlen returned integer - the length of the MQTT payload
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccumuvpU.s 			page 2
+
+
+  32:Core/Src/MQTTDeserializePublish.c ****   * @param buf the raw buffer data, of the correct length determined by the remaining length field
+  33:Core/Src/MQTTDeserializePublish.c ****   * @param buflen the length in bytes of the data in the supplied buffer
+  34:Core/Src/MQTTDeserializePublish.c ****   * @return error code.  1 is success
+  35:Core/Src/MQTTDeserializePublish.c ****   */
+  36:Core/Src/MQTTDeserializePublish.c **** int MQTTDeserialize_publish(unsigned char* dup, int* qos, unsigned char* retained, unsigned short* 
+  37:Core/Src/MQTTDeserializePublish.c **** 		unsigned char** payload, int* payloadlen, unsigned char* buf, int buflen)
+  38:Core/Src/MQTTDeserializePublish.c **** {
+  28              		.loc 1 38 1 view -0
+  29              		.cfi_startproc
+  30              		@ args = 20, pretend = 0, frame = 8
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              		.loc 1 38 1 is_stmt 0 view .LVU1
+  33 0000 2DE9F041 		push	{r4, r5, r6, r7, r8, lr}
+  34              	.LCFI0:
+  35              		.cfi_def_cfa_offset 24
+  36              		.cfi_offset 4, -24
+  37              		.cfi_offset 5, -20
+  38              		.cfi_offset 6, -16
+  39              		.cfi_offset 7, -12
+  40              		.cfi_offset 8, -8
+  41              		.cfi_offset 14, -4
+  42 0004 82B0     		sub	sp, sp, #8
+  43              	.LCFI1:
+  44              		.cfi_def_cfa_offset 32
+  45 0006 8046     		mov	r8, r0
+  46 0008 0D46     		mov	r5, r1
+  47 000a 1646     		mov	r6, r2
+  48 000c 1F46     		mov	r7, r3
+  39:Core/Src/MQTTDeserializePublish.c **** 	MQTTHeader header = {0};
+  49              		.loc 1 39 2 is_stmt 1 view .LVU2
+  50              		.loc 1 39 13 is_stmt 0 view .LVU3
+  51 000e 0024     		movs	r4, #0
+  52              	.LVL1:
+  40:Core/Src/MQTTDeserializePublish.c **** 	unsigned char* curdata = buf;
+  53              		.loc 1 40 2 is_stmt 1 view .LVU4
+  54              		.loc 1 40 17 is_stmt 0 view .LVU5
+  55 0010 0B9B     		ldr	r3, [sp, #44]
+  56              	.LVL2:
+  57              		.loc 1 40 17 view .LVU6
+  58 0012 0193     		str	r3, [sp, #4]
+  41:Core/Src/MQTTDeserializePublish.c **** 	unsigned char* enddata = NULL;
+  59              		.loc 1 41 2 is_stmt 1 view .LVU7
+  60              	.LVL3:
+  42:Core/Src/MQTTDeserializePublish.c **** 	int rc = 0;
+  61              		.loc 1 42 2 view .LVU8
+  43:Core/Src/MQTTDeserializePublish.c **** 	int mylen = 0;
+  62              		.loc 1 43 2 view .LVU9
+  63              		.loc 1 43 6 is_stmt 0 view .LVU10
+  64 0014 0094     		str	r4, [sp]
+  44:Core/Src/MQTTDeserializePublish.c **** 
+  45:Core/Src/MQTTDeserializePublish.c **** 	FUNC_ENTRY;
+  65              		.loc 1 45 12 is_stmt 1 view .LVU11
+  46:Core/Src/MQTTDeserializePublish.c **** 	header.byte = readChar(&curdata);
+  66              		.loc 1 46 2 view .LVU12
+  67              		.loc 1 46 16 is_stmt 0 view .LVU13
+  68 0016 01A8     		add	r0, sp, #4
+  69              	.LVL4:
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccumuvpU.s 			page 3
+
+
+  70              		.loc 1 46 16 view .LVU14
+  71 0018 FFF7FEFF 		bl	readChar
+  72              	.LVL5:
+  73              		.loc 1 46 14 view .LVU15
+  74 001c 60F30704 		bfi	r4, r0, #0, #8
+  47:Core/Src/MQTTDeserializePublish.c **** 	if (header.bits.type != PUBLISH)
+  75              		.loc 1 47 2 is_stmt 1 view .LVU16
+  76              		.loc 1 47 23 is_stmt 0 view .LVU17
+  77 0020 00F0F00C 		and	ip, r0, #240
+  78              		.loc 1 47 5 view .LVU18
+  79 0024 BCF1300F 		cmp	ip, #48
+  80 0028 04D0     		beq	.L6
+  42:Core/Src/MQTTDeserializePublish.c **** 	int mylen = 0;
+  81              		.loc 1 42 6 view .LVU19
+  82 002a 0024     		movs	r4, #0
+  83              	.LVL6:
+  84              	.L2:
+  48:Core/Src/MQTTDeserializePublish.c **** 		goto exit;
+  49:Core/Src/MQTTDeserializePublish.c **** 	*dup = header.bits.dup;
+  50:Core/Src/MQTTDeserializePublish.c **** 	*qos = header.bits.qos;
+  51:Core/Src/MQTTDeserializePublish.c **** 	*retained = header.bits.retain;
+  52:Core/Src/MQTTDeserializePublish.c **** 
+  53:Core/Src/MQTTDeserializePublish.c **** 	curdata += (rc = MQTTPacket_decodeBuf(curdata, &mylen));
+  54:Core/Src/MQTTDeserializePublish.c **** 	enddata = curdata + mylen;
+  55:Core/Src/MQTTDeserializePublish.c **** 
+  56:Core/Src/MQTTDeserializePublish.c **** 	if (!readMQTTLenString(topicName, &curdata, enddata) ||
+  57:Core/Src/MQTTDeserializePublish.c **** 		enddata - curdata < 0)
+  58:Core/Src/MQTTDeserializePublish.c **** 		goto exit;
+  59:Core/Src/MQTTDeserializePublish.c **** 
+  60:Core/Src/MQTTDeserializePublish.c **** 	if (*qos > 0)
+  61:Core/Src/MQTTDeserializePublish.c **** 		*packetid = readInt(&curdata);
+  62:Core/Src/MQTTDeserializePublish.c **** 
+  63:Core/Src/MQTTDeserializePublish.c **** 	*payloadlen = enddata - curdata;
+  64:Core/Src/MQTTDeserializePublish.c **** 	*payload = curdata;
+  65:Core/Src/MQTTDeserializePublish.c **** 	rc = 1;
+  66:Core/Src/MQTTDeserializePublish.c **** exit:
+  67:Core/Src/MQTTDeserializePublish.c **** 	FUNC_EXIT_RC(rc);
+  85              		.loc 1 67 18 is_stmt 1 view .LVU20
+  68:Core/Src/MQTTDeserializePublish.c **** 	return rc;
+  86              		.loc 1 68 2 view .LVU21
+  87              	.L1:
+  69:Core/Src/MQTTDeserializePublish.c **** }
+  88              		.loc 1 69 1 is_stmt 0 view .LVU22
+  89 002c 2046     		mov	r0, r4
+  90 002e 02B0     		add	sp, sp, #8
+  91              	.LCFI2:
+  92              		.cfi_remember_state
+  93              		.cfi_def_cfa_offset 24
+  94              		@ sp needed
+  95 0030 BDE8F081 		pop	{r4, r5, r6, r7, r8, pc}
+  96              	.LVL7:
+  97              	.L6:
+  98              	.LCFI3:
+  99              		.cfi_restore_state
+  49:Core/Src/MQTTDeserializePublish.c **** 	*qos = header.bits.qos;
+ 100              		.loc 1 49 2 is_stmt 1 view .LVU23
+  49:Core/Src/MQTTDeserializePublish.c **** 	*qos = header.bits.qos;
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccumuvpU.s 			page 4
+
+
+ 101              		.loc 1 49 20 is_stmt 0 view .LVU24
+ 102 0034 C4F3C003 		ubfx	r3, r4, #3, #1
+  49:Core/Src/MQTTDeserializePublish.c **** 	*qos = header.bits.qos;
+ 103              		.loc 1 49 7 view .LVU25
+ 104 0038 88F80030 		strb	r3, [r8]
+  50:Core/Src/MQTTDeserializePublish.c **** 	*retained = header.bits.retain;
+ 105              		.loc 1 50 2 is_stmt 1 view .LVU26
+  50:Core/Src/MQTTDeserializePublish.c **** 	*retained = header.bits.retain;
+ 106              		.loc 1 50 20 is_stmt 0 view .LVU27
+ 107 003c C4F34103 		ubfx	r3, r4, #1, #2
+  50:Core/Src/MQTTDeserializePublish.c **** 	*retained = header.bits.retain;
+ 108              		.loc 1 50 7 view .LVU28
+ 109 0040 2B60     		str	r3, [r5]
+  51:Core/Src/MQTTDeserializePublish.c **** 
+ 110              		.loc 1 51 2 is_stmt 1 view .LVU29
+  51:Core/Src/MQTTDeserializePublish.c **** 
+ 111              		.loc 1 51 25 is_stmt 0 view .LVU30
+ 112 0042 C4F30004 		ubfx	r4, r4, #0, #1
+ 113              	.LVL8:
+  51:Core/Src/MQTTDeserializePublish.c **** 
+ 114              		.loc 1 51 12 view .LVU31
+ 115 0046 3470     		strb	r4, [r6]
+  53:Core/Src/MQTTDeserializePublish.c **** 	enddata = curdata + mylen;
+ 116              		.loc 1 53 2 is_stmt 1 view .LVU32
+  53:Core/Src/MQTTDeserializePublish.c **** 	enddata = curdata + mylen;
+ 117              		.loc 1 53 19 is_stmt 0 view .LVU33
+ 118 0048 6946     		mov	r1, sp
+ 119 004a 0198     		ldr	r0, [sp, #4]
+ 120 004c FFF7FEFF 		bl	MQTTPacket_decodeBuf
+ 121              	.LVL9:
+ 122 0050 0446     		mov	r4, r0
+ 123              	.LVL10:
+  53:Core/Src/MQTTDeserializePublish.c **** 	enddata = curdata + mylen;
+ 124              		.loc 1 53 10 view .LVU34
+ 125 0052 019E     		ldr	r6, [sp, #4]
+ 126              	.LVL11:
+  53:Core/Src/MQTTDeserializePublish.c **** 	enddata = curdata + mylen;
+ 127              		.loc 1 53 10 view .LVU35
+ 128 0054 0644     		add	r6, r6, r0
+ 129 0056 0196     		str	r6, [sp, #4]
+  54:Core/Src/MQTTDeserializePublish.c **** 
+ 130              		.loc 1 54 2 is_stmt 1 view .LVU36
+  54:Core/Src/MQTTDeserializePublish.c **** 
+ 131              		.loc 1 54 20 is_stmt 0 view .LVU37
+ 132 0058 009B     		ldr	r3, [sp]
+  54:Core/Src/MQTTDeserializePublish.c **** 
+ 133              		.loc 1 54 10 view .LVU38
+ 134 005a 1E44     		add	r6, r6, r3
+ 135              	.LVL12:
+  56:Core/Src/MQTTDeserializePublish.c **** 		enddata - curdata < 0)
+ 136              		.loc 1 56 2 is_stmt 1 view .LVU39
+  56:Core/Src/MQTTDeserializePublish.c **** 		enddata - curdata < 0)
+ 137              		.loc 1 56 7 is_stmt 0 view .LVU40
+ 138 005c 3246     		mov	r2, r6
+ 139 005e 01A9     		add	r1, sp, #4
+ 140 0060 0898     		ldr	r0, [sp, #32]
+ 141              	.LVL13:
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccumuvpU.s 			page 5
+
+
+  56:Core/Src/MQTTDeserializePublish.c **** 		enddata - curdata < 0)
+ 142              		.loc 1 56 7 view .LVU41
+ 143 0062 FFF7FEFF 		bl	readMQTTLenString
+ 144              	.LVL14:
+  56:Core/Src/MQTTDeserializePublish.c **** 		enddata - curdata < 0)
+ 145              		.loc 1 56 5 view .LVU42
+ 146 0066 0028     		cmp	r0, #0
+ 147 0068 E0D0     		beq	.L1
+  57:Core/Src/MQTTDeserializePublish.c **** 		goto exit;
+ 148              		.loc 1 57 11 discriminator 1 view .LVU43
+ 149 006a 019B     		ldr	r3, [sp, #4]
+ 150 006c F31A     		subs	r3, r6, r3
+  56:Core/Src/MQTTDeserializePublish.c **** 		enddata - curdata < 0)
+ 151              		.loc 1 56 55 discriminator 1 view .LVU44
+ 152 006e 002B     		cmp	r3, #0
+ 153 0070 DCDB     		blt	.L1
+  60:Core/Src/MQTTDeserializePublish.c **** 		*packetid = readInt(&curdata);
+ 154              		.loc 1 60 2 is_stmt 1 view .LVU45
+  60:Core/Src/MQTTDeserializePublish.c **** 		*packetid = readInt(&curdata);
+ 155              		.loc 1 60 6 is_stmt 0 view .LVU46
+ 156 0072 2B68     		ldr	r3, [r5]
+  60:Core/Src/MQTTDeserializePublish.c **** 		*packetid = readInt(&curdata);
+ 157              		.loc 1 60 5 view .LVU47
+ 158 0074 002B     		cmp	r3, #0
+ 159 0076 07DC     		bgt	.L7
+ 160              	.L3:
+  63:Core/Src/MQTTDeserializePublish.c **** 	*payload = curdata;
+ 161              		.loc 1 63 2 is_stmt 1 view .LVU48
+  63:Core/Src/MQTTDeserializePublish.c **** 	*payload = curdata;
+ 162              		.loc 1 63 24 is_stmt 0 view .LVU49
+ 163 0078 019B     		ldr	r3, [sp, #4]
+ 164 007a F61A     		subs	r6, r6, r3
+ 165              	.LVL15:
+  63:Core/Src/MQTTDeserializePublish.c **** 	*payload = curdata;
+ 166              		.loc 1 63 14 view .LVU50
+ 167 007c 0A9A     		ldr	r2, [sp, #40]
+ 168 007e 1660     		str	r6, [r2]
+  64:Core/Src/MQTTDeserializePublish.c **** 	rc = 1;
+ 169              		.loc 1 64 2 is_stmt 1 view .LVU51
+  64:Core/Src/MQTTDeserializePublish.c **** 	rc = 1;
+ 170              		.loc 1 64 11 is_stmt 0 view .LVU52
+ 171 0080 099A     		ldr	r2, [sp, #36]
+ 172 0082 1360     		str	r3, [r2]
+  65:Core/Src/MQTTDeserializePublish.c **** exit:
+ 173              		.loc 1 65 2 is_stmt 1 view .LVU53
+ 174              	.LVL16:
+  65:Core/Src/MQTTDeserializePublish.c **** exit:
+ 175              		.loc 1 65 5 is_stmt 0 view .LVU54
+ 176 0084 0124     		movs	r4, #1
+ 177 0086 D1E7     		b	.L1
+ 178              	.LVL17:
+ 179              	.L7:
+  61:Core/Src/MQTTDeserializePublish.c **** 
+ 180              		.loc 1 61 3 is_stmt 1 view .LVU55
+  61:Core/Src/MQTTDeserializePublish.c **** 
+ 181              		.loc 1 61 15 is_stmt 0 view .LVU56
+ 182 0088 01A8     		add	r0, sp, #4
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccumuvpU.s 			page 6
+
+
+ 183 008a FFF7FEFF 		bl	readInt
+ 184              	.LVL18:
+  61:Core/Src/MQTTDeserializePublish.c **** 
+ 185              		.loc 1 61 13 view .LVU57
+ 186 008e 3880     		strh	r0, [r7]	@ movhi
+ 187 0090 F2E7     		b	.L3
+ 188              		.cfi_endproc
+ 189              	.LFE3:
+ 191              		.section	.text.MQTTDeserialize_ack,"ax",%progbits
+ 192              		.align	1
+ 193              		.global	MQTTDeserialize_ack
+ 194              		.syntax unified
+ 195              		.thumb
+ 196              		.thumb_func
+ 197              		.fpu softvfp
+ 199              	MQTTDeserialize_ack:
+ 200              	.LVL19:
+ 201              	.LFB4:
+  70:Core/Src/MQTTDeserializePublish.c **** 
+  71:Core/Src/MQTTDeserializePublish.c **** 
+  72:Core/Src/MQTTDeserializePublish.c **** 
+  73:Core/Src/MQTTDeserializePublish.c **** /**
+  74:Core/Src/MQTTDeserializePublish.c ****   * Deserializes the supplied (wire) buffer into an ack
+  75:Core/Src/MQTTDeserializePublish.c ****   * @param packettype returned integer - the MQTT packet type
+  76:Core/Src/MQTTDeserializePublish.c ****   * @param dup returned integer - the MQTT dup flag
+  77:Core/Src/MQTTDeserializePublish.c ****   * @param packetid returned integer - the MQTT packet identifier
+  78:Core/Src/MQTTDeserializePublish.c ****   * @param buf the raw buffer data, of the correct length determined by the remaining length field
+  79:Core/Src/MQTTDeserializePublish.c ****   * @param buflen the length in bytes of the data in the supplied buffer
+  80:Core/Src/MQTTDeserializePublish.c ****   * @return error code.  1 is success, 0 is failure
+  81:Core/Src/MQTTDeserializePublish.c ****   */
+  82:Core/Src/MQTTDeserializePublish.c **** int MQTTDeserialize_ack(unsigned char* packettype, unsigned char* dup, unsigned short* packetid, un
+  83:Core/Src/MQTTDeserializePublish.c **** {
+ 202              		.loc 1 83 1 is_stmt 1 view -0
+ 203              		.cfi_startproc
+ 204              		@ args = 4, pretend = 0, frame = 8
+ 205              		@ frame_needed = 0, uses_anonymous_args = 0
+ 206              		.loc 1 83 1 is_stmt 0 view .LVU59
+ 207 0000 F0B5     		push	{r4, r5, r6, r7, lr}
+ 208              	.LCFI4:
+ 209              		.cfi_def_cfa_offset 20
+ 210              		.cfi_offset 4, -20
+ 211              		.cfi_offset 5, -16
+ 212              		.cfi_offset 6, -12
+ 213              		.cfi_offset 7, -8
+ 214              		.cfi_offset 14, -4
+ 215 0002 83B0     		sub	sp, sp, #12
+ 216              	.LCFI5:
+ 217              		.cfi_def_cfa_offset 32
+ 218 0004 0546     		mov	r5, r0
+ 219 0006 0F46     		mov	r7, r1
+ 220 0008 1646     		mov	r6, r2
+  84:Core/Src/MQTTDeserializePublish.c **** 	MQTTHeader header = {0};
+ 221              		.loc 1 84 2 is_stmt 1 view .LVU60
+ 222              		.loc 1 84 13 is_stmt 0 view .LVU61
+ 223 000a 0024     		movs	r4, #0
+ 224              	.LVL20:
+  85:Core/Src/MQTTDeserializePublish.c **** 	unsigned char* curdata = buf;
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccumuvpU.s 			page 7
+
+
+ 225              		.loc 1 85 2 is_stmt 1 view .LVU62
+ 226              		.loc 1 85 17 is_stmt 0 view .LVU63
+ 227 000c 0193     		str	r3, [sp, #4]
+  86:Core/Src/MQTTDeserializePublish.c **** 	unsigned char* enddata = NULL;
+ 228              		.loc 1 86 2 is_stmt 1 view .LVU64
+ 229              	.LVL21:
+  87:Core/Src/MQTTDeserializePublish.c **** 	int rc = 0;
+ 230              		.loc 1 87 2 view .LVU65
+  88:Core/Src/MQTTDeserializePublish.c **** 	int mylen;
+ 231              		.loc 1 88 2 view .LVU66
+  89:Core/Src/MQTTDeserializePublish.c **** 
+  90:Core/Src/MQTTDeserializePublish.c **** 	FUNC_ENTRY;
+ 232              		.loc 1 90 12 view .LVU67
+  91:Core/Src/MQTTDeserializePublish.c **** 	header.byte = readChar(&curdata);
+ 233              		.loc 1 91 2 view .LVU68
+ 234              		.loc 1 91 16 is_stmt 0 view .LVU69
+ 235 000e 01A8     		add	r0, sp, #4
+ 236              	.LVL22:
+ 237              		.loc 1 91 16 view .LVU70
+ 238 0010 FFF7FEFF 		bl	readChar
+ 239              	.LVL23:
+ 240              		.loc 1 91 14 view .LVU71
+ 241 0014 60F30704 		bfi	r4, r0, #0, #8
+ 242              	.LVL24:
+  92:Core/Src/MQTTDeserializePublish.c **** 	*dup = header.bits.dup;
+ 243              		.loc 1 92 2 is_stmt 1 view .LVU72
+ 244              		.loc 1 92 20 is_stmt 0 view .LVU73
+ 245 0018 C4F3C003 		ubfx	r3, r4, #3, #1
+ 246              		.loc 1 92 7 view .LVU74
+ 247 001c 3B70     		strb	r3, [r7]
+  93:Core/Src/MQTTDeserializePublish.c **** 	*packettype = header.bits.type;
+ 248              		.loc 1 93 2 is_stmt 1 view .LVU75
+ 249              		.loc 1 93 27 is_stmt 0 view .LVU76
+ 250 001e C4F30314 		ubfx	r4, r4, #4, #4
+ 251              	.LVL25:
+ 252              		.loc 1 93 14 view .LVU77
+ 253 0022 2C70     		strb	r4, [r5]
+  94:Core/Src/MQTTDeserializePublish.c **** 
+  95:Core/Src/MQTTDeserializePublish.c **** 	curdata += (rc = MQTTPacket_decodeBuf(curdata, &mylen)); /* read remaining length */
+ 254              		.loc 1 95 2 is_stmt 1 view .LVU78
+ 255              		.loc 1 95 19 is_stmt 0 view .LVU79
+ 256 0024 6946     		mov	r1, sp
+ 257 0026 0198     		ldr	r0, [sp, #4]
+ 258 0028 FFF7FEFF 		bl	MQTTPacket_decodeBuf
+ 259              	.LVL26:
+ 260              		.loc 1 95 10 view .LVU80
+ 261 002c 019B     		ldr	r3, [sp, #4]
+ 262 002e 0344     		add	r3, r3, r0
+ 263 0030 0193     		str	r3, [sp, #4]
+  96:Core/Src/MQTTDeserializePublish.c **** 	enddata = curdata + mylen;
+ 264              		.loc 1 96 2 is_stmt 1 view .LVU81
+ 265              		.loc 1 96 20 is_stmt 0 view .LVU82
+ 266 0032 009B     		ldr	r3, [sp]
+ 267              	.LVL27:
+  97:Core/Src/MQTTDeserializePublish.c **** 
+  98:Core/Src/MQTTDeserializePublish.c **** 	if (enddata - curdata < 2)
+ 268              		.loc 1 98 2 is_stmt 1 view .LVU83
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccumuvpU.s 			page 8
+
+
+ 269              		.loc 1 98 5 is_stmt 0 view .LVU84
+ 270 0034 012B     		cmp	r3, #1
+ 271 0036 04DD     		ble	.L8
+  99:Core/Src/MQTTDeserializePublish.c **** 		goto exit;
+ 100:Core/Src/MQTTDeserializePublish.c **** 	*packetid = readInt(&curdata);
+ 272              		.loc 1 100 2 is_stmt 1 view .LVU85
+ 273              		.loc 1 100 14 is_stmt 0 view .LVU86
+ 274 0038 01A8     		add	r0, sp, #4
+ 275              	.LVL28:
+ 276              		.loc 1 100 14 view .LVU87
+ 277 003a FFF7FEFF 		bl	readInt
+ 278              	.LVL29:
+ 279              		.loc 1 100 12 view .LVU88
+ 280 003e 3080     		strh	r0, [r6]	@ movhi
+ 101:Core/Src/MQTTDeserializePublish.c **** 
+ 102:Core/Src/MQTTDeserializePublish.c **** 	rc = 1;
+ 281              		.loc 1 102 2 is_stmt 1 view .LVU89
+ 282              	.LVL30:
+ 283              		.loc 1 102 5 is_stmt 0 view .LVU90
+ 284 0040 0120     		movs	r0, #1
+ 285              	.L9:
+ 103:Core/Src/MQTTDeserializePublish.c **** exit:
+ 104:Core/Src/MQTTDeserializePublish.c **** 	FUNC_EXIT_RC(rc);
+ 286              		.loc 1 104 18 is_stmt 1 view .LVU91
+ 105:Core/Src/MQTTDeserializePublish.c **** 	return rc;
+ 287              		.loc 1 105 2 view .LVU92
+ 288              	.LVL31:
+ 289              	.L8:
+ 106:Core/Src/MQTTDeserializePublish.c **** }
+ 290              		.loc 1 106 1 is_stmt 0 view .LVU93
+ 291 0042 03B0     		add	sp, sp, #12
+ 292              	.LCFI6:
+ 293              		.cfi_def_cfa_offset 20
+ 294              		@ sp needed
+ 295 0044 F0BD     		pop	{r4, r5, r6, r7, pc}
+ 296              		.loc 1 106 1 view .LVU94
+ 297              		.cfi_endproc
+ 298              	.LFE4:
+ 300              		.text
+ 301              	.Letext0:
+ 302              		.file 2 "Core/Inc/MQTTPacket.h"
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccumuvpU.s 			page 9
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 MQTTDeserializePublish.c
+C:\Users\Vento\AppData\Local\Temp\ccumuvpU.s:16     .text.MQTTDeserialize_publish:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\ccumuvpU.s:24     .text.MQTTDeserialize_publish:00000000 MQTTDeserialize_publish
+C:\Users\Vento\AppData\Local\Temp\ccumuvpU.s:192    .text.MQTTDeserialize_ack:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\ccumuvpU.s:199    .text.MQTTDeserialize_ack:00000000 MQTTDeserialize_ack
+
+UNDEFINED SYMBOLS
+readChar
+MQTTPacket_decodeBuf
+readMQTTLenString
+readInt

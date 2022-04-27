@@ -255,7 +255,7 @@ void testdrawline() {
 
 void setup()   {
   Serial.begin(9600);
-Serial.println("PCD test");
+  Serial.println("PCD test");
   display.begin();
   // init done
 
