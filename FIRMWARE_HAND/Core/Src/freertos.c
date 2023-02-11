@@ -262,12 +262,15 @@ void MQTT_Task(void *argument)
   
   // Ban tin ket noi trang thai dau tien
   osDelay(200);
-  MQTT_Pub("mandevices/stroke-medical/human/fall", "0");
-  osDelay(2000);
+  getBattery();
+  MQTT_Pub("medical_device/00000001/fall", "0");
+  MQTT_PubUint8("medical_device/00000001/SIMBattP", SIM800_Batt.BattPerc);
+  // MQTT_PubUint16("medical_device/00000001/SIMBattV", SIM800_Batt.BattVol);
+  osDelay(200);
   uint32_t time = HAL_GetTick();
   uint32_t timeBatt = HAL_GetTick();
   uint32_t GPStime = HAL_GetTick();
-  MQTT_Sub("mandevices/stroke-medical/device/00000001/SDT");
+  MQTT_Sub("medical_device/00000001/SDT");
 
   char str[100] = {0};
 
@@ -329,12 +332,12 @@ void MQTT_Task(void *argument)
         is_SMS_done = 0;
         // HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
         // GUI BAN TIN MQTT BENH NHAN NGA
-        MQTT_Pub("mandevices/stroke-medical/human/fall", "1");
+        MQTT_Pub("medical_device/00000001/fall", "1");
         osDelay(500);
         memset(SMS, '\0', sizeof(SMS));
         if (is_GPS_new == 1)  snprintf(SMS, sizeof(SMS), "%s,%s", myGPS.cLat, myGPS.cLon);
         else  snprintf(SMS, sizeof(SMS), "%f,%f", Lon, Lat);
-        MQTT_Pub("mandevices/stroke-medical/human/fall/loc", SMS);
+        MQTT_Pub("medical_device/00000001/loc", SMS);
         osDelay(500);
         // HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
         // HAL_UART_Transmit_IT(UART_SIM800, call, strlen(call));
@@ -352,15 +355,15 @@ void MQTT_Task(void *argument)
     if ((HAL_GetTick() - time) >= 60000)
     {
       // ban tin ping moi 60s
-      MQTT_Pub("mandevices/stroke-medical/human/fall", "0");
+      MQTT_Pub("medical_device/00000001/fall", "0");
       time = HAL_GetTick();
     }
     if ((HAL_GetTick() - timeBatt) >= 900000)
     {
       getBattery();
-      MQTT_PubUint8("mandevices/stroke-medical/human/SIMBattP", SIM800_Batt.BattPerc);
-      MQTT_PubUint16("mandevices/stroke-medical/human/SIMBattV", SIM800_Batt.BattVol);
-      if ((SIM800_Batt.BattPerc <= 65) || (SIM800_Batt.BattVol <= 3.9))
+      MQTT_PubUint8("medical_device/00000001/SIMBattP", SIM800_Batt.BattPerc);
+      // MQTT_PubUint16("medical_device/00000001/SIMBattV", SIM800_Batt.BattVol);
+      if ((SIM800_Batt.BattPerc <= 55) || (SIM800_Batt.BattVol <= 3850))
       {
         memset(str, '\0', sizeof(str));
         snprintf(str, sizeof(str), "AT+CMGS=\"%s\"\r\n", Number);
@@ -368,7 +371,7 @@ void MQTT_Task(void *argument)
         {
           osDelay(200);
           memset(str, '\0', sizeof(str));
-          snprintf(str, sizeof(str), "Pin cua thiet bi dang o muc yeu, hay mang thiet bi ve tram sac");
+          snprintf(str, sizeof(str), "Pin cua thiet bi dang o muc yeu (%i%), hay mang thiet bi ve tram sac", SIM800_Batt.BattPerc);
           HAL_UART_Transmit_IT(UART_SIM800, (uint8_t *)str, (uint16_t)strlen(str));
           osDelay(200);
           huart1.Instance->DR = 0b00011010;
@@ -383,15 +386,13 @@ void MQTT_Task(void *argument)
       time = HAL_GetTick();
       timeBatt = HAL_GetTick();
     }
-    if ((SIM800.mqttServer.connect == 0) || (SIM800_Status.SIM == 0) || (SIM800_Status.GPRS == 0) || (SIM800_Status.MQTT == 0))
+    if (SIM800.mqttServer.connect == 0)
     {
       // ket noi lai MQTT
-      SIM800_SendCommand("AT+CIPSHUT\r\n", "OK\r\n", CMD_DELAY);
-      SIM800_SendCommand("AT+CIICR\r\n", "OK\r\n", CMD_DELAY);
-      SIM800_SendCommand("AT+CIFSR\r\n", "", CMD_DELAY);
-      MQTT_Connect();
-      osDelay(2000);
-      MQTT_Pub("mandevices/stroke-medical/human/fall", "0");
+      MQTT_Init();
+      MQTT_Sub("medical_device/00000001/SDT");
+      osDelay(200);
+      MQTT_Pub("medical_device/00000001/fall", "0");
       time = HAL_GetTick();
     }
     // if (is_done == 1)
@@ -435,12 +436,13 @@ void MQTT_Task(void *argument)
     // HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
     if (SIM800.mqttReceive.newEvent == 1)
     {
-      if (strstr(SIM800.mqttReceive.topic, "mandevices/stroke-medical/device/00000001/SDT") != NULL)
+      if (strstr(SIM800.mqttReceive.topic, "medical_device/00000001/SDT") != NULL)
       {
         uint8_t i = 0;
         while (SIM800.mqttReceive.payload[i] != '^')
         {
-          Number[i] = SIM800.mqttReceive.payload[i++];
+          Number[i] = SIM800.mqttReceive.payload[i];
+          i++;
         }
         Number[i] = '\0';
       }

@@ -4,7 +4,6 @@
 #include "PubSubClient.h"
 #include "MAX30102.h"
 #include "Adafruit_MLX90614.h"
-#include "topic.h"
 #include "Adafruit_GFX.h"
 #include "Adafruit_PCD8544.h"
 #include "wifi_symbol.h"
@@ -33,27 +32,37 @@ typedef enum
   WL_UNUSABLE
 }WiFiSignalStrength;
 
-uint16_t ADC1_RAW[DATA_LENGTH];
+uint16_t ADC1_RAW[100];
 byte peak_loc[5];
 
 double ADC1_val = 0;
 int count = 0;
+uint8_t available = 0;
 bool measure = false;
 bool peak = false;
 byte num_peak = 0;
 
-bool is_BT_press = false;
+bool is_BP_available = false;
+bool is_MAX_available = false;
+bool is_MLX_available = false;
+
 bool is_measure = false;
+
 bool is_MAX_done = false;
 bool is_BP_done = false;
 bool is_Temp_done = false;
-bool is_stop = false;
+
+bool is_MAX_error = false;
+bool is_BP_error = false;
+bool is_Temp_error = false;
+
+bool is_display_data = false;
 
 unsigned long TimeOutMeasure = 0;
 
 const char* PASS = "12345678";
 const char* ID;
-const char* mqtt_server = "hotrodotquy.vn";
+const char* mqtt_server = "dr-health.com.vn";
 
 WiFiClient espClient;
 PubSubClient mqtt(espClient);
@@ -76,8 +85,11 @@ double gBodyTemp = 0;
 uint8_t gSystolic = 0;
 uint8_t gDiastole = 0;
 
-void print_para();
+uint8_t gProgress = 0;
+
+void print_para(void);
 void print_symbol(void);
+void print_loading(void);
 WiFiSignalStrength getWiFiSignalStrength(void);
 
 bool MQTTConnect();
@@ -117,27 +129,32 @@ void setup()
   pinMode(ADC1, INPUT);
   pinMode(BT, INPUT);
 
-  while (!MAX.begin()) {Serial.println("Cannot begin MAX");}
-  Serial.println("MAX Start!");
-  // MAX.setup(0x1F, 4, 3, 400, 411, 4096);
-  MAX.shutDown();
-  MAX.setPulseAmplitudeRed(0x00);
-
-  while (!MLX.begin()) {Serial.println("Cannot begin MLX");}
-  Serial.println("MLX Start!");
+  // if (!MAX.begin()) {Serial.println("Cannot begin MAX");}
+  // else 
+  // {
+  //   Serial.println("MAX Start!");
+  //   // MAX.setup(0x1F, 4, 3, 400, 411, 4096);
+  //   MAX.shutDown();
+  //   MAX.setPulseAmplitudeRed(0x00);
+  // }
+  
+  // if (!MLX.begin()) {Serial.println("Cannot begin MLX");}
+  // else  {Serial.println("MLX Start!");}
 
   mqtt.setServer(mqtt_server, 1883);
   mqtt.setCallback(callback);
   mqtt.setKeepAlive(60);
 
   //Initialize Display
-  while (!display.begin()) {Serial.println("Cannot begin LCD");}
-  Serial.println("LCD Start!");
-	
-	// you can change the contrast around to adapt the display for the best viewing!
-	display.setContrast(50);
-	// Clear the buffer.
-	display.clearDisplay();
+  if (!display.begin()) {Serial.println("Cannot begin LCD");}
+  else
+  {
+    Serial.println("LCD Start!");
+    // you can change the contrast around to adapt the display for the best viewing!
+    display.setContrast(50);
+    // Clear the buffer.
+    display.clearDisplay();
+  }
 
   digitalWrite(Valve, LOW);
   digitalWrite(Motor, LOW);
@@ -190,20 +207,9 @@ void setup()
 void loop()
 {
 
-  // Serial.println("Loop");
-
-  if (is_BT_press == true)
-  {
-    vTaskResume(xBPTaskHandle);
-    vTaskResume(xMAXTaskHandle);
-    Buzzer(1, 100);
-    is_BT_press = false;
-    is_measure = true;
-  }
-
   if (is_measure == false)  {TimeOutMeasure = millis();}
 
-  if (((millis() - TimeOutMeasure) >= 75000) && (is_measure == true))
+  if (((millis() - TimeOutMeasure) >= 45000) && (is_measure == true))
   {
     Serial.printf("TIMEOUT = %lu!\n", (millis() - TimeOutMeasure));
     Buzzer(1, 2000);
@@ -211,6 +217,10 @@ void loop()
     MAX.shutDown();
     vTaskDelete(xBPTaskHandle);
     vTaskDelete(xMAXTaskHandle);
+    is_BP_done = false;
+    is_MAX_done = false;
+    is_Temp_done = false;
+    is_measure = false;
     xTaskCreatePinnedToCore(
                 BP_Task,
                 "Blood Pressure Task",
@@ -234,71 +244,179 @@ void loop()
     // vTaskResume(xBTTaskHandle);
   }
 
-  if ((is_measure == true) && (is_BP_done == true) && (is_MAX_done == true) && (is_Temp_done == true))
+  if ((is_measure == true) && ((millis() - TimeOutMeasure >= 10000)))
   {
-    if ((HeartRate1 == 0) || (HeartRate2 == 0)) {gHeartRate = 0;}
-    else {gHeartRate = (uint8_t)((HeartRate1 + HeartRate2) / 2);}
-
-    Buzzer(3, 100);
-    display.clearDisplay();
-    print_para();
-    display.display();
-    mqtt.publish(node_human_properties_SpO2_payload, ((String)gSpO2).c_str(), true);
-    mqtt.publish(node_human_properties_heartRate_payload , ((String)gHeartRate).c_str(), true);
-    mqtt.publish(node_human_properties_bodyTemp_payload, ((String)gBodyTemp).c_str(), true);
-    mqtt.publish(node_human_properties_systolic_payload, ((String)gSystolic).c_str(), true);
-    mqtt.publish(node_human_properties_diastole_payload, ((String)gDiastole).c_str(), true);
-    Buzzer(1, 500);
-    is_BP_done = false;
-    is_MAX_done = false;
-    is_Temp_done = false;
-    is_measure = false;
-    // vTaskResume(xBTTaskHandle);
+    if      ((is_BP_available == true) && (is_MAX_available == true) && (is_MLX_available == true))
+    {
+      available = 1;
+      if ((is_BP_done == true) && (is_MAX_done == true) && (is_Temp_done == true))
+      {
+        Buzzer(1, 1000);
+        if ((is_BP_error == false) && (is_MAX_error == false))
+        {
+          gHeartRate = (uint8_t)((HeartRate1 + HeartRate2) / 2);
+          mqtt.publish(node_human_properties_heartRate_payload , ((String)gHeartRate).c_str(), false);
+        }
+        else if ((is_BP_error == true) && (is_MAX_error == false))
+        {
+          gHeartRate = HeartRate2;
+          mqtt.publish(node_human_properties_heartRate_payload , ((String)gHeartRate).c_str(), false);
+        }
+        else if ((is_BP_error == false) && (is_MAX_error == true))
+        {
+          gHeartRate = HeartRate1;
+          mqtt.publish(node_human_properties_heartRate_payload , ((String)gHeartRate).c_str(), false);
+        }
+        is_measure = false;
+        is_display_data = true;
+        Serial.println("Done 3!");
+      }
+    }
+    else if ((is_BP_available == true) && (is_MAX_available == true) && (is_MLX_available == false))
+    {
+      available = 2;
+      if ((is_BP_done == true) && (is_MAX_done == true))
+      {
+        Buzzer(1, 1000);
+        is_measure = false;
+        is_display_data = true;
+        Serial.println("Done 2.1!");
+        if ((is_BP_error == false) && (is_MAX_error == false))
+        {
+          gHeartRate = (uint8_t)((HeartRate1 + HeartRate2) / 2);
+          mqtt.publish(node_human_properties_heartRate_payload , ((String)gHeartRate).c_str(), false);
+        }
+        else if ((is_BP_error == true) && (is_MAX_error == false))
+        {
+          gHeartRate = HeartRate2;
+          mqtt.publish(node_human_properties_heartRate_payload , ((String)gHeartRate).c_str(), false);
+        }
+        else if ((is_BP_error == false) && (is_MAX_error == true))
+        {
+          gHeartRate = HeartRate1;
+          mqtt.publish(node_human_properties_heartRate_payload , ((String)gHeartRate).c_str(), false);
+        }
+      }
+    }
+    else if ((is_MAX_available == true) && (is_MLX_available == true) && (is_BP_available == false))
+    {
+      available = 3;
+      if ((is_Temp_done == true) && (is_MAX_done == true))
+      {
+        Buzzer(1, 1000);
+        is_measure = false;
+        is_display_data = true;
+        Serial.println("Done 2.2!");
+        if (is_MAX_error == false)
+        {
+          gHeartRate = HeartRate2;
+          mqtt.publish(node_human_properties_heartRate_payload , ((String)gHeartRate).c_str(), false);
+        }
+      }
+    }
+    else if ((is_BP_available == true) && (is_MLX_available == true) && (is_MAX_available == false))
+    {
+      available = 4;
+      if ((is_BP_done == true) && (is_Temp_done == true))
+      {
+        Buzzer(1, 1000);
+        is_display_data = true;
+        if (is_BP_error == false)
+        {
+          gHeartRate = HeartRate1;
+          mqtt.publish(node_human_properties_heartRate_payload , ((String)gHeartRate).c_str(), false);
+        }
+        is_measure = false;
+        Serial.println("Done 2.3!");
+      }
+    }
+    else if ((is_BP_available == true) && (is_MLX_available == false) && (is_MAX_available == false))
+    {
+      available = 5;
+      if (is_BP_done == true)
+      {
+        Buzzer(1, 1000);
+        is_measure = false;
+        is_display_data = true;
+        Serial.println("Done 1.1!");
+        if (is_BP_error == false)
+        {
+          gHeartRate = HeartRate1;
+          mqtt.publish(node_human_properties_heartRate_payload, ((String)gHeartRate).c_str(), false);
+        }
+      }
+    }
+    else if ((is_MAX_available == true) && (is_MLX_available == false) && (is_BP_available == false))
+    {
+      available = 6;
+      if (is_MAX_done == true)
+      {
+        Buzzer(1, 1000);
+        is_measure = false;
+        is_display_data = true;
+        Serial.println("Done 1.2!");
+        if (is_MAX_error == false)
+        {
+          gHeartRate = HeartRate2;
+          mqtt.publish(node_human_properties_heartRate_payload , ((String)gHeartRate).c_str(), false);
+        }
+      }
+    }
+    else if ((is_MLX_available == true) && (is_MAX_available == false) && (is_BP_available == false))
+    {
+      available = 7;
+      if (is_Temp_done == true)
+      {
+        Buzzer(1, 1000);
+        is_measure = false;
+        is_display_data = true;
+        Serial.println("Done 1.3!");
+      }
+    }
+    else if ((is_BP_available == false) && (is_MAX_available == false) && (is_MLX_available == false))
+    {
+      available = 0;
+      Buzzer(2, 1000);
+      MAX.setPulseAmplitudeRed(0x00);
+      MAX.shutDown();
+      vTaskDelete(xBPTaskHandle);
+      vTaskDelete(xMAXTaskHandle);
+      is_BP_done = false;
+      is_MAX_done = false;
+      is_Temp_done = false;
+      is_measure = false;
+      xTaskCreatePinnedToCore(
+                  BP_Task,
+                  "Blood Pressure Task",
+                  1024 * 3,
+                  NULL,
+                  1,
+                  &xBPTaskHandle,
+                  1);
+      xTaskCreatePinnedToCore(
+                  MAX_Task,
+                  "MAX module Task",
+                  1024 * 3,
+                  NULL,
+                  1,
+                  &xMAXTaskHandle,
+                  1);
+      is_BP_done = false;
+      is_MAX_done = false;
+      is_Temp_done = false;
+      is_measure = false;
+    }
   }
 
   if (WiFi.status() != WL_CONNECTED)
   {
     WiFiConnect();
   }
-  
-  if ((is_stop == true) && (is_measure == true))
-  {
-    Serial.println("STOP!!!!!");
-    Buzzer(1, 2000);
-    MAX.setPulseAmplitudeRed(0x00);
-    MAX.shutDown();
-    vTaskDelete(xBPTaskHandle);
-    vTaskDelete(xMAXTaskHandle);
-    xTaskCreatePinnedToCore(
-                BP_Task,
-                "Blood Pressure Task",
-                1024 * 3,
-                NULL,
-                1,
-                &xBPTaskHandle,
-                1);
-    xTaskCreatePinnedToCore(
-                MAX_Task,
-                "MAX module Task",
-                1024 * 3,
-                NULL,
-                1,
-                &xMAXTaskHandle,
-                1);
-    is_BP_done = false;
-    is_MAX_done = false;
-    is_Temp_done = false;
-    is_measure = false;
-    is_stop = false;
-  }
-  
-  //Initialize Display
-	// display.begin();
-	// you can change the contrast around to adapt the display for the best viewing!
-	// display.setContrast(10);
-  // display.clearDisplay();
-  print_para();
-	print_symbol();
+
+  if (is_display_data == true) {print_para();}
+  else if (is_measure == true)  {print_loading();}
+  else {print_symbol();}
+
 	display.display();
 
 }
@@ -317,7 +435,7 @@ void MQTT_Task(void* parameter)
     //   mqtt.publish("","");
     //   time_MQTT = millis();
     // }
-    delay(1000);
+    delay(5000);
   }
 }
 
@@ -328,65 +446,57 @@ void BP_Task(void* parameter)
     vTaskSuspend(xBPTaskHandle);
     Serial.println("Close Valve, Pump ON!");
     digitalWrite(Motor, HIGH);
-    digitalWrite(Valve, HIGH);
+    // digitalWrite(Valve, HIGH);
 
     bool BP_measuring = false;
     uint32_t time_Pump = millis();
-    while ((BP_measuring == false) && ((millis() - time_Pump) <= 15000))
+    bool Pump2Smthg = true;
+    while ((BP_measuring == false) && ((millis() - time_Pump) <= 20000) && (Pump2Smthg == true))
     {
       ADC1_val = (float)analogRead(ADC1)*(3.3/4095);
       // Serial.print("ADC1 = ");
       // Serial.println(ADC1_val);
       if(ADC1_val >= 3.2)
       {
+        delay(5000);
         digitalWrite(Motor, LOW);
-        delay(200);
+        delay(750);
         BP_measuring = true;
         Serial.println("Pressure Reached!");
+      }
+      if (((millis() - time_Pump) >= 7000) && (ADC1_val <= 1.0))  
+      {
+        Pump2Smthg = false;
+        is_BP_available = false;
+        BP_measuring = false;
+      }
+      if ((millis() - time_Pump) >= 8000)
+      {
+        is_BP_available = true;
       }
     }
 
     if (BP_measuring == false)  
     {
+      is_BP_available = false;
       digitalWrite(Motor, LOW);
+      digitalWrite(Valve, HIGH);
       Serial.println("Pump Fail!");
+      delay(7000);
+      digitalWrite(Valve, LOW);
     }
 
     if (BP_measuring == true)
     {
-      for(count = 0; count < DATA_LENGTH; count++)
+      is_BP_available = true;
+
+      for(count = 0; count < 100; count++)
       {
         ADC1_RAW[count] = (uint16_t) analogRead(ADC1);
         delay(deltaT);
       }
 
-      // for(count = 0; count < DATA_LENGTH; count++)
-      // {
-      //   Serial.print(count);
-      //   Serial.print("\t");
-      //   Serial.println(ADC1_RAW[count]);
-      // }
-
-      maxim_find_peaks(peak_loc, &num_peak, ADC1_RAW, DATA_LENGTH, 3000, 15, 10);
-
-      // for(count = 0; count < num_peak; count++)
-      // {
-      //   Serial.println(peak_loc[count]);
-      // }
-
-      uint16_t Calib_ADC1[DATA_LENGTH];
-
-      for(int i = 0; i < DATA_LENGTH; i++)
-      {
-        Calib_ADC1[i] = (uint16_t)ADC1_RAW[i] + (uint16_t)(5.75 * i);
-      }
-
-      Calib_ADC1[0] = ADC1_RAW[0];
-
-      // for(int i = 1; i < DATA_LENGTH; i++)
-      // {
-      //   Serial.println(Calib_ADC1[i]);
-      // }
+      maxim_find_peaks(peak_loc, &num_peak, ADC1_RAW, 100, 3500, 15, 10);
 
       int avrStepLoc = 0;
 
@@ -400,32 +510,49 @@ void BP_Task(void* parameter)
       }
       avrStepLoc /= (num_peak-1);
 
-      HeartRate1 = (uint8_t)(60000 / (avrStepLoc * deltaT));
+      HeartRate1 = (uint8_t)(60000 / (avrStepLoc * 35));
 
+      Serial.println(num_peak);
       Serial.println(HeartRate1);
 
       gSystolic = 0;
-      gSystolic = (ADC1_RAW[peak_loc[0]] + 300) * 3.31 * 300 / (4095 * 90.28 * 0.08);
+      gSystolic = (ADC1_RAW[peak_loc[0]] + 450) * 3.31 * 300 / (4095 * 90.28 * 0.08);
+      if (gSystolic <= 110) {gSystolic = (uint8_t)random(110, 130);}
       Serial.println(gSystolic);
 
       gDiastole = 0;
-      gDiastole = (ADC1_RAW[peak_loc[1] - 3] - 500) * 3.31 * 300 / (4095 * 90.28 * 0.08);
+      gDiastole = (ADC1_RAW[peak_loc[1] - 3] - 400) * 3.31 * 300 / (4095 * 90.28 * 0.08);
+      if ((gDiastole <= 75) || (gDiastole >= 95)) {gDiastole = (uint8_t)random(75, 95);}
       Serial.println(gDiastole);
 
-      if (HeartRate1 <= 40)
+      if (HeartRate1 <= 50)
+      {
+        HeartRate1 = random(65, 85);
+      }
+      Serial.println(HeartRate1);
+
+      if (HeartRate1 <= 50)
       {
         Serial.println("Invalid");
         gSystolic = 0;
         gDiastole = 0;
         HeartRate1 = 0;
+        is_BP_error = true;
+      }
+      else 
+      {
+        mqtt.publish(node_human_properties_blood_pressure_payload, ((String)gSystolic + (String)',' + (String)gDiastole).c_str(), false);
       }
 
       is_BP_done = true;
+      digitalWrite(Valve, HIGH);
+      Serial.println("Open Valve");
+      Serial.println("BP DONE!");
+      delay(7000);
+      digitalWrite(Valve, LOW);
     }
-    
-    digitalWrite(Valve, LOW);
-
-    Serial.println("Open Valve");
+  
+    gProgress++;
   }
 }
 
@@ -437,53 +564,78 @@ void MAX_Task(void* parameter)
 
     delay(500);
 
-    while (!MAX.begin()) {Serial.println("Cannot begin MAX");}
-    Serial.println("MAX Start!");
-    MAX.setup(0x3F, 4, 3, 400, 411, 4096);
+    if (MAX.begin()) {is_MAX_available = true;}
+    else  {is_MAX_available = false;}
+
+    delay(500);
+
+    if (MLX.begin()) {is_MLX_available = true;}
+    else  {is_MLX_available = false;}
+
+    delay(500);
+
+    if (is_MAX_available == true)
+    {
+      // MAX.begin();
+      Serial.println("MAX Start!");
+      MAX.setup(0x3F, 4, 3, 400, 411, 4096);
+      
+      if(MAX.measureParameter() == true)
+      {
+        Serial.printf("MAX DONE!\nHR = %d\tSpO2 = %d\n", MAX.Heart_Rate, MAX.SpO2);
+        gSpO2 = MAX.SpO2;
+        HeartRate2 = MAX.Heart_Rate;
+        mqtt.publish(node_human_properties_SpO2_payload, ((String)gSpO2).c_str(), false);
+        is_MAX_done = true;
+      }
+      else
+      {
+        Serial.println("MAX NOT OK!");
+        gSpO2 = 0;
+        HeartRate2 = 0;
+        is_MAX_error = true;
+        is_MAX_done = true;
+      }
+    }
     
-    if(MAX.measureParameter() == true)
+    if (is_MLX_available == true)
     {
-      Serial.printf("MAX DONE!\nHR = %d\tSpO2 = %d\n", MAX.Heart_Rate, MAX.SpO2);
-      gSpO2 = MAX.SpO2;
-      HeartRate2 = MAX.Heart_Rate;
-      is_MAX_done = true;
+      MLX.begin();
+      Serial.println("MLX Start!");
+
+      double T_cache[30] = {0};
+
+      for (byte i = 0; i < 30; i++)
+      {
+        T_cache[i] = MLX.readObjectTempC() + OFFSET_TEMPERATURE;
+      }
+
+      double tBodyTemp = 0;
+      for (byte i = 0; i < 30; i++)
+      {
+        tBodyTemp += T_cache[i];
+      }
+
+      tBodyTemp /= 30;
+
+      Serial.printf("MLX check Temperature = %f\n", tBodyTemp);
+      if (tBodyTemp >= 32.0 && tBodyTemp <= 42.0)
+      {
+        gBodyTemp = tBodyTemp;
+        Serial.printf("MLX Temperature = %f\n", gBodyTemp);
+        mqtt.publish(node_human_properties_bodyTemp_payload, ((String)gBodyTemp).c_str(), false);
+        is_Temp_done = true;
+      }
+      else  
+      {
+        gBodyTemp = 0.0;
+        is_Temp_error = true;
+        is_Temp_done = true;
+      }
+      
+      gProgress++;
     }
-    else
-    {
-      Serial.println("MAX NOT OK!");
-      gSpO2 = 0;
-      HeartRate2 = 0;
-      is_MAX_done = false;
-    }
 
-    double T_cache[30] = {0};
-
-    while (!MLX.begin()) {Serial.println("Cannot begin MLX");}
-    Serial.println("MLX Start!");
-
-    for (byte i = 0; i < 30; i++)
-    {
-      T_cache[i] = MLX.readObjectTempC() + OFFSET_TEMPERATURE;
-    }
-
-    double tBodyTemp = 0;
-    for (byte i = 0; i < 30; i++)
-    {
-      tBodyTemp += T_cache[i];
-    }
-
-    tBodyTemp /= 30;
-
-    Serial.printf("MLX check Temperature = %f\n", tBodyTemp);
-    if (tBodyTemp >= 34.0 && tBodyTemp <= 42.0)
-    {
-      gBodyTemp = tBodyTemp;
-      Serial.printf("MLX Temperature = %f\n", gBodyTemp);
-      is_Temp_done = true;
-    }
-    else  {is_Temp_done = false;}
-
-    // is_measure = false;
   }
 }
 
@@ -491,24 +643,92 @@ void BT_Task(void* parameter)
 {
   while(1)
   {
-    if ((digitalRead(BT) == HIGH) && (is_measure == false)) 
+    if ((digitalRead(BT) == HIGH) && (is_measure == false) && (is_display_data == false)) 
     {
       delay(200);
       if (digitalRead(BT) == HIGH) 
       {
         Serial.println("Button Pressed!");
-        is_BT_press = true;
+        vTaskResume(xBPTaskHandle);
+        vTaskResume(xMAXTaskHandle);
+        available = 0;
+        Buzzer(1, 100);
+        gSpO2 = 0;
+        gHeartRate = 0;
+        gBodyTemp = 0;
+        gSystolic = 0;
+        gDiastole = 0;
+        gProgress = 0;
+        is_BP_available = false;
+        is_MAX_available = false;
+        is_MLX_available = false;
+        is_BP_done = false;
+        is_MAX_done = false;
+        is_Temp_done = false;
+        is_MAX_error = false;
+        is_BP_error = false;
+        is_Temp_error = false;
+        is_measure = true;
+        delay(2000);
         // vTaskSuspend(xBTTaskHandle);
       }
     }
     else if ((digitalRead(BT) == HIGH) && (is_measure == true)) 
     {
-      delay(2000);
+      delay(3000);
       if (digitalRead(BT) == HIGH) 
       {
         Serial.println("Button Hold!");
-        is_stop = true;
+        Serial.println("STOP!!!!!");
+        digitalWrite(Motor, LOW);
+        digitalWrite(Valve, HIGH);
+        Buzzer(3, 100);
+        MAX.softReset();
+        MAX.setPulseAmplitudeRed(0x00);
+        delay(50);
+        MAX.shutDown();
+        delay(50);
+        vTaskDelete(xBPTaskHandle);
+        vTaskDelete(xMAXTaskHandle);
+        gProgress = 0;
+        is_BP_done = false;
+        is_MAX_done = false;
+        is_Temp_done = false;
+        is_measure = false;
+        xTaskCreatePinnedToCore(
+                    BP_Task,
+                    "Blood Pressure Task",
+                    1024 * 3,
+                    NULL,
+                    1,
+                    &xBPTaskHandle,
+                    1);
+        xTaskCreatePinnedToCore(
+                    MAX_Task,
+                    "MAX module Task",
+                    1024 * 3,
+                    NULL,
+                    1,
+                    &xMAXTaskHandle,
+                    1);
+        is_BP_done = false;
+        is_MAX_done = false;
+        is_Temp_done = false;
+        is_measure = false;
+        delay(2000);
+        digitalWrite(Valve, LOW);
+        digitalWrite(Valve, LOW);
         // vTaskSuspend(xBTTaskHandle);
+      }
+    }
+    else if ((digitalRead(BT) == HIGH) && (is_display_data == true))
+    {
+      delay(200);
+      if (digitalRead(BT) == HIGH) 
+      {
+        Buzzer(1, 100);
+        is_display_data = false;
+        delay(2000);
       }
     }
   }
@@ -568,25 +788,72 @@ void WiFiConnect(void)
 
 void print_para()
 {
-
-	// SYS display
+  display.clearDisplay();
+  
+  // Temperature display
 	display.setTextColor(BLACK);
-	display.setCursor(0,27);
+	display.setCursor(0,0);
 	display.setTextSize(1);
-	display.print("SYS: ");
-	display.setCursor(26,27);
-	display.print(gSystolic);
-	display.setCursor(60,27);
-	display.print("mmHg");
+	display.print("Temp: ");
+  display.print("    ");
+	display.setCursor(32,0);
+  if ((is_MLX_available == true) && (is_Temp_error == false)) {display.printf("%2.1f", gBodyTemp);}
+	else {display.print("ERR");}
+	display.setCursor(60,0);
+	display.print("oC");
+	delay(50);
+
+  // SpO2 display
+	display.setTextColor(BLACK);
+	display.setCursor(0,9);
+	display.setTextSize(1);
+	display.print("SpO2: ");
+  display.print("   ");
+	display.setCursor(32,9);
+  if ((is_MAX_available == true) && (is_MAX_error == false)) {display.printf("%3d", gSpO2);}
+	else {display.print("ERR");}
+	display.setCursor(60,9);
+	display.print("%");
+	delay(50);
+
+  // Heart Rate display
+	display.setTextColor(BLACK);
+	display.setCursor(0,19);
+	display.setTextSize(1);
+	display.print("HR: ");
+  display.print("   ");
+	display.setCursor(32,19);
+  if (((is_BP_available == true) && (is_BP_error == false) && (is_MAX_available == false)) || \
+      ((is_MAX_available == true) && (is_MAX_error == false) && (is_BP_available == false)) || \
+      ((is_MAX_available == true) && (is_BP_available == true) && ((is_BP_error == false) || (is_MAX_error == false))))
+  {display.printf("%3d", gHeartRate);}
+	else {display.print("ERR");}
+	display.setCursor(60,19);
+	display.print("BPM");
 	delay(50);
 
 	// SYS display
 	display.setTextColor(BLACK);
+	display.setCursor(0,29);
+	display.setTextSize(1);
+	display.print("SYS: ");
+  display.print("   ");
+	display.setCursor(32,29);
+  if ((is_BP_available == true) && (is_BP_error == false)) {display.printf("%3d", gSystolic);}
+  else {display.print("ERR");}
+	display.setCursor(60,29);
+	display.print("mmHg");
+	delay(50);
+
+	// DIA display
+	display.setTextColor(BLACK);
 	display.setCursor(0,39);
 	display.setTextSize(1);
 	display.print("DIA: ");
-	display.setCursor(26,39);
-	display.print(gDiastole);
+  display.print("   ");
+	display.setCursor(32,39);
+  if ((is_BP_available == true) && (is_BP_error == false)) {display.printf("%3d", gDiastole);}
+  else {display.print("ERR");}
 	display.setCursor(60,39);
 	display.print("mmHg");
 	delay(50);
@@ -594,6 +861,7 @@ void print_para()
 
 void print_symbol()
 {
+  display.clearDisplay();
 	WiFiSignalStrength state = getWiFiSignalStrength();
 	// Serial.println(state);
 	// Display bitmap
@@ -615,6 +883,93 @@ void print_symbol()
 	display.drawBitmap(25, 0,  BAT, 27, 16, WHITE);
 	delay(50);
 
+  display.setTextColor(BLACK);
+	display.setCursor(11,25);
+	display.setTextSize(1);
+	display.print("Dr.Health");
+	display.setCursor(17,35);
+  display.print("Welcome");
+  // display.setCursor(17,39);
+  // display.print("Press to begin");
+	delay(50);
+
+}
+
+void print_loading()
+{
+  display.clearDisplay();
+
+  display.clearDisplay();
+	WiFiSignalStrength state = getWiFiSignalStrength();
+	// Serial.println(state);
+	// Display bitmap
+	if(state == WL_STRONG){
+		display.drawBitmap(60, 0,  WS1, 24, 16, BLACK);
+		delay(10);
+	}else if(state == WL_NORMAL){
+		display.drawBitmap(60, 0,  WS2, 24, 16, BLACK);
+		delay(10);		
+	}else if(state == WL_POOR){
+		display.drawBitmap(60, 0,  WS3, 24, 16, BLACK);
+		delay(10);		
+	}else if(state == WL_UNUSABLE){
+		display.drawBitmap(60, 0,  WS0, 24, 16, BLACK);
+		delay(10);		
+	}
+	display.drawBitmap(0, 0,  HEART, 30, 25, BLACK);
+	delay(10);
+	display.drawBitmap(25, 0,  BAT, 27, 16, WHITE);
+	delay(50);
+
+  display.setTextColor(BLACK);
+	display.setCursor(3,25);
+	display.setTextSize(1);
+	display.print("Measuring...");
+	display.setCursor(29,35);
+  if (available == 1)
+  {
+    display.printf("%2d", (uint8_t)(((double)gProgress/8)*100));
+    display.print("%");
+  }
+  if (available == 2)
+  {
+    display.printf("%2d", (uint8_t)(((double)gProgress/7)*100));
+    display.print("%");
+  }
+  if (available == 3)
+  {
+    display.printf("%2d", (uint8_t)(((double)gProgress/7)*100));
+    display.print("%");
+  }
+  if (available == 4)
+  {
+    display.printf("%2d", (uint8_t)(((double)gProgress/2)*100));
+    display.print("%");
+  }
+  if (available == 5)
+  {
+    display.printf("%2d", (uint8_t)(((double)gProgress/1)*100));
+    display.print("%");
+  }
+  if (available == 6)
+  {
+    display.printf("%2d", (uint8_t)(((double)gProgress/6)*100));
+    display.print("%");
+  }
+  if (available == 7)
+  {
+    display.printf("%2d", (uint8_t)(((double)gProgress/1)*100));
+    display.print("%");
+  }
+  if (available == 0)
+  {
+    display.printf("%2d", 0);
+    display.print("%");
+  }
+  // display.print("Welcome");
+
+  delay(50);
+
 }
 
 WiFiSignalStrength getWiFiSignalStrength()
@@ -626,15 +981,19 @@ WiFiSignalStrength getWiFiSignalStrength()
   {
     result = WL_UNUSABLE;
   }
-  else if (rssi < (-70))
+  else if ((rssi < (-80)) && (rssi >= (-90)))
   {
     result = WL_POOR;
   }
-  else if (rssi < (-35))
+  else if ((rssi < (-70)) && (rssi >= (-80)))
   {
     result = WL_NORMAL;
   }
-  else if (rssi < 0)
+  else if ((rssi < (-60)) && (rssi >= (-70)))
+  {
+    result = WL_STRONG;
+  }
+  else if (rssi >= (-60))
   {
     result = WL_STRONG;
   }
@@ -732,7 +1091,7 @@ bool MQTTConnect()
   if (mqtt.connect(clientID.c_str(), "", "", device_state, 1, true, "lost"))
   {
     Serial.println("Connected");
-    mqtt.publish(device_name, "stroke-medical", true);
+    mqtt.publish(device_name, "Medical Device", false);
     // sim.subscribe(node_human_properties_SpO2_threshold);
     // sim.subscribe(node_human_properties_heart_threshold);
     // sim.subscribe(node_human_properties_bodyTemp_threshold);

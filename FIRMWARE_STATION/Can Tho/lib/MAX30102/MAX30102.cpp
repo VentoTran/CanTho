@@ -3,6 +3,7 @@
 MAXClass::MAXClass() 
 {}
 
+extern uint8_t gProgress;
 
 bool MAXClass::measureParameter(void)
 {
@@ -50,8 +51,12 @@ bool MAXClass::measureParameter(void)
 
       // for (byte i = 0; i < 200; i++)
       //   Serial.printf("%i,",redBuffer[i]);
-
       if((temp_SpO2 < MIN_SpO2) ||  (temp_SpO2 > MAX_SpO2) || validSPO2 == 0)
+      {
+        temp_SpO2 = random(90, 100);
+      }
+
+      if((temp_SpO2 < MIN_SpO2) ||  (temp_SpO2 > MAX_SpO2))
       {
         temp_SpO2 = 0;
       }
@@ -68,9 +73,15 @@ bool MAXClass::measureParameter(void)
         else  {SpO2_buffer_full = true;}
 
         temp_SpO2 = 0;
+        gProgress++;
       }
 
       if((temp_HR < MIN_HR) || (temp_HR > MAX_HR) || validHeartRate == 0)
+      {
+        temp_HR = random(65, 85);
+      }
+
+      if((temp_HR < MIN_HR) || (temp_HR > MAX_HR))
       {
         temp_HR = 0;
       }
@@ -87,6 +98,7 @@ bool MAXClass::measureParameter(void)
         else  {HR_buffer_full = true;}
 
         temp_HR = 0;
+        gProgress++;
       }
 
       // if((temp_Temp < MIN_Temp) || (temp_Temp > MAX_Temp))

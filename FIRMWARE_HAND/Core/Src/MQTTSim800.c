@@ -54,6 +54,7 @@ typedef struct
 extern SIM800_t SIM800;
 SIM800_St SIM800_Status = {0, 0, 0};
 SIM800_Batt_t SIM800_Batt = {0, 0};
+uint8_t is_GPS = 0;
 extern uint8_t is_SMS_done;
 
 uint8_t rx_data = 0;
@@ -157,6 +158,7 @@ float str2float(char* str, int afterpoint)
 void getGPS(void)
 {
     // SIM800_SendCommand("AT+CGNSINF\r\n", "", 1000);
+    is_GPS = 1;
     char cmd[15] = "AT+CGNSINF\r\n";
     clearRxBuffer();
     HAL_UART_Transmit_IT(UART_SIM800, (unsigned char *)cmd, (uint16_t)strlen(cmd));
@@ -174,6 +176,8 @@ void getGPS(void)
     }
     
     GPS_Time_Parse(myGPS.UTC_Time);
+
+    is_GPS = 0;
 
     clearMqttBuffer();
     // clearRxBuffer();
@@ -303,9 +307,10 @@ void Sim800_RxCallBack(void)
         clearRxBuffer();
     }
 
-    if(rx_data == '^')
+    if((rx_data == '^') && (is_GPS == 0))
     {
         MQTT_Receive(rx_buffer);
+        clearRxBuffer();
     }
 
     HAL_UART_Receive_IT(UART_SIM800, &rx_data, 1);
@@ -402,13 +407,6 @@ int MQTT_Init(void)
 
     SIM800_SendCommand("AT\r\n", "OK\r\n", CMD_DELAY);
     SIM800_SendCommand("ATE0\r\n", "OK\r\n", CMD_DELAY);
-    if (SIM800_SendCommand("AT\r\n", "OK\r\n", CMD_DELAY) == 0){SIM800_Status.SIM = 1;}
-    else
-    {
-        SIM800_Status.SIM = 0;
-        SIM800_Status.GPRS = 0;
-        SIM800_Status.MQTT = 0;
-    }
     SIM800_SendCommand("AT+CMGF=1\r\n", "OK\r\n", 1000);
     error += SIM800_SendCommand("AT+CIPSHUT\r\n", "OK\r\n", CMD_DELAY);
     error += SIM800_SendCommand("AT+CGATT=1\r\n", "OK\r\n", CMD_DELAY);
@@ -421,12 +419,15 @@ int MQTT_Init(void)
     SIM800_SendCommand("AT+CIFSR\r\n", "", CMD_DELAY);
     if (error != 0)
     {   
+        SIM800_Status.SIM = 0;
         SIM800_Status.GPRS = 0;
         SIM800_Status.MQTT = 0;
         return error;
     }
     else
     {   
+        SIM800_Status.MQTT = 1;
+        SIM800_Status.SIM = 1;
         SIM800_Status.GPRS = 1;
         MQTT_Connect();
         return error;
@@ -500,7 +501,7 @@ void MQTT_Pub(char *topic, char *payload)
     int mqtt_len = MQTTSerialize_publish(buf, sizeof(buf), 0, 0, 1, 0,
                                          topicString, (unsigned char *)payload, (int)strlen(payload));
     SIM800_SendCommand("AT+CIPSEND\r\n", ">", 1000);
-    osDelay(500);
+    osDelay(200);
     SIM800_SendMQTT((char*)buf, mqtt_len, "", 1000);
     osDelay(200);
     HAL_UART_Transmit_IT(UART_SIM800, (unsigned char *)temp, 1);
@@ -508,7 +509,7 @@ void MQTT_Pub(char *topic, char *payload)
 
 
 #if FREERTOS == 1
-    osDelay(5000);
+    osDelay(200);
 #else
     HAL_Delay(100);
 #endif
@@ -614,15 +615,15 @@ void MQTT_Sub(char *topic)
     MQTTString topicString = MQTTString_initializer;
     topicString.cstring = topic;
 
-    int mqtt_len = MQTTSerialize_subscribe(buf, sizeof(buf), 0, 1, 1,
-                                            &topicString, 0);
+    int mqtt_len = MQTTSerialize_subscribe(buf, sizeof(buf), 0, 1, 1, &topicString, 0);
     SIM800_SendCommand("AT+CIPSEND\r\n", ">", CMD_DELAY);
-    SIM800_SendMQTT(buf, mqtt_len, "OK\r\n", CMD_DELAY);
-    osDelay(100);
+    osDelay(200);
+    SIM800_SendMQTT((char*)buf, mqtt_len, "OK\r\n", CMD_DELAY);
+    osDelay(200);
     huart1.Instance->DR = 0b00011010;       //0x1A - OK
 
 #if FREERTOS == 1
-    osDelay(100);
+    osDelay(200);
 #else
     HAL_Delay(100);
 #endif

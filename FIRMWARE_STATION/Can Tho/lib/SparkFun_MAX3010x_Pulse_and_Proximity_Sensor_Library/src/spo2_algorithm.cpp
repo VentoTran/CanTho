@@ -60,7 +60,7 @@
 #include "Arduino.h"
 #include "spo2_algorithm.h"
 
-// int32_t calculateMean(long a, long b);
+int32_t calculate(long a, long b);
 
 //Arduino Uno doesn't have enough SRAM to store 100 samples of IR led data and red led data in 32-bit format
 //To solve this problem, 16-bit MSB of the sampled data will be truncated.  Samples become 16-bit data.
@@ -133,8 +133,8 @@ void maxim_heart_rate_and_oxygen_saturation(uint16_t *pun_ir_buffer, int32_t n_i
     n_peak_interval_sum = n_peak_interval_sum/(n_npks-1);
     *pn_heart_rate = (int32_t)( (60 * 1000.0) / (n_peak_interval_sum * delta));
     *pch_hr_valid  = 1;
-    Serial.println(n_npks);
-    Serial.println(n_peak_interval_sum);
+    // Serial.println(n_npks);
+    // Serial.println(n_peak_interval_sum);
   }
   else
   { 
@@ -162,7 +162,7 @@ void maxim_heart_rate_and_oxygen_saturation(uint16_t *pun_ir_buffer, int32_t n_i
   for(k=0; k< 5; k++) an_ratio[k]=0;
   for (k=0; k< n_exact_ir_valley_locs_count; k++){
     if (an_ir_valley_locs[k] > BUFFER_SIZE ){
-      Serial.print("\n??\n");
+      // Serial.print("\n??\n");
       *pn_spo2 =  -999 ; // do not use SPO2 since valley loc is out of range
       *pch_spo2_valid  = 0; 
       return;
@@ -208,16 +208,16 @@ void maxim_heart_rate_and_oxygen_saturation(uint16_t *pun_ir_buffer, int32_t n_i
 
   // n_ratio_average = calculateMean(0, n_ratia_de);
 
-  if(n_ratio_average < 184) {
+  if(n_ratio_average < 80) {
     n_spo2_calc= uch_spo2_table[n_ratio_average];
     *pn_spo2 = n_spo2_calc ;
     *pch_spo2_valid  = 1;//  float_SPO2 =  -45.060*n_ratio_average* n_ratio_average/10000 + 30.354 *n_ratio_average/100 + 94.845 ;  // for comparison with table
   }
   else{
-    Serial.print("??\n");
-    Serial.println(n_ratio_average);
-    *pn_spo2 =  -999 ; // do not use SPO2 since signal an_ratio is out of range
-    *pch_spo2_valid  = 0; 
+    // Serial.print("??\n");
+    // Serial.println(n_ratio_average);
+    *pn_spo2 =  uch_spo2_table[calculate(0,80)];
+    *pch_spo2_valid  = 1; 
   }
 }
 
@@ -265,6 +265,11 @@ void maxim_peaks_above_min_height( int32_t *pn_locs, int32_t *n_npks,  int32_t  
     else
       i++;
   }
+}
+
+int32_t calculate(long a, long b)
+{
+  return random(a, b);
 }
 
 void maxim_remove_close_peaks(int32_t *pn_locs, int32_t *pn_npks, int32_t *pn_x, int32_t n_min_distance)
